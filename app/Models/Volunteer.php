@@ -21,6 +21,7 @@ class Volunteer extends Model
         'skills',
         'status',
         'notes',
+        'start_date',
     ];
 
     /**
@@ -30,6 +31,7 @@ class Volunteer extends Model
      */
     protected $casts = [
         'skills' => 'array',
+        'start_date' => 'datetime',
     ];
 
     /**

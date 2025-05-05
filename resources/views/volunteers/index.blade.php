@@ -13,6 +13,9 @@
     }
 </script>
 
+<!-- Add CSRF Token Meta Tag -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <!-- navigation -->
 <div class="flex">
         <div class="w-64 min-h-screen bg-[#1B4B5A] text-white">
@@ -75,6 +78,7 @@
                 </div>
             </nav>
         </div>
+
 
         <!-- Enhanced Main Content -->
         <div class="flex-1 p-6 bg-gray-50">
@@ -180,7 +184,7 @@
                     Add New Volunteer
                 </button>
                 
-                <button id="export-data-btn" type="button" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <!-- <button id="export-data-btn" type="button" class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                     <svg class="-ml-1 mr-2 h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
@@ -192,7 +196,7 @@
                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                     </svg>
                     View Reports
-                </button>
+                </button> -->
             </div>
 
             <!-- Tabs -->
@@ -619,11 +623,10 @@
         </div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>&#8203;
         <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <form id="add-volunteer-form">
-        @csrf
-                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            <form id="add-volunteer-form" method="POST" action="{{ route('volunteers.store') }}">
+                @csrf
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-        <div class="mb-4">
+                    <div class="mb-4">
                         <h3 class="text-lg leading-6 font-medium text-gray-900">Add New Volunteer</h3>
                         <p class="mt-1 text-sm text-gray-500">Fill in the details to add a new volunteer to the system.</p>
                     </div>
@@ -670,7 +673,13 @@
                                 <option value="Active">Active</option>
                                 <option value="Pending" selected>Pending</option>
                                 <option value="Inactive">Inactive</option>
-            </select>
+                            </select>
+                        </div>
+                        
+                        <!-- Start Date -->
+                        <div>
+                            <label for="volunteer-start-date" class="block text-sm font-medium text-gray-700">Start Date</label>
+                            <input type="date" name="start_date" id="volunteer-start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#2C5F6E] focus:ring-[#2C5F6E] sm:text-sm" required>
                         </div>
                         
                         <!-- Additional Information -->
@@ -696,6 +705,120 @@
 <!-- JavaScript for interactive functionality -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Modal functionality
+        const addVolunteerBtn = document.getElementById('add-volunteer-btn');
+        const modal = document.getElementById('add-volunteer-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const form = document.getElementById('add-volunteer-form');
+        const errorMessage = document.getElementById('form-error-message');
+
+        // Open modal
+        addVolunteerBtn.addEventListener('click', function() {
+            modal.classList.remove('hidden');
+        });
+
+        // Close modal
+        closeModalBtn.addEventListener('click', function() {
+            modal.classList.add('hidden');
+            form.reset();
+            errorMessage.classList.add('hidden');
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                form.reset();
+                errorMessage.classList.add('hidden');
+            }
+        });
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Clear previous error messages
+            errorMessage.classList.add('hidden');
+            errorMessage.textContent = '';
+            
+            // Get form data
+            const formData = new FormData(form);
+            
+            // Send AJAX request
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        if (data.errors) {
+                            // Handle validation errors
+                            const errorMessages = Object.values(data.errors).flat();
+                            throw new Error(errorMessages.join('\n'));
+                        }
+                        throw new Error(data.message || 'An error occurred');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Close modal
+                modal.classList.add('hidden');
+                form.reset();
+                
+                // Show success message
+                alert('Volunteer added successfully!');
+                
+                // Reload page to show new volunteer
+                window.location.reload();
+            })
+            .catch(error => {
+                errorMessage.textContent = error.message;
+                errorMessage.classList.remove('hidden');
+                console.error('Error:', error);
+            });
+        });
+
+        // Phone number validation
+        const phoneInput = document.getElementById('volunteer-phone');
+        phoneInput.addEventListener('input', function(e) {
+            // Remove any non-digit characters
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Format as (XXX) XXX-XXXX
+            if (value.length > 0) {
+                if (value.length <= 3) {
+                    value = `(${value}`;
+                } else if (value.length <= 6) {
+                    value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+                } else {
+                    value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                }
+            }
+            
+            e.target.value = value;
+        });
+
+        // Email validation
+        const emailInput = document.getElementById('volunteer-email');
+        emailInput.addEventListener('blur', function(e) {
+            const email = e.target.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(email)) {
+                errorMessage.textContent = 'Please enter a valid email address.';
+                errorMessage.classList.remove('hidden');
+                e.target.focus();
+            } else {
+                errorMessage.classList.add('hidden');
+            }
+        });
+
         // Search functionality
         const searchInput = document.getElementById('search');
         const volunteerRows = document.querySelectorAll('#volunteer-list tr');
@@ -786,24 +909,6 @@
                 });
                 document.getElementById(tabId).classList.remove('hidden');
             });
-        });
-        
-        // Add New Volunteer button functionality
-        const addVolunteerBtn = document.getElementById('add-volunteer-btn');
-        addVolunteerBtn.addEventListener('click', function() {
-            window.location.href = '/volunteers/create';
-        });
-        
-        // Export Data button functionality
-        const exportDataBtn = document.getElementById('export-data-btn');
-        exportDataBtn.addEventListener('click', function() {
-            window.location.href = '/volunteers/export';
-        });
-        
-        // View Reports button functionality
-        const viewReportsBtn = document.getElementById('view-reports-btn');
-        viewReportsBtn.addEventListener('click', function() {
-            window.location.href = '/volunteers/reports';
         });
         
         // View volunteer profile functionality

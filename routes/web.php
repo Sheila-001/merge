@@ -126,11 +126,11 @@ Route::middleware(['auth'])->group(function () {
 
 // Volunteer routes with auth
 Route::middleware(['auth'])->group(function () {
+    Route::get('/volunteers', [VolunteerController::class, 'index'])->name('volunteers.index');
+    Route::post('/volunteers', [VolunteerController::class, 'store'])->name('volunteers.store');
     Route::get('/volunteer/events', [VolunteerController::class, 'viewEvents'])->name('volunteer.events');
     Route::get('/volunteers/calendar', [VolunteerController::class, 'viewCalendar'])->name('volunteer.calendar');
     Route::post('/volunteers/job-offers', [VolunteerController::class, 'addJobOffer'])->name('volunteer.addJobOffer');
-    Route::get('/volunteers', [VolunteerController::class, 'index'])->name('volunteers.index');
-    Route::post('/volunteers', [VolunteerController::class, 'store'])->name('volunteers.store');
     Route::post('/volunteers/{volunteer}/status', [VolunteerController::class, 'updateStatus'])->name('volunteers.updateStatus');
 });
 

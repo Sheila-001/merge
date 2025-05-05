@@ -31,6 +31,7 @@ class VolunteerController extends Controller
             'skills' => 'nullable|array',
             'status' => 'required|in:Active,Pending,Inactive',
             'notes' => 'nullable|string',
+            'start_date' => 'required|date',
         ]);
 
         if ($validator->fails()) {
@@ -46,6 +47,7 @@ class VolunteerController extends Controller
                 'skills' => $request->skills ? json_encode($request->skills) : null,
                 'status' => $request->status,
                 'notes' => $request->notes,
+                'start_date' => $request->start_date,
             ]);
 
             return response()->json([
