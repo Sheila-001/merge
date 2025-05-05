@@ -70,7 +70,16 @@ class AdminController extends Controller
             'completedEvents' => Event::where('status', 'completed')
                                     ->orderBy('end_date', 'desc')
                                     ->take(5)
-                                    ->get()
+                                    ->get(),
+            'recentEvents' => Event::orderBy('created_at', 'desc')
+                                 ->take(5)
+                                 ->get(),
+            'activeStudents' => User::where('role', 'student')
+                                  ->where('status', 'active')
+                                  ->count(),
+            'activeEvents' => Event::where('status', '!=', 'completed')
+                                 ->where('status', '!=', 'cancelled')
+                                 ->count()
         ];
 
         return view('admin.dashboard', $data);
