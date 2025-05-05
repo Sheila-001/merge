@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('scholarship_applications', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('status')->default('pending');
+            $table->text('essay')->nullable();
+            $table->string('gpa')->nullable();
+            $table->string('major')->nullable();
+            $table->text('extracurricular_activities')->nullable();
+            $table->text('financial_need')->nullable();
+            $table->text('recommendation_letter')->nullable();
             $table->timestamps();
         });
     }

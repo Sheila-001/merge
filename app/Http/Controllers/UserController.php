@@ -17,6 +17,11 @@ class UserController extends Controller
             $query->where('role', request('role'));
         }
 
+        // Filter by class year if specified
+        if (request('class_year')) {
+            $query->where('class_year', request('class_year'));
+        }
+
         // Search functionality
         if (request('search')) {
             $query->where(function($q) {
@@ -51,9 +56,10 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|string|in:user,admin',
+            'role' => 'required|string|in:admin,student,volunteer',  // Updated roles
             'status' => 'required|string|in:active,inactive',
-            'profile_picture' => 'nullable|image|max:1024', // Max 1MB
+            'class_year' => 'nullable|string',  // Add class_year validation
+            'profile_picture' => 'nullable|image|max:1024',
         ]);
 
         $user = new User();
@@ -62,6 +68,7 @@ class UserController extends Controller
         $user->password = Hash::make($request->password);
         $user->role = $request->role;
         $user->status = $request->status;
+        $user->class_year = $request->class_year;  // Add class_year
 
         if ($request->hasFile('profile_picture')) {
             $path = $request->file('profile_picture')->store('profile-pictures', 'public');
@@ -85,6 +92,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'role' => 'required|in:admin,student,volunteer',
             'status' => 'required|in:active,inactive',
+            'class_year' => 'nullable|string',  // Add this line
             'password' => 'nullable|string|min:8',
         ]);
 

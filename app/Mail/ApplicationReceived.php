@@ -13,20 +13,15 @@ class ApplicationReceived extends Mailable
 {
     use Queueable, SerializesModels;
 
-    // Public properties are automatically available in the view
-    public $applicantName;
+    public $name;
     public $trackingCode;
 
     /**
      * Create a new message instance.
-     * 
-     * @param string $applicantName
-     * @param string $trackingCode
-     * @return void
      */
-    public function __construct(string $applicantName, string $trackingCode)
+    public function __construct($name, $trackingCode)
     {
-        $this->applicantName = $applicantName;
+        $this->name = $name;
         $this->trackingCode = $trackingCode;
     }
 
@@ -36,7 +31,7 @@ class ApplicationReceived extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Scholarship Application Received', // Set the email subject
+            subject: 'Your Scholarship Application - Tracking Code',
         );
     }
 
@@ -45,9 +40,8 @@ class ApplicationReceived extends Mailable
      */
     public function content(): Content
     {
-        // Point to the email view we will create
         return new Content(
-            view: 'emails.application_received', 
+            view: 'emails.application-received',
         );
     }
 

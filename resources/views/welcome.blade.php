@@ -152,7 +152,7 @@
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
             <div class="flex items-center space-x-4">
-                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80"
+                    <img src="{{ asset('image/logohauzhayag.jpg') }}"
                          alt="Hauz Hayag Logo"
                          class="h-16 w-auto rounded-lg shadow-md">
                     <span class="text-2xl font-bold text-primary">Hauz Hayag</span>
@@ -183,10 +183,10 @@
                         <i class="fas fa-info-circle"></i>
                         <span>About Us</span>
                     </a>
-                    <button class="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-400 transition" onclick="openLoginModal()">
-                        <i class="fas fa-user"></i>
-                        <span>Login</span>
-                    </button>
+                    <a href="/admin/login" class="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-400 transition">
+                        <i class="fas fa-lock"></i>
+                        <span>Admin Login</span>
+                    </a>
                 </nav>                
             </div>
 
@@ -212,10 +212,10 @@
                     <i class="fas fa-info-circle"></i>
                     <span>About Us</span>
                 </a>
-                <button class="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-400 transition" onclick="openLoginModal()">
-                    <i class="fas fa-user"></i>
-                    <span>Login</span>
-                </button>
+                <a href="/admin/login" class="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-400 transition">
+                    <i class="fas fa-lock"></i>
+                    <span>Admin Login</span>
+                </a>
             </nav>
         </div>
     </header>
@@ -262,6 +262,11 @@
                 </div>
             </div>
         </section>
+
+    
+<!-- <x-test>
+    <p>Testing component rendering.</p>
+</x-test> -->
 
         <!-- Scholarships Section with scroll animations -->
         <section id="scholarships" class="max-w-7xl mx-auto py-16 px-4 bg-gradient-to-br from-blue-50 via-white to-blue-50 rounded-3xl shadow-lg my-12">
@@ -324,21 +329,21 @@
                         <h3 class="mt-4 font-semibold text-lg">Software Developer</h3>
                         <p class="text-gray-600">Build innovative solutions for education.</p>
                         <p class="text-sm text-gray-500 mt-2">Tech Solutions Inc. | San Francisco, CA</p>
-                        <button class="mt-auto bg-primary text-white w-full py-2 px-6 rounded-lg hover:bg-blue-700 transition mb-2" onclick="openJobDetailsModal()">View Details</button>
+                        <button class="mt-auto bg-primary text-white w-full py-2 px-6 rounded-lg hover:bg-blue-700 transition" onclick="openJobDetailsModal()">View Details</button>
                     </div>
                     <div class="bg-neutral shadow rounded-lg p-6 flex flex-col hover:animate-elevate hover:animate-rotate-3d transition-all duration-300 animate-bounce-in" style="animation-delay: 0.2s">
                         <span class="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">Part-time</span>
                         <h3 class="mt-4 font-semibold text-lg">Marketing Coordinator</h3>
                         <p class="text-gray-600">Promote our mission through marketing.</p>
                         <p class="text-sm text-gray-500 mt-2">Global Marketing Agency | New York, NY</p>
-                        <button class="mt-auto bg-primary text-white w-full py-2 px-6 rounded-lg hover:bg-blue-700 transition mb-2" onclick="openJobDetailsModal()">View Details</button>
+                        <button class="mt-auto bg-primary text-white w-full py-2 px-6 rounded-lg hover:bg-blue-700 transition" onclick="openJobDetailsModal()">View Details</button>
                     </div>
                     <div class="bg-neutral shadow rounded-lg p-6 flex flex-col hover:animate-elevate hover:animate-rotate-3d transition-all duration-300 animate-bounce-in-right" style="animation-delay: 0.3s">
                         <span class="bg-yellow-100 text-yellow-800 text-sm px-3 py-1 rounded-full">Internship</span>
                         <h3 class="mt-4 font-semibold text-lg">Research Assistant</h3>
                         <p class="text-gray-600">Gain experience in education research.</p>
                         <p class="text-sm text-gray-500 mt-2">Education Institute | Boston, MA</p>
-                        <button class="mt-auto bg-primary text-white w-full py-2 px-6 rounded-lg hover:bg-blue-700 transition mb-2" onclick="openJobDetailsModal()">View Details</button>
+                        <button class="mt-auto bg-primary text-white w-full py-2 px-6 rounded-lg hover:bg-blue-700 transition" onclick="openJobDetailsModal()">View Details</button>
                     </div>
                 </div>
             </div>
@@ -346,38 +351,64 @@
 
         <!-- Events Section with enhanced animations -->
 <section id="events" class="py-16 bg-neutral">
-     <div class="max-w-7xl mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center mb-12 animate-bounce-in">Upcoming Events</h2>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="bg-white rounded-lg shadow overflow-hidden hover:animate-elevate hover:animate-rotate-3d transition-all duration-300 animate-bounce-in-left" style="animation-delay: 0.1s">
-                        <div class="relative h-64 overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-                                 alt="Annual Career Fair"
-                                 class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-2">Annual Career Fair</h3>
-                            <p class="text-sm text-gray-500">June 15, 2024 | Convention Center</p>
-                            <p class="text-gray-600 mt-2">Connect with leading companies and explore job opportunities.</p>
-                            <button class="mt-4 bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-400 transition" onclick="openEventModal()">Register Now</button>
-                        </div>
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12 animate-bounce-in">Upcoming Events</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @forelse($events as $event)
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:animate-elevate hover:animate-rotate-3d transition-all duration-300 animate-bounce-in-left" style="animation-delay: 0.1s">
+                <div class="relative h-48 overflow-hidden bg-primary/10">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <svg class="w-20 h-20 text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
                     </div>
-                    <div class="bg-white rounded-lg shadow overflow-hidden hover:animate-elevate hover:animate-rotate-3d transition-all duration-300 animate-bounce-in-right" style="animation-delay: 0.2s">
-                        <div class="relative h-64 overflow-hidden">
-                            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-                                 alt="Leadership Workshop"
-                                 class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-2">Leadership Workshop</h3>
-                            <p class="text-sm text-gray-500">July 8, 2024 | Innovation Hub</p>
-                            <p class="text-gray-600 mt-2">Learn essential leadership skills and meet mentors.</p>
-                            <button class="mt-4 bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-400 transition" onclick="openEventModal()">Register Now</button>
-                        </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $event->title }}</h3>
+                    <div class="flex items-center text-gray-600 mb-2">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span class="text-sm">
+                            {{ \Carbon\Carbon::parse($event->start_date)->format('M d, Y - h:i A') }}
+                        </span>
+                    </div>
+                    <div class="flex items-center text-gray-600 mb-4">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span class="text-sm">{{ $event->location }}</span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $event->description }}</p>
+                    <div class="flex justify-end">
+                        <button onclick="showEventDetails('{{ $event->id }}')" 
+                                class="text-primary hover:text-primary/80 text-sm font-medium flex items-center">
+                            Learn More
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
-        </section>
+            @empty
+            <div class="col-span-full text-center py-12">
+                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <h3 class="text-xl font-medium text-gray-500">No upcoming events at the moment</h3>
+                <p class="text-gray-400 mt-2">Check back later for new events!</p>
+            </div>
+            @endforelse
+        </div>
+    </div>
+</section>
 
         <!-- Success Stories Section with enhanced animations -->
         <section id="success-stories" class="py-20 bg-gradient-to-b from-neutral to-white">
@@ -439,8 +470,46 @@
             </div>
         </section>
 
-        <!-- About Us Section with enhanced animations -->
-<section id="about-us" class="bg-white py-16">
+        <!-- Track Application Section -->
+        <section id="track-application" class="py-20 bg-gradient-to-b from-white to-neutral">
+            <div class="max-w-3xl mx-auto px-4">
+                <h2 class="text-4xl font-extrabold text-center text-primary mb-8 tracking-tight animate-bounce-in">Track Your Application</h2>
+                <p class="text-center text-gray-600 mb-8">Enter your tracking code to check your scholarship application status</p>
+                <div class="bg-white/90 p-10 rounded-3xl shadow-2xl border border-primary/20 animate-fade-in">
+                    <form method="POST" action="{{ route('scholarship.track') }}" class="space-y-8">
+                        @csrf
+                        <div>
+                            <label for="tracking_code" class="block text-base font-semibold mb-2 text-gray-700">Tracking Code</label>
+                            <input type="text" name="tracking_code" id="tracking_code"
+                                class="w-full px-5 py-3 border-2 border-primary/30 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-lg placeholder-gray-400 shadow-sm"
+                                placeholder="Enter your 8-digit tracking code"
+                                maxlength="8"
+                                required>
+                        </div>
+                        @if(session('error'))
+                            <div class="flex items-center bg-red-50 border-l-4 border-red-400 p-4 rounded-xl shadow animate-fade-in">
+                                <svg class="h-6 w-6 text-red-400 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-base text-red-700">{{ session('error') }}</span>
+                            </div>
+                        @endif
+                        <div class="flex justify-center">
+                            <button type="submit"
+                                class="inline-flex items-center px-8 py-3 border border-transparent text-lg font-semibold rounded-xl shadow-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all gap-2 group">
+                                <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                Track Application
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about-us" class="bg-white py-16">
     <div class="max-w-7xl mx-auto px-4">
                 <h2 class="text-3xl font-bold text-center mb-12 animate-bounce-in">About Us</h2>
                
@@ -593,16 +662,16 @@
             <h2 class="text-2xl font-bold mb-4 text-primary text-center">Event Registration</h2>
             <form class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium mb-1">Full Name</label>
-                    <input type="text" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    <label for="full_name" class="block text-sm font-medium mb-1">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1">Email</label>
-                    <input type="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    <label for="email" class="block text-sm font-medium mb-1">Email</label>
+                    <input type="email" id="email" name="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1">Phone Number</label>
-                    <input type="tel" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    <label for="phone_number" class="block text-sm font-medium mb-1">Phone Number</label>
+                    <input type="tel" id="phone_number" name="phone_number" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
                 </div>
                 <button type="submit" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-blue-400 transition">
                     Register Now
@@ -628,7 +697,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('scholarship.apply') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <form action="/scholarship/apply" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 <div>
                     <label for="welcome_full_name" class="block text-sm font-medium mb-1">Full Name</label>
@@ -659,25 +728,6 @@
                     Submit Application
                 </button>
             </form>
-
-            <div class="mt-6 pt-6 border-t">
-                <h3 class="text-lg font-semibold mb-4 text-center">Track Your Application</h3>
-                @if ($errors->tracking && $errors->tracking->has('tracking_code'))
-                    <div class="mb-4 p-3 bg-red-100 text-red-700 text-sm rounded-lg border border-red-300">
-                         {{ $errors->tracking->first('tracking_code') }}
-                    </div>
-                @endif
-                <form action="{{ route('scholarship.track.submit') }}" method="POST" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label for="welcome_tracking_code" class="block text-sm font-medium mb-1">Tracking Code</label>
-                        <input type="text" id="welcome_tracking_code" name="tracking_code" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary uppercase" placeholder="Enter your 8-character code" required maxlength="8">
-                    </div>
-                    <button type="submit" class="w-full bg-secondary text-black py-2 rounded-lg hover:bg-yellow-400 transition">
-                        Check Status
-                    </button>
-                </form>
-            </div>
         </div>
     </div>
 
@@ -700,10 +750,10 @@
                 </button>
                 <div id="loginError" class="text-red-500 text-sm text-center hidden"></div>
             </form>
-            <div class="text-center mt-4">
+            <!-- <div class="text-center mt-4">
                 <span class="text-gray-600">No account?</span>
                 <button class="text-primary font-semibold hover:underline ml-1" onclick="switchToRegister()">Register here</button>
-            </div>
+            </div> -->
         </div>
     </div>
 

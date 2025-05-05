@@ -11,6 +11,7 @@ use Illuminate\Support\Str; // For random strings
 use Illuminate\Support\Facades\Hash; // For hashing password
 use App\Mail\ApplicationReceived; // Make sure Mailable is imported
 use Illuminate\Support\Facades\Log; // For logging errors
+use Carbon\Carbon;
 
 class ScholarshipController extends Controller
 {
@@ -39,12 +40,11 @@ class ScholarshipController extends Controller
             $transcriptPath = $request->file('transcript')->store('transcripts', 'public');
         }
 
-        // 3. Generate Unique Tracking Code
-        $trackingCode = Str::upper(Str::random(8));
-        // Ensure uniqueness (rare collision chance, but good practice)
-        while (ScholarshipApplication::where('tracking_code', $trackingCode)->exists()) {
-            $trackingCode = Str::upper(Str::random(8));
-        }
+        // 3. Generate Unique Tracking Code: current year + 4-digit random number
+        $yearPrefix = Carbon::now()->format('Y');
+        do {
+            $trackingCode = $yearPrefix . str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
+        } while (ScholarshipApplication::where('tracking_code', $trackingCode)->exists());
 
         // 4. Save the Scholarship Application
         $application = ScholarshipApplication::create([
@@ -66,29 +66,72 @@ class ScholarshipController extends Controller
                 'email' => $validatedData['email'],
                 'password' => Hash::make(Str::random(10)), // Generate random password
                 'role' => 'student', // Set role to student
-                // Add any other required fields from your users table with defaults if necessary
-                // 'status' => 'active', // Example if you have a status
+                'class_year' => Carbon::now()->format('Y'), // Add current year as class year
+                'status' => 'active', // Add status field
             ]);
         }
 
-        // 6. Send Email Notification
+        // Send Email Notification
         try {
             Mail::to($validatedData['email'])->send(new ApplicationReceived($validatedData['full_name'], $trackingCode));
         } catch (\Exception $e) {
-            // Optional: Log the error if email fails, but don't stop the process
-             Log::error('Mail sending failed: ' . $e->getMessage()); 
-            // You might want to flash a different message if email fails
-            // return redirect()->route('admin.students.index')
-            //                  ->with('success', 'Application submitted, but email notification failed.');
+            Log::error('Mail sending failed: ' . $e->getMessage());
         }
 
-        // 7. Redirect to the Admin Students page with a success message
-        return redirect()->route('admin.students.index')
-                         ->with('success', 'Application submitted successfully! Tracking code: ' . $trackingCode);
-                         // Consider showing the tracking code on a success page instead of redirecting straight to admin
+        // Redirect to a success page with the tracking code
+        return redirect()->route('scholarship.success', ['tracking_code' => $trackingCode]);
     }
 
-    // Add other methods like showApplyForm, track, showTrackStatus if needed
+    public function track(Request $request)
+    {
+        // For GET requests from links
+        if ($request->isMethod('get') && $request->has('tracking_code')) {
+            $tracking_code = $request->tracking_code;
+        } else {
+            // For POST requests from forms
+            $request->validate([
+                'tracking_code' => 'required|string|size:8'
+            ]);
+            $tracking_code = $request->tracking_code;
+        }
+
+        $application = ScholarshipApplication::where('tracking_code', $tracking_code)->first();
+
+        if ($application) {
+            return redirect()->route('scholarship.show', ['tracking_code' => $application->tracking_code]);
+        }
+
+        return back()->with('error', 'Invalid tracking code. Please check and try again.');
+    }
+
+    public function show($tracking_code)
+    {
+        $application = ScholarshipApplication::where('tracking_code', $tracking_code)->firstOrFail();
+        return view('scholarship.track_status', compact('application'));
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,approved,declined'
+        ]);
+
+        $application = ScholarshipApplication::findOrFail($id);
+        $application->status = $request->status;
+        $application->save();
+
+        return response()->json([
+            'message' => 'Application status updated successfully',
+            'status' => $application->status
+        ]);
+    }
+
+    public function index()
+    {
+        $applications = ScholarshipApplication::latest()->get();
+        return view('admin.applications.index', compact('applications'));
+    }
+
     public function showApplyForm()
     {
         // Return the view containing the application form
@@ -96,21 +139,19 @@ class ScholarshipController extends Controller
         // You'll need to create this view
         return "Scholarship Application Form Placeholder"; // Replace with actual view
     }
-    
-    public function track(Request $request)
-    {
-         // Logic to handle the submission of the tracking code form
-         $request->validate(['tracking_code' => 'required|string|size:8']); // Adjust size if needed
-         $code = $request->input('tracking_code');
-         
-         $application = ScholarshipApplication::where('tracking_code', $code)->first();
 
-         if ($application) {
-             // Found: Show status view
-             return view('scholarship.track_status', compact('application'));
-         } else {
-             // Not Found: Redirect back with error
-             return back()->withErrors(['tracking_code' => 'Invalid tracking code.']);
-         }
+    /**
+     * Display the success page after application submission
+     */
+    public function success($tracking_code)
+    {
+        // Check if the tracking code exists
+        $application = ScholarshipApplication::where('tracking_code', $tracking_code)->first();
+        
+        if (!$application) {
+            return redirect()->route('home')->with('error', 'Invalid tracking code.');
+        }
+        
+        return view('scholarship.success', compact('tracking_code'));
     }
-} 
+}

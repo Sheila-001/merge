@@ -18,4 +18,46 @@ class StudentController extends Controller
         $applications = ScholarshipApplication::latest()->get();
         return view('admin.students.index', compact('applications'));
     }
+
+    /**
+     * Update application status to approved
+     *
+     * @param  string  $tracking_code
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function approve($tracking_code)
+    {
+        $application = ScholarshipApplication::where('tracking_code', $tracking_code)->firstOrFail();
+        $application->status = 'approved';
+        $application->save();
+
+        return redirect()->back()->with('success', 'Application approved successfully');
+    }
+
+    /**
+     * Update application status to rejected
+     *
+     * @param  string  $tracking_code
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function reject($tracking_code)
+    {
+        $application = ScholarshipApplication::where('tracking_code', $tracking_code)->firstOrFail();
+        $application->status = 'rejected';
+        $application->save();
+
+        return redirect()->back()->with('success', 'Application rejected successfully');
+    }
+
+    /**
+     * Remove the specified scholarship application.
+     *
+     * @param  string  $tracking_code
+     */
+    public function destroy($tracking_code)
+    {
+        $application = ScholarshipApplication::where('tracking_code', $tracking_code)->firstOrFail();
+        $application->delete();
+        return redirect()->back()->with('success', 'Student application deleted successfully.');
+    }
 }

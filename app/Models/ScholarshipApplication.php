@@ -13,8 +13,6 @@ class ScholarshipApplication extends Model
     // Make sure this matches your actual table name in the database
     protected $table = 'scholarship_applications'; 
 
-    // --- IMPORTANT --- 
-    // Add all columns from your table that should be mass assignable
     protected $fillable = [
         'full_name',
         'email',
@@ -22,8 +20,7 @@ class ScholarshipApplication extends Model
         'scholarship_type',
         'transcript_path',
         'tracking_code',
-        'status', // e.g., pending, approved, rejected
-        // Add other fields like 'tracking_code' if necessary
+        'status',
     ];
 
     /**

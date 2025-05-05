@@ -17,6 +17,7 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
+        'class_year'  // Add this if it's not already there
     ];
 
     protected $hidden = [
@@ -28,4 +29,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
 }
