@@ -7,10 +7,59 @@ use App\Models\JobListing;
 
 class JobListingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jobs = JobListing::where('status', 'approved')->latest()->paginate(6);
-        return view('jobs.listings', compact('jobs'));
+        $query = JobListing::query();
+
+        // Search functionality
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('company_name', 'like', "%{$search}%")
+                  ->orWhere('role', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        // Status filter
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        // Posted by filter
+        if ($request->has('posted_by') && $request->posted_by !== '') {
+            $query->where('is_admin_posted', $request->posted_by === 'admin');
+        }
+
+        // Expiry filter
+        if ($request->has('expiry') && $request->expiry !== '') {
+            switch ($request->expiry) {
+                case 'active':
+                    $query->where('expires_at', '>', now());
+                    break;
+                case 'expired':
+                    $query->where('expires_at', '<', now());
+                    break;
+                case 'no_expiry':
+                    $query->whereNull('expires_at');
+                    break;
+            }
+        }
+
+        $jobs = $query->latest()->paginate(10)->withQueryString();
+
+        return view('admin.jobs.index', compact('jobs'));
+    }
+
+    public function show(JobListing $job)
+    {
+        if ($job->status !== 'approved' || 
+            ($job->expires_at && $job->expires_at < now())) {
+            abort(404);
+        }
+
+        return view('jobs.show', compact('job'));
     }
 
     public function create()

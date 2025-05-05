@@ -15,13 +15,26 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'Admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('admin123'),
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
             'role' => 'admin',
             'status' => 'active',
-            'class_year' => '2025',
-            'is_admin' => 1,
+            'class_year' => '2024',
+            'is_admin' => true,
+            'email_verified_at' => now(),
+        ]);
+
+        // Create a backup admin account
+        User::create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@hauzhayag.com',
+            'password' => Hash::make('SuperAdmin@123'),
+            'role' => 'admin',
+            'status' => 'active',
+            'class_year' => '2024',
+            'is_admin' => true,
+            'email_verified_at' => now(),
         ]);
     }
 }
