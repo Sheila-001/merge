@@ -584,8 +584,6 @@
                                 </button>
                             </div>
                         </div>
-
-                        <h1>hello world</h1>
                         
                         <!-- Job 2 -->
                         <div class="border border-gray-200 rounded-lg p-4">
