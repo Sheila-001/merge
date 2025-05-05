@@ -13,16 +13,14 @@ class ApplicationReceived extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $name;
-    public $trackingCode;
+    public $tracking_code;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($name, $trackingCode)
+    public function __construct($tracking_code)
     {
-        $this->name = $name;
-        $this->trackingCode = $trackingCode;
+        $this->tracking_code = $tracking_code;
     }
 
     /**
@@ -31,7 +29,7 @@ class ApplicationReceived extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Scholarship Application - Tracking Code',
+            subject: 'Scholarship Application Received',
         );
     }
 
@@ -41,7 +39,7 @@ class ApplicationReceived extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.application-received',
+            view: 'emails.scholarship.application-received',
         );
     }
 
@@ -53,5 +51,14 @@ class ApplicationReceived extends Mailable
     public function attachments(): array
     {
         return [];
+    }
+
+    public function build()
+    {
+        return $this->markdown('emails.scholarship.application-received')
+                    ->subject('Scholarship Application Received')
+                    ->with([
+                        'tracking_code' => $this->tracking_code
+                    ]);
     }
 }

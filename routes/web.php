@@ -114,13 +114,19 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 });
 
-// Student Applications Route with auth
+// Student routes with auth
 Route::middleware(['auth'])->group(function () {
+    Route::get('/student/dashboard', function () {
+        return view('student.dashboard');
+    })->name('student.dashboard');
     Route::get('/students', [StudentController::class, 'index'])->name('admin.students.index');
 });
 
 // Volunteer routes with auth
 Route::middleware(['auth'])->group(function () {
+    Route::get('/volunteer/dashboard', function () {
+        return view('volunteer.dashboard');
+    })->name('volunteer.dashboard');
     Route::get('/volunteers', [VolunteerController::class, 'index'])->name('volunteers.index');
     Route::post('/volunteers', [VolunteerController::class, 'store'])->name('volunteers.store');
     Route::get('/volunteer/events', [VolunteerController::class, 'viewEvents'])->name('volunteer.events');
@@ -174,23 +180,25 @@ Route::get('/scholarship/success/{tracking_code}', [App\Http\Controllers\Scholar
 Route::match(['get', 'post'], '/scholarship/track', [App\Http\Controllers\ScholarshipController::class, 'track'])->name('scholarship.track');
 Route::get('/scholarship/track/{tracking_code}', [App\Http\Controllers\ScholarshipController::class, 'show'])->name('scholarship.show');
 
-// New route for students to view job listings
-// Route::get('/jobs/listings', [JobListingController::class, 'index'])->name('jobs.listings');
+// New Volunteer View Routes
 
-// API route for job details (for modal)
-// Route::get('/api/job-listings/{id}', function($id) {
-//     return \App\Models\JobListing::findOrFail($id);
-// });
+   
 
-// Route::get('/jobs', [JobListingController::class, 'index'])->name('jobs.index');
-
-// Route::get('/admin/jobs/create', [JobListingController::class, 'create'])->name('jobs.create');
-// Route::post('/admin/jobs', [JobListingController::class, 'store'])->name('jobs.store');
-
-// Route::get('/admin/jobs', [JobListingController::class, 'adminIndex'])->name('jobs.admin.index');
-// Route::get('/admin/jobs/{job}/edit', [JobListingController::class, 'edit'])->name('jobs.edit');
-// Route::put('/admin/jobs/{job}', [JobListingController::class, 'update'])->name('jobs.update');
-// Route::delete('/admin/jobs/{job}', [JobListingController::class, 'destroy'])->name('jobs.destroy');
-
-// Route::post('/admin/jobs/{job}/approve', [JobListingController::class, 'approve'])->name('jobs.approve');
-// Route::post('/admin/jobs/{job}/reject', [JobListingController::class, 'reject'])->name('jobs.reject');
+// Volunteer Dashboard Routes
+Route::middleware(['auth'])->prefix('volunteer')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('volunteer.dashboard');
+    })->name('volunteer.dashboard');
+    
+    Route::get('/events', function () {
+        return view('volunteer.events');
+    })->name('volunteer.events');
+    
+    Route::get('/calendar', function () {
+        return view('volunteer.calendar');
+    })->name('volunteer.calendar');
+    
+    Route::get('/jobs', function () {
+        return view('volunteer.jobs');
+    })->name('volunteer.jobs');
+});

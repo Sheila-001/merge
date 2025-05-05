@@ -103,8 +103,7 @@ class VolunteerController extends Controller
 
     public function viewCalendar()
     {
-        // Logic for viewing calendar
-        return view('volunteers.calendar');
+        return view('volunteer.calendar');
     }
 
     public function addJobOffer(Request $request)
