@@ -227,19 +227,19 @@
                 <div id="heroSlides" class="flex h-full transition-transform duration-700 ease-in-out">
                     <!-- Slide 1 -->
                     <div class="min-w-full h-full">
-                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80"
+                        <img src="{{ asset('image/feedingprogram.jpg') }}" alt="Description 1" class="w-full h-full object-cover"
                              alt="Students Learning"
                              class="w-full h-full object-cover">
                     </div>
                     <!-- Slide 2 -->
                     <div class="min-w-full h-full">
-                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                        <img src="{{ asset('image/firedrill.jpg') }}" alt="Description 1" class="w-full h-full object-cover"
                              alt="Community Support"
                              class="w-full h-full object-cover">
                     </div>
                     <!-- Slide 3 -->
                     <div class="min-w-full h-full">
-                        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                        <img src="{{ asset('image/goods.jpg') }}" alt="Description 1" class="w-full h-full object-cover"
                              alt="Education Success"
                              class="w-full h-full object-cover">
                     </div>
@@ -413,43 +413,104 @@
         <!-- Success Stories Section with enhanced animations -->
         <section id="success-stories" class="py-20 bg-gradient-to-b from-neutral to-white">
             <div class="max-w-7xl mx-auto px-2 sm:px-6">
-                <h2 class="text-4xl font-extrabold text-center text-primary mb-12 tracking-tight animate-bounce-in">Success Stories</h2>
+                <h2 class="text-4xl font-extrabold text-center text-primary mb-12 tracking-tight animate-bounce-in">Our Top Testimony</h2>
                 <div class="relative overflow-hidden">
                     <div id="slides" class="flex transition-transform duration-500 ease-in-out" style="width: 100%;">
                         <!-- Slide 1 -->
-                        <div class="slide flex flex-col md:flex-row items-center min-w-full gap-8 bg-white rounded-2xl shadow-xl p-6 md:p-14 hover:animate-elevate transition-all duration-300" style="animation-delay: 0.1s">
-                            <div class="w-full md:w-1/2 h-64 md:h-96 relative overflow-hidden rounded-xl shadow-md ring-2 ring-primary/10">
-                                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80"
-                                     alt="Maria, Scholarship Graduate"
-                                     class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                        <div class="slide flex flex-col md:flex-row items-center min-w-full gap-8 bg-gray-50 rounded-2xl shadow-xl p-6 md:p-14 hover:animate-elevate transition-all duration-300" style="animation-delay: 0.1s">
+                            <div class="relative flex flex-col items-center w-full md:w-1/2">
+                                <!-- Large Orange Circle Background -->
+                                <div class="absolute z-0 flex justify-center items-center" style="top: 0; left: 50%; transform: translateX(-50%);">
+                                    <div class="w-72 h-72 md:w-96 md:h-96 rounded-full bg-blue-400 ring-4 ring-black flex items-center justify-center">
+                                        <img src="{{ asset('image/alumni2.jpg') }}"
+                                             alt="Daylan Unabia, Scholarship Graduate Alumni"
+                                             class="w-48 h-48 md:w-64 md:h-64 object-contain rounded-full transform scale-[1.15]">
+                                    </div>
+                                </div>
+                                <!-- Profile Image (overlapping the bottom of the circle) -->
+                                <img src="{{ asset('image/alumni2.jpg') }}"
+                                     alt="Daylan Unabia, Scholarship Graduate Alumni"
+                                     class="relative z-10 w-48 h-48 md:w-64 md:h-64 object-contain rounded-full mt-10 transform scale-[1.15]" style="margin-bottom: -2.5rem;">
+                                <!-- Name and Banner -->
+                                <div class="relative z-20 w-64 md:w-80 mt-2">
+                                    <div class="bg-yellow-200 text-center py-2 rounded-t-lg font-bold text-xl md:text-2xl shadow" style="transform: skew(-10deg);">
+                                        <span style="transform: skew(10deg); display: inline-block;">Daylyn Unabia</span>
+                                    </div>
+                                    <div class="bg-blue-700 text-white text-center py-1 rounded-b-lg text-sm md:text-base shadow -mt-1" style="transform: skew(-10deg);">
+                                        <span style="transform: skew(10deg); display: inline-block;">ALUMNA</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="w-full md:w-1/2 flex flex-col justify-center mt-4 md:mt-0">
-                                <h3 class="text-3xl md:text-4xl font-bold text-primary mb-3">Maria, Scholarship Graduate</h3>
-                                <p class="text-lg md:text-2xl text-gray-700 font-medium leading-relaxed">Thanks to Hauz Hayag, I finished my degree and now work as a teacher, giving back to my community.</p>
+                                <p class="text-lg md:text-2xl text-gray-700 font-medium leading-relaxed">Growing up in a low-income family with eight siblings was 
+                                    extremely difficult, as we struggled to meet even our basic needs. 
+                                    Sacrifices were part of our daily life, and the future often felt uncertain. 
+                                    Being accepted into the Hauz Hayag Scholarship and Training Program 
+                                    was a life-changing blessing that opened doors to new opportunities. 
+                                    Now, as a researcher and graduate student, I work hard to uplift my 
+                                    family and contribute positively to society.</p>
                             </div>
                         </div>
                         <!-- Slide 2 -->
-                        <div class="slide flex flex-col md:flex-row items-center min-w-full gap-8 bg-white rounded-2xl shadow-xl p-6 md:p-14 hover:animate-elevate transition-all duration-300" style="animation-delay: 0.2s">
-                            <div class="w-full md:w-1/2 h-64 md:h-96 relative overflow-hidden rounded-xl shadow-md ring-2 ring-primary/10">
-                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1376&q=80"
-                                     alt="John, Job Placement"
-                                     class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                        <div class="slide flex flex-col md:flex-row items-center min-w-full gap-8 bg-gray-50 rounded-2xl shadow-xl p-6 md:p-14 hover:animate-elevate transition-all duration-300" style="animation-delay: 0.2s">
+                            <div class="relative flex flex-col items-center w-full md:w-1/2">
+                                <div class="absolute z-0 flex justify-center items-center" style="top: 0; left: 50%; transform: translateX(-50%);">
+                                    <div class="w-72 h-72 md:w-96 md:h-96 rounded-full bg-blue-400 ring-4 ring-black flex items-center justify-center">
+                                        <!-- Removed duplicate image -->
+                                    </div>
+                                </div>
+                                <img src="{{ asset('image/employee3.jpg') }}"
+                                     alt="Nissan Geagonia, Cebu City Employee"
+                                     class="relative z-10 w-48 h-48 md:w-64 md:h-64 object-contain rounded-full mt-10 transform scale-[1.15]" style="margin-bottom: -2.5rem;">
+                                <div class="relative z-20 w-64 md:w-80 mt-2">
+                                    <div class="bg-yellow-200 text-center py-2 rounded-t-lg font-bold text-xl md:text-2xl shadow" style="transform: skew(-10deg);">
+                                        <span style="transform: skew(10deg); display: inline-block;">Geagonia Nissan</span>
+                                    </div>
+                                    <div class="bg-blue-700 text-white text-center py-1 rounded-b-lg text-sm md:text-base shadow -mt-1" style="transform: skew(-10deg);">
+                                        <span style="transform: skew(10deg); display: inline-block;">CEBU CITY EMPLOYEE</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="w-full md:w-1/2 flex flex-col justify-center mt-4 md:mt-0">
-                                <h3 class="text-3xl md:text-4xl font-bold text-primary mb-3">John, Job Placement</h3>
-                                <p class="text-lg md:text-2xl text-gray-700 font-medium leading-relaxed">The job program helped me land my first tech job. Hauz Hayag changed my life!</p>
+                                <p class="text-lg md:text-2xl text-gray-700 font-medium leading-relaxed">I'm inspired to work at Hayag because I've seen 
+                                    how it brings real change to people's 
+                                    lives through scholarships and feeding programs. 
+                                    Over the past nine years, I've witnessed many families, 
+                                    including my own, receive the support they need my daughter 
+                                    even got to go to college. The benefits and financial help make 
+                                    working here even more meaningful. It's more than just a job and it's a 
+                                    place where I've grown and found purpose by helping others.</p>
                             </div>
                         </div>
                         <!-- Slide 3 -->
-                        <div class="slide flex flex-col md:flex-row items-center min-w-full gap-8 bg-white rounded-2xl shadow-xl p-6 md:p-14 hover:animate-elevate transition-all duration-300" style="animation-delay: 0.3s">
-                            <div class="w-full md:w-1/2 h-64 md:h-96 relative overflow-hidden rounded-xl shadow-md ring-2 ring-primary/10">
-                                <img src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80"
-                                     alt="Aira, Feeding Program Beneficiary"
-                                     class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                        <div class="slide flex flex-col md:flex-row items-center min-w-full gap-8 bg-gray-50 rounded-2xl shadow-xl p-6 md:p-14 hover:animate-elevate transition-all duration-300" style="animation-delay: 0.3s">
+                            <div class="relative flex flex-col items-center w-full md:w-1/2">
+                                <div class="absolute z-0 flex justify-center items-center" style="top: 0; left: 50%; transform: translateX(-50%);">
+                                    <div class="w-72 h-72 md:w-96 md:h-96 rounded-full bg-blue-400 ring-4 ring-black flex items-center justify-center">
+                                        <img src="{{ asset('image/student2.jpg') }}"
+                                             alt="Gwyne Otida, Current Student"
+                                             class="w-48 h-48 md:w-64 md:h-64 object-contain rounded-full transform scale-[1.15]">
+                                    </div>
+                                </div>
+                                <img src="{{ asset('image/student2.jpg') }}"
+                                     alt="Gwyne Otida, Current Student"
+                                     class="relative z-10 w-48 h-48 md:w-64 md:h-64 object-contain rounded-full mt-10 transform scale-[1.15]" style="margin-bottom: -2.5rem;">
+                                <div class="relative z-20 w-64 md:w-80 mt-2">
+                                    <div class="bg-yellow-200 text-center py-2 rounded-t-lg font-bold text-xl md:text-2xl shadow" style="transform: skew(-10deg);">
+                                        <span style="transform: skew(10deg); display: inline-block;">Gwyne Otida</span>
+                                    </div>
+                                    <div class="bg-blue-700 text-white text-center py-1 rounded-b-lg text-sm md:text-base shadow -mt-1" style="transform: skew(-10deg);">
+                                        <span style="transform: skew(10deg); display: inline-block;">CURRENT STUDENT</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="w-full md:w-1/2 flex flex-col justify-center mt-4 md:mt-0">
-                                <h3 class="text-3xl md:text-4xl font-bold text-primary mb-3">Aira, Feeding Program Beneficiary</h3>
-                                <p class="text-lg md:text-2xl text-gray-700 font-medium leading-relaxed">The feeding program gave me the energy to focus on my studies and dream big.</p>
+                                <p class="text-lg md:text-2xl text-gray-700 font-medium leading-relaxed">As a child from a less privileged background, 
+                                    I often felt trapped by poverty and unsure of my purpose. But Hauz Hayag 
+                                    became the light that helped me escape hopelessness and believe in myself again. 
+                                    Through their support, I started to rebuild my dreams and see my worth. 
+                                    I'm grateful for the kind souls behind Hayag who helped me thrive, 
+                                    and I know the younger me would be proud of how far I've come.</p>
                             </div>
                         </div>
                     </div>
@@ -537,13 +598,13 @@
                         <!-- Slide 1 -->
                         <div class="min-w-full">
                             <div class="relative h-96">
-                                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80"
-                                     alt="Hauz Hayag Graduates"
+                                <img src="{{ asset('image/feeding2.jpg') }}" alt="Description 1" class="w-full h-full object-cover"
+                                     alt="Hauz Hayag feeding"
                                      class="w-full h-full object-cover">
                                 <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
                                     <div class="text-center text-white p-8">
-                                        <h3 class="text-3xl font-bold mb-4">2018 - First Batch of Graduates</h3>
-                                        <p class="text-xl">Celebrating our first group of scholarship recipients who completed their education.</p>
+                                        <h3 class="text-3xl font-bold mb-4">Feeding program</h3>
+                                        <p class="text-xl">The mission is to reduce hunger and support the health of individuals, especially children and those in need. This is done by providing regular access to nutritious meals.</p>
                                     </div>
                                 </div>
                             </div>
@@ -551,13 +612,14 @@
                         <!-- Slide 2 -->
                         <div class="min-w-full">
                             <div class="relative h-96">
-                                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-                                     alt="Community Outreach"
+                                <img src="{{ asset('image/education.jpg') }}" alt="Description 1" class="w-full h-full object-cover"
+                                     alt="Hauz Hayag Education"
                                      class="w-full h-full object-cover">
                                 <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
                                     <div class="text-center text-white p-8">
-                                        <h3 class="text-3xl font-bold mb-4">2020 - Community Expansion</h3>
-                                        <p class="text-xl">Expanding our reach to more communities and establishing new partnerships.</p>
+                                        <h3 class="text-3xl font-bold mb-4">Education</h3>
+                                        <p class="text-xl">The goal is to equip individuals with knowledge, skills, and values for a better future. It aims to help them lead successful and meaningful lives.
+</p>
                                     </div>
                                 </div>
                             </div>
@@ -565,13 +627,13 @@
                         <!-- Slide 3 -->
                         <div class="min-w-full">
                             <div class="relative h-96">
-                                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                                <img src="{{ asset('image/growth.jpg') }}" alt="Description 1" class="w-full h-full object-cover"
                                      alt="Award Ceremony"
                                      class="w-full h-full object-cover">
                                 <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
                                     <div class="text-center text-white p-8">
-                                        <h3 class="text-3xl font-bold mb-4">2022 - Recognition and Growth</h3>
-                                        <p class="text-xl">Receiving recognition for our impact and expanding our scholarship programs.</p>
+                                        <h3 class="text-3xl font-bold mb-4">Growth of Knowledge</h3>
+                                        <p class="text-xl">The aim is to develop the ability to read, understand, and use information effectively. This empowers individuals to make wise decisions and actively participate in society.</p>
                                     </div>
                                 </div>
                             </div>
@@ -618,9 +680,10 @@
               <!-- Contact Info -->
               <div>
                 <h2 class="text-lg font-semibold mb-4">Contact Us</h2>
-                <p class="text-sm">📍 Cebu City, Philippines</p>
-                <p class="text-sm">📧 info@hauzhayag.org</p>
-                <p class="text-sm">📞 +63 912 345 6789</p>
+                <p class="text-sm">📍 Carlock Street, San Nicolas Proper, Cebu City, Philippines</p>
+                <p class="text-sm">📧 hauzhayag143@gmail.com</p>
+                <p class="text-sm">📞 (032) 384 6594</p>
+                <p class="text-sm">🌐 hayag-project.com</p>
               </div>
             </div>
          
