@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail; // If sending email
 use Illuminate\Support\Str; // For random strings
 use Illuminate\Support\Facades\Hash; // For hashing password
-use App\Mail\ApplicationReceived; // Make sure Mailable is imported
+use App\Mail\TrackingCodeMail; // Make sure Mailable is imported
 use Illuminate\Support\Facades\Log; // For logging errors
 use Carbon\Carbon;
 
@@ -73,9 +73,21 @@ class ScholarshipController extends Controller
 
         // Send Email Notification
         try {
-            Mail::to($validatedData['email'])->send(new ApplicationReceived($validatedData['full_name'], $trackingCode));
+            Mail::to($validatedData['email'])
+                ->send(new TrackingCodeMail($application));
+            
+            // Log successful email sending
+            Log::info('Tracking code email sent successfully', [
+                'email' => $validatedData['email'],
+                'tracking_code' => $trackingCode
+            ]);
         } catch (\Exception $e) {
-            Log::error('Mail sending failed: ' . $e->getMessage());
+            // Log the error but don't stop the application process
+            Log::error('Failed to send tracking code email: ' . $e->getMessage(), [
+                'email' => $validatedData['email'],
+                'tracking_code' => $trackingCode,
+                'error' => $e->getMessage()
+            ]);
         }
 
         // Redirect to a success page with the tracking code
@@ -135,9 +147,7 @@ class ScholarshipController extends Controller
     public function showApplyForm()
     {
         // Return the view containing the application form
-        // Example: return view('scholarship.apply'); 
-        // You'll need to create this view
-        return "Scholarship Application Form Placeholder"; // Replace with actual view
+        return view('scholarship.apply');
     }
 
     /**
@@ -153,5 +163,37 @@ class ScholarshipController extends Controller
         }
         
         return view('scholarship.success', compact('tracking_code'));
+    }
+
+    /**
+     * Resend the tracking code to the user's email address.
+     */
+    public function resendCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $application = ScholarshipApplication::where('email', $request->email)->first();
+
+        if (!$application) {
+            return back()->with('error', 'No application found for this email address.');
+        }
+
+        try {
+            Mail::to($application->email)->send(new TrackingCodeMail($application));
+            Log::info('Tracking code resent successfully', [
+                'email' => $application->email,
+                'tracking_code' => $application->tracking_code
+            ]);
+            return back()->with('success', 'Tracking code has been resent to your email address.');
+        } catch (\Exception $e) {
+            Log::error('Failed to resend tracking code: ' . $e->getMessage(), [
+                'email' => $application->email,
+                'tracking_code' => $application->tracking_code,
+                'error' => $e->getMessage()
+            ]);
+            return back()->with('error', 'Failed to resend tracking code. Please try again later.');
+        }
     }
 }

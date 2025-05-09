@@ -28,7 +28,17 @@ class EventController extends Controller
             'location' => 'required|string|max:255',
         ]);
 
-        Event::create($validated);
+        $validated['status'] = 'active';
+        $validated['is_admin_posted'] = true;
+        $validated['created_by'] = auth()->id();
+
+        $event = Event::create($validated);
+
+        // Notify students about the new event
+        $students = \App\Models\User::where('role', 'student')->get();
+        foreach ($students as $student) {
+            $student->notify(new \App\Notifications\NewEventNotification($event));
+        }
 
         return redirect()->route('events.index')
             ->with('success', 'Event created successfully.');

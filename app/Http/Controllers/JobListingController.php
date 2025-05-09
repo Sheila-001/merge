@@ -9,47 +9,9 @@ class JobListingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = JobListing::query();
-
-        // Search functionality
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('company_name', 'like', "%{$search}%")
-                  ->orWhere('role', 'like', "%{$search}%")
-                  ->orWhere('location', 'like', "%{$search}%");
-            });
-        }
-
-        // Status filter
-        if ($request->has('status') && $request->status !== '') {
-            $query->where('status', $request->status);
-        }
-
-        // Posted by filter
-        if ($request->has('posted_by') && $request->posted_by !== '') {
-            $query->where('is_admin_posted', $request->posted_by === 'admin');
-        }
-
-        // Expiry filter
-        if ($request->has('expiry') && $request->expiry !== '') {
-            switch ($request->expiry) {
-                case 'active':
-                    $query->where('expires_at', '>', now());
-                    break;
-                case 'expired':
-                    $query->where('expires_at', '<', now());
-                    break;
-                case 'no_expiry':
-                    $query->whereNull('expires_at');
-                    break;
-            }
-        }
-
-        $jobs = $query->latest()->paginate(10)->withQueryString();
-
-        return view('admin.jobs.index', compact('jobs'));
+        // Show all jobs for now (for testing)
+        $jobs = \App\Models\JobListing::latest()->paginate(10);
+        return view('jobs.index', compact('jobs'));
     }
 
     public function show(JobListing $job)
@@ -71,15 +33,26 @@ class JobListingController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'company_name' => 'required|string|max:255',
+            'role' => 'required|string|max:255',
             'description' => 'required|string',
-            'company' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
-            'salary' => 'nullable|string|max:255',
-            'requirements' => 'nullable|string',
+            'qualifications' => 'required|string',
+            'employment_type' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'salary_min' => 'nullable|numeric|min:0',
+            'salary_max' => 'nullable|numeric|min:0|gt:salary_min',
+            'contact_person' => 'required|string|max:255',
+            'contact_email' => 'required|email|max:255',
+            'contact_phone' => 'nullable|string|max:255',
+            'expires_at' => 'nullable|date',
         ]);
-        $validated['status'] = 'pending';
+        $validated['status'] = 'approved';
+        $validated['is_admin_posted'] = true;
+        $validated['posted_by'] = auth()->id();
+
         \App\Models\JobListing::create($validated);
-        return redirect()->route('jobs.index')->with('success', 'Job listing submitted and is pending admin approval.');
+
+        return redirect()->route('jobs.index')->with('success', 'Job listing created successfully.');
     }
 
     public function adminIndex()

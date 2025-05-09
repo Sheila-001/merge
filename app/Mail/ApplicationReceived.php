@@ -39,7 +39,11 @@ class ApplicationReceived extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.scholarship.application-received',
+            view: 'emails.application-received',
+            with: [
+                'name' => $this->application->full_name,
+                'trackingCode' => $this->tracking_code
+            ]
         );
     }
 

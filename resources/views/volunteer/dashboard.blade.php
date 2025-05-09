@@ -20,9 +20,9 @@
     </script>
 </head>
 <body class="bg-gray-100">
-    <div class="flex">
+    <div class="flex h-screen overflow-hidden">
         <!-- Sidebar Navigation -->
-        <div class="w-64 min-h-screen bg-[#1B4B5A] text-white">
+        <div class="w-64 bg-[#1B4B5A] text-white flex flex-col fixed h-full">
             <div class="p-4 flex items-center space-x-2">
                 <img src="{{ asset('image/logohauzhayag.jpg') }}" alt="Hauz Hayag Logo" class="h-16 w-auto rounded-lg shadow-md">
                 <h1 class="text-2xl font-bold">Hauz Hayag</h1>
@@ -67,9 +67,8 @@
                 </div>
             </nav>
         </div>
-
         <!-- Main Content -->
-        <div class="flex-1 p-6 bg-gray-50">
+        <div class="flex-1 p-6 bg-gray-50 ml-64 overflow-y-auto h-screen">
             <!-- Page Header -->
             <div class="mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">Volunteer Dashboard</h1>

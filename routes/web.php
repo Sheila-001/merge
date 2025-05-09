@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ApplicationReceived;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\JobListingController;
+use App\Mail\TrackingCodeMail;
 
 
 
@@ -25,32 +26,15 @@ Route::get('/', function () {
 
 //login Routes
 
-Route::middleware('guest')->group(function () {
-    Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
-    Route::post('/admin/login', [AdminController::class, 'login']);
-});
-
 // Admin Protected Routes
-Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix('admin')->group(function () {
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/students', [StudentController::class, 'index'])->name('admin.students.index');
-    Route::post('/students/{tracking_code}/approve', [StudentController::class, 'approve'])->name('admin.students.approve');
-    Route::post('/students/{tracking_code}/reject', [StudentController::class, 'reject'])->name('admin.students.reject');
-    Route::delete('/students/{tracking_code}', [StudentController::class, 'destroy'])->name('admin.students.destroy');
-    
-    // Applications routes
     Route::get('/applications', [ScholarshipController::class, 'index'])->name('admin.applications.index');
     Route::post('/applications/{id}/status', [ScholarshipController::class, 'updateStatus'])->name('admin.applications.updateStatus');
-    
-    // Scholars route
     Route::get('/scholars', [AdminController::class, 'showScholars'])->name('admin.scholars');
-    
-    // Settings routes
     Route::get('/settings', [AdminController::class, 'showSettings'])->name('admin.settings');
     Route::put('/settings', [AdminController::class, 'updateSettings'])->name('admin.settings.update');
-
-    // Job Listing Routes
     Route::resource('jobs', \App\Http\Controllers\Admin\JobListingController::class);
     Route::post('jobs/{job}/approve', [\App\Http\Controllers\Admin\JobListingController::class, 'approve'])->name('jobs.approve');
     Route::post('jobs/{job}/reject', [\App\Http\Controllers\Admin\JobListingController::class, 'reject'])->name('jobs.reject');
@@ -119,14 +103,6 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 });
 
-// Student routes with auth
-Route::middleware(['auth'])->group(function () {
-    Route::get('/student/dashboard', function () {
-        return view('student.dashboard');
-    })->name('student.dashboard');
-    Route::get('/students', [StudentController::class, 'index'])->name('admin.students.index');
-});
-
 // Volunteer routes with auth
 Route::middleware(['auth'])->group(function () {
     Route::get('/volunteer/dashboard', function () {
@@ -144,6 +120,12 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    
+    // Notifications
+    Route::post('/notifications/mark-all-as-read', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return back()->with('success', 'All notifications marked as read.');
+    })->name('notifications.markAllAsRead');
 });
 
 // Admin routes
@@ -151,7 +133,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/applications', [ScholarshipController::class, 'index'])->name('admin.applications.index');
     Route::post('/applications/{id}/status', [ScholarshipController::class, 'updateStatus'])->name('admin.applications.updateStatus');
     // Student management
-    Route::get('/students', [App\Http\Controllers\Admin\StudentController::class, 'index'])->name('admin.students.index');
+    Route::get('/students', [App\Http\Controllers\Admin\StudentController::class, 'index'])
+        ->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
+        ->name('admin.students.index.shortcut');
     Route::post('/students/{tracking_code}/approve', [App\Http\Controllers\Admin\StudentController::class, 'approve'])->name('admin.students.approve');
     Route::post('/students/{tracking_code}/reject', [App\Http\Controllers\Admin\StudentController::class, 'reject'])->name('admin.students.reject');
     // Delete student application
@@ -173,6 +157,7 @@ Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 // Public Job Listing Routes
 Route::get('/jobs', [JobListingController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{job}', [JobListingController::class, 'show'])->name('jobs.show');
+Route::get('/jobs/listings', [JobListingController::class, 'index'])->name('jobs.listings');
 
 // API route for job details (for modal)
 Route::get('/api/job-listings/{id}', function($id) {
@@ -187,21 +172,21 @@ Route::match(['get', 'post'], '/scholarship/track', [App\Http\Controllers\Schola
 Route::get('/scholarship/track/{tracking_code}', [App\Http\Controllers\ScholarshipController::class, 'show'])->name('scholarship.show');
 
 // New route for students to view job listings
-// Route::get('/jobs/listings', [JobListingController::class, 'index'])->name('jobs.listings');
+Route::get('/jobs/listings', [JobListingController::class, 'index'])->name('jobs.listings');
+Route::get('/jobs/{job}', [JobListingController::class, 'show'])->name('jobs.show');
 
-// Route::get('/admin/jobs/create', [JobListingController::class, 'create'])->name('jobs.create');
-// Route::post('/admin/jobs', [JobListingController::class, 'store'])->name('jobs.store');
-
-// Route::get('/admin/jobs', [JobListingController::class, 'adminIndex'])->name('jobs.admin.index');
-// Route::get('/admin/jobs/{job}/edit', [JobListingController::class, 'edit'])->name('jobs.edit');
-// Route::put('/admin/jobs/{job}', [JobListingController::class, 'update'])->name('jobs.update');
-// Route::delete('/admin/jobs/{job}', [JobListingController::class, 'destroy'])->name('jobs.destroy');
-
-// Route::post('/admin/jobs/{job}/approve', [JobListingController::class, 'approve'])->name('jobs.approve');
-// Route::post('/admin/jobs/{job}/reject', [JobListingController::class, 'reject'])->name('jobs.reject');
-// New Volunteer View Routes
-
-   
+// Admin Job Routes
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/jobs', [App\Http\Controllers\Admin\JobListingController::class, 'index'])->name('jobs.index');
+    Route::get('/jobs/create', [App\Http\Controllers\Admin\JobListingController::class, 'create'])->name('jobs.create');
+    Route::post('/jobs', [App\Http\Controllers\Admin\JobListingController::class, 'store'])->name('jobs.store');
+    Route::get('/jobs/{job}', [App\Http\Controllers\Admin\JobListingController::class, 'show'])->name('jobs.show');
+    Route::get('/jobs/{job}/edit', [App\Http\Controllers\Admin\JobListingController::class, 'edit'])->name('jobs.edit');
+    Route::put('/jobs/{job}', [App\Http\Controllers\Admin\JobListingController::class, 'update'])->name('jobs.update');
+    Route::delete('/jobs/{job}', [App\Http\Controllers\Admin\JobListingController::class, 'destroy'])->name('jobs.destroy');
+    Route::post('/jobs/{job}/approve', [App\Http\Controllers\Admin\JobListingController::class, 'approve'])->name('jobs.approve');
+    Route::post('/jobs/{job}/reject', [App\Http\Controllers\Admin\JobListingController::class, 'reject'])->name('jobs.reject');
+});
 
 // Volunteer Dashboard Routes
 Route::middleware(['auth'])->prefix('volunteer')->group(function () {
@@ -220,4 +205,67 @@ Route::middleware(['auth'])->prefix('volunteer')->group(function () {
     Route::get('/jobs', function () {
         return view('volunteer.jobs');
     })->name('volunteer.jobs');
+});
+
+// Student Login Routes
+Route::get('/student/login', [App\Http\Controllers\Auth\LoginController::class, 'showStudentLoginForm'])->name('student.login');
+Route::post('/student/login', [App\Http\Controllers\Auth\LoginController::class, 'studentLogin']);
+
+// Test email route
+Route::get('/test-email', function () {
+    try {
+        \Mail::raw('Test email from Laravel', function($message) {
+            $message->to('your_gmail@gmail.com')->subject('Test Email');
+        });
+        return 'Test email sent! Check your inbox (and spam folder).';
+    } catch (\Exception $e) {
+        return 'Error sending email: ' . $e->getMessage();
+    }
+});
+
+// Student Authentication Routes
+Route::prefix('student')->name('student.')->group(function () {
+    Route::get('login', [App\Http\Controllers\Student\Auth\LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [App\Http\Controllers\Student\Auth\LoginController::class, 'login']);
+    Route::post('logout', [App\Http\Controllers\Student\Auth\LoginController::class, 'logout'])->name('logout');
+
+    // Student Registration
+    Route::get('register', [App\Http\Controllers\Student\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [App\Http\Controllers\Student\Auth\RegisterController::class, 'register']);
+
+    // Student Password Reset
+    Route::get('password/reset', [App\Http\Controllers\Student\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('password/email', [App\Http\Controllers\Student\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('password/reset/{token}', [App\Http\Controllers\Student\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('password/reset', [App\Http\Controllers\Student\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
+
+    // Protected Student Routes
+    // Route::middleware(['auth:student'])->group(function () {
+    //     Route::get('dashboard', function () {
+    //         return view('student.dashboard');
+    //     })->name('dashboard');
+    // });
+});
+
+Route::get('/students', [App\Http\Controllers\Admin\StudentController::class, 'index'])
+    ->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
+    ->name('admin.students.index.shortcut');
+
+// Test scholarship tracking code email
+Route::get('/test-scholarship-email', function () {
+    $application = \App\Models\ScholarshipApplication::latest()->first();
+    if (!$application) {
+        return 'No scholarship application found.';
+    }
+    try {
+        \Mail::to($application->email)->send(new \App\Mail\TrackingCodeMail($application));
+        return 'Tracking code email sent to ' . $application->email . '! Check your inbox (and spam folder).';
+    } catch (\Exception $e) {
+        return 'Error sending tracking code email: ' . $e->getMessage();
+    }
+});
+
+// Student Dashboard Route (restored)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/student/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('student.dashboard');
 });

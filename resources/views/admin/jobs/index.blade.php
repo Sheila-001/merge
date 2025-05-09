@@ -64,7 +64,7 @@
                     <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded font-semibold text-lg shadow hover:bg-gray-300 transition">
                         <span class="mr-2">&#8592;</span> Back to Dashboard
                     </a>
-                    <a href="{{ route('jobs.create') }}" class="inline-flex items-center px-8 py-3 bg-green-600 text-white rounded font-bold text-lg shadow-lg hover:bg-green-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2">
+                    <a href="{{ route('admin.jobs.create') }}" class="inline-flex items-center px-8 py-3 bg-green-600 text-white rounded font-bold text-lg shadow-lg hover:bg-green-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2">
                         <span class="mr-2 text-2xl">+</span> Create Job
                     </a>
                 </div>
@@ -127,27 +127,27 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex space-x-1">
-                                        <a href="{{ route('jobs.show', $job) }}" class="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200" title="View">
+                                        <a href="{{ route('admin.jobs.show', $job) }}" class="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200" title="View">
                                             View
                                         </a>
-                                        <a href="{{ route('jobs.edit', $job) }}" class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200" title="Edit">
+                                        <a href="{{ route('admin.jobs.edit', $job) }}" class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200" title="Edit">
                                             Edit
                                         </a>
                                         @if(!$job->is_admin_posted && $job->status === 'pending')
-                                            <form action="{{ route('jobs.approve', $job) }}" method="POST" class="inline">
+                                            <form action="{{ route('admin.jobs.approve', $job) }}" method="POST" class="inline">
                                                 @csrf
                                                 <button type="submit" class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200" title="Approve">
                                                     Approve
                                                 </button>
                                             </form>
-                                            <form action="{{ route('jobs.reject', $job) }}" method="POST" class="inline">
+                                            <form action="{{ route('admin.jobs.reject', $job) }}" method="POST" class="inline">
                                                 @csrf
                                                 <button type="submit" class="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200" title="Reject">
                                                     Reject
                                                 </button>
                                             </form>
                                         @endif
-                                        <form action="{{ route('jobs.destroy', $job) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this job listing?');">
+                                        <form action="{{ route('admin.jobs.destroy', $job) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this job listing?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="inline-flex items-center px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200" title="Delete">

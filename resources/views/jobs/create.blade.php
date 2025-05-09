@@ -27,31 +27,67 @@
                     </ul>
                 </div>
             @endif
-            <form action="{{ route('jobs.store') }}" method="POST" class="bg-white rounded-lg shadow-md p-8 max-w-xl mx-auto">
+            <form action="{{ route('admin.jobs.store') }}" method="POST" class="bg-white rounded-lg shadow-md p-8 max-w-xl mx-auto">
                 @csrf
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-bold mb-2">Title</label>
+                    <label class="block text-gray-700 font-bold mb-2">Job Title <span class="text-red-500">*</span></label>
                     <input type="text" name="title" class="w-full border border-gray-300 rounded px-3 py-2" required value="{{ old('title') }}">
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-bold mb-2">Description</label>
+                    <label class="block text-gray-700 font-bold mb-2">Company Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="company_name" class="w-full border border-gray-300 rounded px-3 py-2" required value="{{ old('company_name') }}">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2">Role <span class="text-red-500">*</span></label>
+                    <input type="text" name="role" class="w-full border border-gray-300 rounded px-3 py-2" required value="{{ old('role') }}">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2">Description <span class="text-red-500">*</span></label>
                     <textarea name="description" class="w-full border border-gray-300 rounded px-3 py-2" rows="4" required>{{ old('description') }}</textarea>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-bold mb-2">Company</label>
-                    <input type="text" name="company" class="w-full border border-gray-300 rounded px-3 py-2" required value="{{ old('company') }}">
+                    <label class="block text-gray-700 font-bold mb-2">Qualifications <span class="text-red-500">*</span></label>
+                    <textarea name="qualifications" class="w-full border border-gray-300 rounded px-3 py-2" rows="3" required>{{ old('qualifications') }}</textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2">Employment Type</label>
+                    <select name="employment_type" class="w-full border border-gray-300 rounded px-3 py-2">
+                        <option value="">Select Type</option>
+                        <option value="Full-time" {{ old('employment_type') == 'Full-time' ? 'selected' : '' }}>Full-time</option>
+                        <option value="Part-time" {{ old('employment_type') == 'Part-time' ? 'selected' : '' }}>Part-time</option>
+                        <option value="Contract" {{ old('employment_type') == 'Contract' ? 'selected' : '' }}>Contract</option>
+                        <option value="Temporary" {{ old('employment_type') == 'Temporary' ? 'selected' : '' }}>Temporary</option>
+                    </select>
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 font-bold mb-2">Location</label>
-                    <input type="text" name="location" class="w-full border border-gray-300 rounded px-3 py-2" required value="{{ old('location') }}">
+                    <input type="text" name="location" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('location') }}">
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Minimum Salary</label>
+                        <input type="number" name="salary_min" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('salary_min') }}" min="0" step="0.01">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">Maximum Salary</label>
+                        <input type="number" name="salary_max" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('salary_max') }}" min="0" step="0.01">
+                    </div>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-bold mb-2">Salary</label>
-                    <input type="text" name="salary" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('salary') }}">
+                    <label class="block text-gray-700 font-bold mb-2">Contact Person <span class="text-red-500">*</span></label>
+                    <input type="text" name="contact_person" class="w-full border border-gray-300 rounded px-3 py-2" required value="{{ old('contact_person') }}">
                 </div>
                 <div class="mb-4">
-                    <label class="block text-gray-700 font-bold mb-2">Requirements</label>
-                    <textarea name="requirements" class="w-full border border-gray-300 rounded px-3 py-2" rows="3">{{ old('requirements') }}</textarea>
+                    <label class="block text-gray-700 font-bold mb-2">Contact Email <span class="text-red-500">*</span></label>
+                    <input type="email" name="contact_email" class="w-full border border-gray-300 rounded px-3 py-2" required value="{{ old('contact_email') }}">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2">Contact Phone</label>
+                    <input type="tel" name="contact_phone" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('contact_phone') }}">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2">Expiry Date</label>
+                    <input type="date" name="expires_at" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ old('expires_at') }}">
                 </div>
                 <div class="flex justify-end">
                     <button type="submit" class="bg-secondary text-white px-6 py-2 rounded hover:bg-secondary/80 transition">Add Job</button>

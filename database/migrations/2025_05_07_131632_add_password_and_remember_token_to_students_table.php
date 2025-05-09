@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->enum('status', ['upcoming', 'ongoing', 'completed', 'cancelled'])->default('upcoming')->after('location');
+        Schema::table('students', function (Blueprint $table) {
+            $table->string('password')->after('email');
+            $table->rememberToken()->after('password');
         });
     }
 
@@ -21,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('students', function (Blueprint $table) {
+            $table->dropColumn(['password', 'remember_token']);
         });
     }
 };

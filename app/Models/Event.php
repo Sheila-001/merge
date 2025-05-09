@@ -16,12 +16,19 @@ class Event extends Model
         'start_date',
         'end_date',
         'location',
-        'status'
+        'status',
+        'created_by',
+        'is_admin_posted'
+    ];
+
+    protected $attributes = [
+        'status' => 'active'
     ];
 
     protected $casts = [
         'start_date' => 'datetime',
-        'end_date' => 'datetime'
+        'end_date' => 'datetime',
+        'is_admin_posted' => 'boolean'
     ];
 
     public function isCompleted()
@@ -29,8 +36,12 @@ class Event extends Model
         return $this->end_date < Carbon::now();
     }
 
-    public function getStatusAttribute()
+    public function getStatusAttribute($value)
     {
+        if ($value === 'cancelled') {
+            return 'cancelled';
+        }
+        
         if ($this->end_date < Carbon::now()) {
             return 'completed';
         } elseif ($this->start_date > Carbon::now()) {
@@ -38,5 +49,16 @@ class Event extends Model
         } else {
             return 'ongoing';
         }
+    }
+
+    public function scopeAdminPosted($query)
+    {
+        return $query->where('is_admin_posted', true);
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active')
+                    ->where('start_date', '>', Carbon::now());
     }
 }

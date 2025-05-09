@@ -1,23 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Student\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 
 class LoginController extends Controller
 {
-    use AuthenticatesUsers;
-
-    // Where to redirect users after login
-    protected $redirectTo = '/dashboard';
-
-    public function __construct()
+    public function showLoginForm()
     {
-        $this->middleware('guest')->except('logout');
+        return view('student.login');
     }
 
     public function login(Request $request)
@@ -27,21 +20,21 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::guard('student')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('dashboard');
+            return redirect()->intended(route('student.dashboard'));
         }
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
-        ]);
+        ])->onlyInput('email');
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('student')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+        return redirect()->route('student.login');
     }
-}
+} 

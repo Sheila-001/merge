@@ -1,0 +1,55 @@
+# Dependencies
+/vendor
+/node_modules
+
+# Build files
+/public/build
+/public/hot
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Cache and logs
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+
+# IDE and editor files
+/.idea
+/.vscode
+/.fleet
+/.nova
+/.zed
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Large media files
+*.mp4
+*.mov
+*.avi
+*.wmv
+*.mp3
+*.wav
+*.pdf
+*.zip
+*.rar
+*.7z
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so 

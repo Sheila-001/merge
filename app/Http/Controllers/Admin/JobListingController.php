@@ -24,28 +24,29 @@ class JobListingController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'company_name' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:255',
+            'role' => 'nullable|string|max:255',
             'description' => 'required|string',
-            'role' => 'required|string|max:255',
-            'qualifications' => 'required|string',
-            'employment_type' => 'required|string|max:255',
             'location' => 'required|string|max:255',
-            'salary_min' => 'nullable|numeric|min:0',
-            'salary_max' => 'nullable|numeric|min:0|gt:salary_min',
-            'contact_person' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'hours_per_week' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'requirements' => 'nullable|string',
+            'benefits' => 'nullable|string',
             'contact_email' => 'required|email|max:255',
             'contact_phone' => 'nullable|string|max:255',
-            'expires_at' => 'nullable|date|after:today',
+            'employment_type' => 'nullable|string|max:255',
         ]);
 
-        $job = new JobListing($validated);
-        $job->status = 'approved';
-        $job->is_admin_posted = true;
-        $job->posted_by = Auth::id();
-        $job->save();
+        $validated['status'] = 'approved';
+        $validated['is_admin_posted'] = true;
 
-        return redirect()->route('jobs.index')
-            ->with('success', 'Job listing created successfully.');
+        $job = JobListing::create($validated);
+
+        return redirect()->route('admin.jobs.index')
+            ->with('success', 'Job listing created and approved successfully.');
     }
 
     public function show(JobListing $job)
@@ -62,23 +63,26 @@ class JobListingController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'company_name' => 'required|string|max:255',
+            'company_name' => 'nullable|string|max:255',
+            'role' => 'nullable|string|max:255',
             'description' => 'required|string',
-            'role' => 'required|string|max:255',
-            'qualifications' => 'required|string',
-            'employment_type' => 'required|string|max:255',
             'location' => 'required|string|max:255',
-            'salary_min' => 'nullable|numeric|min:0',
-            'salary_max' => 'nullable|numeric|min:0|gt:salary_min',
-            'contact_person' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'hours_per_week' => 'required|string|max:255',
+            'status' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'requirements' => 'nullable|string',
+            'benefits' => 'nullable|string',
             'contact_email' => 'required|email|max:255',
             'contact_phone' => 'nullable|string|max:255',
-            'expires_at' => 'nullable|date',
+            'employment_type' => 'nullable|string|max:255',
         ]);
 
         $job->update($validated);
 
-        return redirect()->route('jobs.index')
+        return redirect()->route('admin.jobs.index')
             ->with('success', 'Job listing updated successfully.');
     }
 

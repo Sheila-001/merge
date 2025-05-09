@@ -183,6 +183,25 @@
                 </div>
                 @endif
 
+                <div class="text-center mt-8">
+                    <form action="{{ route('scholarship.resend') }}" method="POST" class="inline-block bg-gray-50 p-6 rounded-lg shadow-md">
+                        @csrf
+                        <label for="email" class="block mb-2 font-medium text-gray-700">Didn't get your tracking code? Enter your email to resend:</label>
+                        <input type="email" name="email" required class="form-input px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary w-full mb-2" placeholder="Enter your email address">
+                        <button type="submit" class="btn btn-primary bg-primary text-white px-4 py-2 rounded hover:bg-primary/80 transition">Resend Code</button>
+                    </form>
+                    @if(session('success'))
+                        <div class="alert alert-success bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mt-4" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if(session('error'))
+                        <div class="alert alert-danger bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mt-4" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                </div>
+
                 <div class="text-center">
                     <a href="/" class="inline-flex items-center text-primary hover:text-primary/80">
                         <i class="fas fa-arrow-left mr-2"></i>

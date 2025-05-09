@@ -54,11 +54,11 @@
             <h1>Scholarship Application</h1>
         </div>
         
-        <p>Dear {{ $application->name }},</p>
+        <p>Dear {{ $application->full_name }},</p>
         
         <p>Thank you for submitting your scholarship application. We have received your information and it is currently being reviewed by our team.</p>
         
-        <p>Your application tracking code is:</p>
+        <p><strong>Your application tracking code is:</strong></p>
         
         <div class="tracking-code">{{ $application->tracking_code }}</div>
         

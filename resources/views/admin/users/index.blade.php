@@ -15,14 +15,14 @@
         }
     </script>
 
-    <div class="flex">
+    <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <div class="w-64 min-h-screen bg-primary text-white">
+        <div class="w-64 bg-primary text-white flex flex-col fixed h-full">
             <div class="p-4 flex items-center space-x-2">
                 <img src="{{ asset('image/logohauzhayag.jpg') }}" alt="Hauz Hayag Logo" class="h-16 w-auto rounded-lg shadow-md">
                 <h1 class="text-2xl font-bold">Hauz Hayag</h1>
             </div>
-            <nav class="mt-8">
+            <nav class="mt-8 flex-1 flex flex-col">
                 <a href="/dashboard" class="flex items-center px-4 py-3 bg-secondary hover:bg-secondary/80 transition-colors">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -69,9 +69,8 @@
                 </div>
             </nav>
         </div>
-
         <!-- Main Content Area -->
-        <div class="flex-1 p-6 bg-gray-50">
+        <div class="flex-1 p-6 bg-gray-50 ml-64 overflow-y-auto h-screen">
             <!-- Page Header -->
             <div class="mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">User Management</h1>

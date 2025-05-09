@@ -9,11 +9,9 @@ class RoleMiddleware
 {
     public function handle($request, Closure $next, $role)
     {
-        if (!Auth::check() || !Auth::user()->hasRole($role)) {
-            // Redirect or abort if the user does not have the required role
-            return redirect('/home'); // or abort(403);
+        if (!Auth::check() || Auth::user()->role !== $role) {
+            abort(403, 'Unauthorized');
         }
-
         return $next($request);
     }
 }

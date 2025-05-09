@@ -183,9 +183,9 @@
                         <i class="fas fa-info-circle"></i>
                         <span>About Us</span>
                     </a>
-                    <a href="/admin/login" class="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-400 transition">
+                    <a href="/login" class="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-400 transition">
                         <i class="fas fa-lock"></i>
-                        <span>Admin Login</span>
+                        <span>Login</span>
                     </a>
                 </nav>                
             </div>
@@ -212,9 +212,13 @@
                     <i class="fas fa-info-circle"></i>
                     <span>About Us</span>
                 </a>
-                <a href="/admin/login" class="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-400 transition">
+                <a href="/login" class="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-400 transition">
                     <i class="fas fa-lock"></i>
-                    <span>Admin Login</span>
+                    <span>Login</span>
+                </a>
+                <a href="/scholarship/login" class="flex items-center space-x-2 bg-secondary text-white px-4 py-2 rounded-lg hover:bg-yellow-500 transition">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Scholarship Login</span>
                 </a>
             </nav>
         </div>
