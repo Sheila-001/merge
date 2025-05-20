@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ApplicationReceived;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\JobListingController;
+use App\Http\Controllers\VolunteerJobController;
 
 
 
@@ -84,17 +85,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-// Volunteer routes under dashboard
-// Route::middleware(['auth', 'role:volunteers'])->prefix('dashboard')->group(function () {
-//     Route::get('/volunteers', [VolunteerController::class, 'index'])->name('volunteers.index'); // Ensure this route is correct
-     Route::get('/volunteer/events', [VolunteerController::class, 'viewEvents'])->name('volunteer.events');
-//     Route::post('/volunteers/events/apply', [VolunteerController::class, 'applyEvent'])->name('volunteers.applyEvent');
-     Route::get('/volunteers/calendar', [VolunteerController::class, 'viewCalendar'])->name('volunteer.calendar');
-     Route::post('/volunteers/job-offers', [VolunteerController::class, 'addJobOffer'])->name('volunteer.addJobOffer');
-    Route::get('/volunteers', function () {
-        // Volunteer page logic
-        return view('volunteers.index'); // Updated to match the correct view path
-    });
+// Public Volunteer Dashboard Route (no auth required)
+Route::get('/volunteer_dashboard', [VolunteerController::class, 'dashboard'])->name('volunteer.dashboard');
+
+// Volunteer routes with auth (for other volunteer actions)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/volunteers', [VolunteerController::class, 'index'])->name('volunteers.index');
+    Route::post('/volunteers', [VolunteerController::class, 'store'])->name('volunteers.store');
+    Route::get('/volunteer/events', [VolunteerController::class, 'viewEvents'])->name('volunteer.events');
+    Route::get('/volunteers/calendar', [VolunteerController::class, 'viewCalendar'])->name('volunteer.calendar');
+    Route::post('/volunteers/job-offers', [VolunteerController::class, 'addJobOffer'])->name('volunteer.addJobOffer');
+    Route::post('/volunteers/{volunteer}/status', [VolunteerController::class, 'updateStatus'])->name('volunteers.updateStatus');
+});
 
 // User management routes with auth
 Route::middleware(['auth'])->group(function () {
@@ -122,16 +124,6 @@ Route::middleware(['auth'])->group(function () {
 // Student Applications Route with auth
 Route::middleware(['auth'])->group(function () {
     Route::get('/students', [StudentController::class, 'index'])->name('admin.students.index');
-});
-
-// Volunteer routes with auth
-Route::middleware(['auth'])->group(function () {
-    Route::get('/volunteers', [VolunteerController::class, 'index'])->name('volunteers.index');
-    Route::post('/volunteers', [VolunteerController::class, 'store'])->name('volunteers.store');
-    Route::get('/volunteer/events', [VolunteerController::class, 'viewEvents'])->name('volunteer.events');
-    Route::get('/volunteers/calendar', [VolunteerController::class, 'viewCalendar'])->name('volunteer.calendar');
-    Route::post('/volunteers/job-offers', [VolunteerController::class, 'addJobOffer'])->name('volunteer.addJobOffer');
-    Route::post('/volunteers/{volunteer}/status', [VolunteerController::class, 'updateStatus'])->name('volunteers.updateStatus');
 });
 
 // Profile routes with auth
@@ -181,15 +173,18 @@ Route::match(['get', 'post'], '/scholarship/track', [App\Http\Controllers\Schola
 Route::get('/scholarship/track/{tracking_code}', [App\Http\Controllers\ScholarshipController::class, 'show'])->name('scholarship.show');
 
 // New route for students to view job listings
-// Route::get('/jobs/listings', [JobListingController::class, 'index'])->name('jobs.listings');
+Route::get('/jobs/listings', [JobListingController::class, 'index'])->name('jobs.listings');
 
-// Route::get('/admin/jobs/create', [JobListingController::class, 'create'])->name('jobs.create');
-// Route::post('/admin/jobs', [JobListingController::class, 'store'])->name('jobs.store');
+Route::get('/admin/jobs/create', [JobListingController::class, 'create'])->name('jobs.create');
+Route::post('/admin/jobs', [JobListingController::class, 'store'])->name('jobs.store');
 
-// Route::get('/admin/jobs', [JobListingController::class, 'adminIndex'])->name('jobs.admin.index');
-// Route::get('/admin/jobs/{job}/edit', [JobListingController::class, 'edit'])->name('jobs.edit');
-// Route::put('/admin/jobs/{job}', [JobListingController::class, 'update'])->name('jobs.update');
-// Route::delete('/admin/jobs/{job}', [JobListingController::class, 'destroy'])->name('jobs.destroy');
+Route::get('/admin/jobs', [JobListingController::class, 'adminIndex'])->name('jobs.admin.index');
+Route::get('/admin/jobs/{job}/edit', [JobListingController::class, 'edit'])->name('jobs.edit');
+Route::put('/admin/jobs/{job}', [JobListingController::class, 'update'])->name('jobs.update');
+Route::delete('/admin/jobs/{job}', [JobListingController::class, 'destroy'])->name('jobs.destroy');
 
-// Route::post('/admin/jobs/{job}/approve', [JobListingController::class, 'approve'])->name('jobs.approve');
-// Route::post('/admin/jobs/{job}/reject', [JobListingController::class, 'reject'])->name('jobs.reject');
+Route::post('/admin/jobs/{job}/approve', [JobListingController::class, 'approve'])->name('jobs.approve');
+Route::post('/admin/jobs/{job}/reject', [JobListingController::class, 'reject'])->name('jobs.reject');
+
+Route::get('/volunteer/job/post', [VolunteerJobController::class, 'create'])->name('volunteer.job.post');
+Route::post('/volunteer-job-post', [VolunteerJobController::class, 'store'])->name('volunteer.jobs.store');
