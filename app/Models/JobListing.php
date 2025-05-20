@@ -32,26 +32,80 @@ class JobListing extends Model
         'role',
         'qualifications',
         'contact_person',
+<<<<<<< HEAD
         'expires_at',
+=======
+        'contact_email',
+        'contact_phone',
+        'status',
+        'location',
+        'employment_type',
+        'salary_min',
+        'salary_max',
+>>>>>>> d3def028a6636791b5390676f51fd78d45b40d80
         'is_admin_posted',
         'posted_by'
     ];
 
     protected $casts = [
+<<<<<<< HEAD
         'start_date' => 'date',
         'end_date' => 'date',
         'expires_at' => 'datetime',
+=======
+        'is_admin_posted' => 'boolean',
+>>>>>>> d3def028a6636791b5390676f51fd78d45b40d80
         'salary_min' => 'decimal:2',
         'salary_max' => 'decimal:2'
     ];
 
+<<<<<<< HEAD
+=======
+    // Add accessors to handle salary values
+    public function getSalaryMinAttribute($value)
+    {
+        return $value !== null ? (float) $value : null;
+    }
+
+    public function getSalaryMaxAttribute($value)
+    {
+        return $value !== null ? (float) $value : null;
+    }
+
+    public function postedBy()
+    {
+        return $this->belongsTo(User::class, 'posted_by');
+    }
+
+>>>>>>> d3def028a6636791b5390676f51fd78d45b40d80
     public function scopeActive($query)
     {
-        return $query->where('status', 'approved')
-                    ->where(function($q) {
-                        $q->whereNull('expires_at')
-                          ->orWhere('expires_at', '>', now());
-                    });
+        return $query->where('status', 'approved');
+    }
+
+    public function dashboard()
+    {
+        try {
+            // Load only admin-posted and active events
+            $events = Event::where('status', 'active')
+                          ->where('is_admin_posted', true)
+                          ->where('end_date', '>', now())
+                          ->get();
+            
+            // Load only admin-posted and approved jobs
+            $jobs = JobListing::where('status', 'approved')
+                             ->where('is_admin_posted', true)
+                             ->where(function($query) {
+                                 $query->whereNull('expires_at')
+                                       ->orWhere('expires_at', '>', now());
+                             })
+                             ->get();
+            
+            return view('volunteers.volunteerdashboard', compact('events', 'jobs'));
+        } catch (\Exception $e) {
+            \Log::error('Volunteer Dashboard Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while loading the dashboard.');
+        }
     }
 
     public function scopePending($query)

@@ -63,11 +63,11 @@
                         <div class="text-sm text-gray-600 font-medium mb-1">Salary Range</div>
                         <div class="text-gray-900 font-semibold">
                             @if($job->salary_min && $job->salary_max)
-                                ${{ number_format($job->salary_min, 2) }} - ${{ number_format($job->salary_max, 2) }}
+                                ${{ is_numeric($job->salary_min) ? number_format((float)$job->salary_min, 2) : 'N/A' }} - ${{ is_numeric($job->salary_max) ? number_format((float)$job->salary_max, 2) : 'N/A' }}
                             @elseif($job->salary_min)
-                                From ${{ number_format($job->salary_min, 2) }}
+                                From ${{ is_numeric($job->salary_min) ? number_format((float)$job->salary_min, 2) : 'N/A' }}
                             @else
-                                Up to ${{ number_format($job->salary_max, 2) }}
+                                Up to ${{ is_numeric($job->salary_max) ? number_format((float)$job->salary_max, 2) : 'N/A' }}
                             @endif
                         </div>
                     </div>

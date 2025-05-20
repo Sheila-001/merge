@@ -3,48 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Volunteer;
 use App\Models\Event;
-use Illuminate\Support\Facades\Auth;
-use App\Models\VolunteerHour;
-use Carbon\Carbon;
+use App\Models\JobListing;
+use Illuminate\Support\Facades\Validator;
 
 class VolunteerController extends Controller
 {
-    public function dashboard()
+    public function index()
     {
-        // Fetch all upcoming events (active and not ended), regardless of who posted them
-        $events = \App\Models\Event::where('status', 'active')
-            ->where('end_date', '>', now())
-            ->orderBy('start_date', 'asc')
-            ->get();
-
-        // Fetch all jobs that are approved, regardless of who posted them
-        $jobs = \App\Models\JobListing::where('status', 'approved')
-            ->where(function($query) {
-                $query->whereNull('expires_at')
-                      ->orWhere('expires_at', '>', now());
-            })
-            ->get();
-
-        // Calculate hours for the current month for the logged-in volunteer
-        $currentMonth = Carbon::now()->month;
-        $currentYear = Carbon::now()->year;
-        $volunteerId = auth()->id();
-        $hoursThisMonth = VolunteerHour::where('volunteer_id', $volunteerId)
-            ->whereMonth('date', $currentMonth)
-            ->whereYear('date', $currentYear)
-            ->sum('hours');
-
-        // Fetch recent activities (last 5 volunteer hour records)
-        $recentActivities = VolunteerHour::with('event')
-            ->where('volunteer_id', $volunteerId)
-            ->orderBy('date', 'desc')
-            ->take(5)
-            ->get();
-
-        return view('volunteers.volunteerdashboard', compact('events', 'jobs', 'hoursThisMonth', 'recentActivities'));
+        // Logic to retrieve volunteers data
+        $volunteers = Volunteer::all();
+        return view('volunteers.index', compact('volunteers'));
     }
-<<<<<<< HEAD
 
     /**
      * Store a newly created volunteer in the database.
@@ -134,7 +105,8 @@ class VolunteerController extends Controller
 
     public function viewCalendar()
     {
-        return view('volunteer.calendar');
+        // Logic for viewing calendar
+        return view('volunteers.calendar');
     }
 
     public function addJobOffer(Request $request)
@@ -143,7 +115,29 @@ class VolunteerController extends Controller
         // Implement validation and job offer creation
         return back()->with('success', 'Job offer added successfully');
     }
+
+    public function dashboard()
+    {
+        try {
+            // Load only admin-posted and active events
+            $events = Event::where('status', 'active')
+                          ->where('is_admin_posted', true)
+                          ->where('end_date', '>', now())
+                          ->get();
+            
+            // Load only admin-posted and approved jobs
+            $jobs = JobListing::where('status', 'approved')
+                             ->where('is_admin_posted', true)
+                             ->where(function($query) {
+                                 $query->whereNull('expires_at')
+                                       ->orWhere('expires_at', '>', now());
+                             })
+                             ->get();
+            
+            return view('volunteers.volunteerdashboard', compact('events', 'jobs'));
+        } catch (\Exception $e) {
+            \Log::error('Volunteer Dashboard Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while loading the dashboard.');
+        }
+    }
 }
-=======
-} 
->>>>>>> d3def028a6636791b5390676f51fd78d45b40d80

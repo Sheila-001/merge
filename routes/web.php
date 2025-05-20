@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ApplicationReceived;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\JobListingController;
-use App\Mail\TrackingCodeMail;
 
 
 
@@ -68,17 +67,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-// Volunteer routes under dashboard
-// Route::middleware(['auth', 'role:volunteers'])->prefix('dashboard')->group(function () {
-//     Route::get('/volunteers', [VolunteerController::class, 'index'])->name('volunteers.index'); // Ensure this route is correct
-     Route::get('/volunteer/events', [VolunteerController::class, 'viewEvents'])->name('volunteer.events');
-//     Route::post('/volunteers/events/apply', [VolunteerController::class, 'applyEvent'])->name('volunteers.applyEvent');
-     Route::get('/volunteers/calendar', [VolunteerController::class, 'viewCalendar'])->name('volunteer.calendar');
-     Route::post('/volunteers/job-offers', [VolunteerController::class, 'addJobOffer'])->name('volunteer.addJobOffer');
-    Route::get('/volunteers', function () {
-        // Volunteer page logic
-        return view('volunteers.index'); // Updated to match the correct view path
-    });
+// Public Volunteer Dashboard Route (no auth required)
+Route::get('/volunteer_dashboard', [VolunteerController::class, 'dashboard'])->name('volunteer.dashboard');
+
+// Volunteer routes with auth (for other volunteer actions)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/volunteers', [VolunteerController::class, 'index'])->name('volunteers.index');
+    Route::post('/volunteers', [VolunteerController::class, 'store'])->name('volunteers.store');
+    Route::get('/volunteer/events', [VolunteerController::class, 'viewEvents'])->name('volunteer.events');
+    Route::get('/volunteers/calendar', [VolunteerController::class, 'viewCalendar'])->name('volunteer.calendar');
+    Route::post('/volunteers/job-offers', [VolunteerController::class, 'addJobOffer'])->name('volunteer.addJobOffer');
+    Route::post('/volunteers/{volunteer}/status', [VolunteerController::class, 'updateStatus'])->name('volunteers.updateStatus');
+});
 
 // User management routes with auth
 Route::middleware(['auth'])->group(function () {
@@ -103,11 +103,13 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 });
 
+// Student Applications Route with auth
+Route::middleware(['auth'])->group(function () {
+    Route::get('/students', [StudentController::class, 'index'])->name('admin.students.index');
+});
+
 // Volunteer routes with auth
 Route::middleware(['auth'])->group(function () {
-    Route::get('/volunteer/dashboard', function () {
-        return view('volunteer.dashboard');
-    })->name('volunteer.dashboard');
     Route::get('/volunteers', [VolunteerController::class, 'index'])->name('volunteers.index');
     Route::post('/volunteers', [VolunteerController::class, 'store'])->name('volunteers.store');
     Route::get('/volunteer/events', [VolunteerController::class, 'viewEvents'])->name('volunteer.events');
@@ -173,100 +175,15 @@ Route::match(['get', 'post'], '/scholarship/track', [App\Http\Controllers\Schola
 Route::get('/scholarship/track/{tracking_code}', [App\Http\Controllers\ScholarshipController::class, 'show'])->name('scholarship.show');
 
 // New route for students to view job listings
-Route::get('/jobs/listings', [JobListingController::class, 'index'])->name('jobs.listings');
-Route::get('/jobs/{job}', [JobListingController::class, 'show'])->name('jobs.show');
+// Route::get('/jobs/listings', [JobListingController::class, 'index'])->name('jobs.listings');
 
-// Admin Job Routes
-Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/jobs', [App\Http\Controllers\Admin\JobListingController::class, 'index'])->name('jobs.index');
-    Route::get('/jobs/create', [App\Http\Controllers\Admin\JobListingController::class, 'create'])->name('jobs.create');
-    Route::post('/jobs', [App\Http\Controllers\Admin\JobListingController::class, 'store'])->name('jobs.store');
-    Route::get('/jobs/{job}', [App\Http\Controllers\Admin\JobListingController::class, 'show'])->name('jobs.show');
-    Route::get('/jobs/{job}/edit', [App\Http\Controllers\Admin\JobListingController::class, 'edit'])->name('jobs.edit');
-    Route::put('/jobs/{job}', [App\Http\Controllers\Admin\JobListingController::class, 'update'])->name('jobs.update');
-    Route::delete('/jobs/{job}', [App\Http\Controllers\Admin\JobListingController::class, 'destroy'])->name('jobs.destroy');
-    Route::post('/jobs/{job}/approve', [App\Http\Controllers\Admin\JobListingController::class, 'approve'])->name('jobs.approve');
-    Route::post('/jobs/{job}/reject', [App\Http\Controllers\Admin\JobListingController::class, 'reject'])->name('jobs.reject');
-});
+// Route::get('/admin/jobs/create', [JobListingController::class, 'create'])->name('jobs.create');
+// Route::post('/admin/jobs', [JobListingController::class, 'store'])->name('jobs.store');
 
-// Volunteer Dashboard Routes
-Route::middleware(['auth'])->prefix('volunteer')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('volunteer.dashboard');
-    })->name('volunteer.dashboard');
-    
-    Route::get('/events', function () {
-        return view('volunteer.events');
-    })->name('volunteer.events');
-    
-    Route::get('/calendar', function () {
-        return view('volunteer.calendar');
-    })->name('volunteer.calendar');
-    
-    Route::get('/jobs', function () {
-        return view('volunteer.jobs');
-    })->name('volunteer.jobs');
-});
+// Route::get('/admin/jobs', [JobListingController::class, 'adminIndex'])->name('jobs.admin.index');
+// Route::get('/admin/jobs/{job}/edit', [JobListingController::class, 'edit'])->name('jobs.edit');
+// Route::put('/admin/jobs/{job}', [JobListingController::class, 'update'])->name('jobs.update');
+// Route::delete('/admin/jobs/{job}', [JobListingController::class, 'destroy'])->name('jobs.destroy');
 
-// Student Login Routes
-Route::get('/student/login', [App\Http\Controllers\Auth\LoginController::class, 'showStudentLoginForm'])->name('student.login');
-Route::post('/student/login', [App\Http\Controllers\Auth\LoginController::class, 'studentLogin']);
-
-// Test email route
-Route::get('/test-email', function () {
-    try {
-        \Mail::raw('Test email from Laravel', function($message) {
-            $message->to('your_gmail@gmail.com')->subject('Test Email');
-        });
-        return 'Test email sent! Check your inbox (and spam folder).';
-    } catch (\Exception $e) {
-        return 'Error sending email: ' . $e->getMessage();
-    }
-});
-
-// Student Authentication Routes
-Route::prefix('student')->name('student.')->group(function () {
-    Route::get('login', [App\Http\Controllers\Student\Auth\LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [App\Http\Controllers\Student\Auth\LoginController::class, 'login']);
-    Route::post('logout', [App\Http\Controllers\Student\Auth\LoginController::class, 'logout'])->name('logout');
-
-    // Student Registration
-    Route::get('register', [App\Http\Controllers\Student\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('register', [App\Http\Controllers\Student\Auth\RegisterController::class, 'register']);
-
-    // Student Password Reset
-    Route::get('password/reset', [App\Http\Controllers\Student\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-    Route::post('password/email', [App\Http\Controllers\Student\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-    Route::get('password/reset/{token}', [App\Http\Controllers\Student\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-    Route::post('password/reset', [App\Http\Controllers\Student\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
-
-    // Protected Student Routes
-    // Route::middleware(['auth:student'])->group(function () {
-    //     Route::get('dashboard', function () {
-    //         return view('student.dashboard');
-    //     })->name('dashboard');
-    // });
-});
-
-Route::get('/students', [App\Http\Controllers\Admin\StudentController::class, 'index'])
-    ->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
-    ->name('admin.students.index.shortcut');
-
-// Test scholarship tracking code email
-Route::get('/test-scholarship-email', function () {
-    $application = \App\Models\ScholarshipApplication::latest()->first();
-    if (!$application) {
-        return 'No scholarship application found.';
-    }
-    try {
-        \Mail::to($application->email)->send(new \App\Mail\TrackingCodeMail($application));
-        return 'Tracking code email sent to ' . $application->email . '! Check your inbox (and spam folder).';
-    } catch (\Exception $e) {
-        return 'Error sending tracking code email: ' . $e->getMessage();
-    }
-});
-
-// Student Dashboard Route (restored)
-Route::middleware(['auth'])->group(function () {
-    Route::get('/student/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('student.dashboard');
-});
+// Route::post('/admin/jobs/{job}/approve', [JobListingController::class, 'approve'])->name('jobs.approve');
+// Route::post('/admin/jobs/{job}/reject', [JobListingController::class, 'reject'])->name('jobs.reject');

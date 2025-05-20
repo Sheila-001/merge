@@ -9,15 +9,50 @@ class JobListingController extends Controller
 {
     public function index(Request $request)
     {
+<<<<<<< HEAD
         // Show all jobs for now (for testing)
         $jobs = \App\Models\JobListing::latest()->paginate(10);
         return view('jobs.index', compact('jobs'));
+=======
+        $query = JobListing::query();
+
+        // Always filter to only approved jobs for public/volunteer listing
+        $query->where('status', 'approved');
+
+        // Search functionality
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('company_name', 'like', "%{$search}%")
+                  ->orWhere('role', 'like', "%{$search}%")
+                  ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        // Company filter
+        if ($request->has('company') && $request->company !== '') {
+            $query->where('company_name', $request->company);
+        }
+
+        // Location filter
+        if ($request->has('location') && $request->location !== '') {
+            $query->where('location', $request->location);
+        }
+
+        // For volunteer/public view, use the correct view and pass companies/locations for filters
+        $companies = JobListing::where('status', 'approved')->distinct()->pluck('company_name');
+        $locations = JobListing::where('status', 'approved')->distinct()->pluck('location');
+
+        $jobs = $query->latest()->paginate(10)->withQueryString();
+
+        return view('jobs.listings', compact('jobs', 'companies', 'locations'));
+>>>>>>> d3def028a6636791b5390676f51fd78d45b40d80
     }
 
     public function show(JobListing $job)
     {
-        if ($job->status !== 'approved' || 
-            ($job->expires_at && $job->expires_at < now())) {
+        if ($job->status !== 'approved') {
             abort(404);
         }
 
@@ -46,6 +81,7 @@ class JobListingController extends Controller
             'contact_phone' => 'nullable|string|max:255',
             'expires_at' => 'nullable|date',
         ]);
+<<<<<<< HEAD
         $validated['status'] = 'approved';
         $validated['is_admin_posted'] = true;
         $validated['posted_by'] = auth()->id();
@@ -53,23 +89,33 @@ class JobListingController extends Controller
         \App\Models\JobListing::create($validated);
 
         return redirect()->route('jobs.index')->with('success', 'Job listing created successfully.');
+=======
+
+        $validated['status'] = 'pending';
+        $validated['is_admin_posted'] = false;
+        
+        JobListing::create($validated);
+        
+        return redirect()->route('volunteer.dashboard')
+            ->with('success', 'Job listing submitted and is pending admin approval.');
+>>>>>>> d3def028a6636791b5390676f51fd78d45b40d80
     }
 
     public function adminIndex()
     {
-        $jobs = \App\Models\JobListing::latest()->get();
+        $jobs = JobListing::latest()->get();
         return view('jobs.admin_index', compact('jobs'));
     }
 
     public function edit($id)
     {
-        $job = \App\Models\JobListing::findOrFail($id);
+        $job = JobListing::findOrFail($id);
         return view('jobs.edit', compact('job'));
     }
 
     public function update(Request $request, $id)
     {
-        $job = \App\Models\JobListing::findOrFail($id);
+        $job = JobListing::findOrFail($id);
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -84,14 +130,14 @@ class JobListingController extends Controller
 
     public function destroy($id)
     {
-        $job = \App\Models\JobListing::findOrFail($id);
+        $job = JobListing::findOrFail($id);
         $job->delete();
         return redirect()->route('jobs.admin.index')->with('success', 'Job deleted successfully!');
     }
 
     public function approve($id)
     {
-        $job = \App\Models\JobListing::findOrFail($id);
+        $job = JobListing::findOrFail($id);
         $job->status = 'approved';
         $job->save();
         return redirect()->route('jobs.admin.index')->with('success', 'Job approved successfully!');
@@ -99,7 +145,7 @@ class JobListingController extends Controller
 
     public function reject($id)
     {
-        $job = \App\Models\JobListing::findOrFail($id);
+        $job = JobListing::findOrFail($id);
         $job->status = 'rejected';
         $job->save();
         return redirect()->route('jobs.admin.index')->with('success', 'Job rejected successfully!');
