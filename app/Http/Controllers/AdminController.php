@@ -53,7 +53,7 @@ class AdminController extends Controller
         return redirect('/');
     }
 
-    public function dashboard()
+    public function index()
     {
         // Auto-update completed events
         $this->updateCompletedEvents();
@@ -77,6 +77,9 @@ class AdminController extends Controller
             'activeStudents' => User::where('role', 'student')
                                   ->where('status', 'active')
                                   ->count(),
+            'pendingApplicants' => User::where('role', 'applicant')
+                                    ->where('status', 'pending')
+                                    ->count(),
             'activeEvents' => Event::where('status', '!=', 'completed')
                                  ->where('status', '!=', 'cancelled')
                                  ->count()

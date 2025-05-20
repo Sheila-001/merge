@@ -28,7 +28,7 @@ Route::get('/', function () {
 
 // Admin Protected Routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
     Route::get('/applications', [ScholarshipController::class, 'index'])->name('admin.applications.index');
     Route::post('/applications/{id}/status', [ScholarshipController::class, 'updateStatus'])->name('admin.applications.updateStatus');
@@ -130,6 +130,7 @@ Route::middleware('auth')->group(function () {
 
 // Admin routes
 Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/', [App\Http\Controllers\AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/applications', [ScholarshipController::class, 'index'])->name('admin.applications.index');
     Route::post('/applications/{id}/status', [ScholarshipController::class, 'updateStatus'])->name('admin.applications.updateStatus');
     // Student management
