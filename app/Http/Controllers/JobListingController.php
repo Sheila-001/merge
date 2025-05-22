@@ -9,11 +9,6 @@ class JobListingController extends Controller
 {
     public function index(Request $request)
     {
-<<<<<<< HEAD
-        // Show all jobs for now (for testing)
-        $jobs = \App\Models\JobListing::latest()->paginate(10);
-        return view('jobs.index', compact('jobs'));
-=======
         $query = JobListing::query();
 
         // Always filter to only approved jobs for public/volunteer listing
@@ -47,7 +42,6 @@ class JobListingController extends Controller
         $jobs = $query->latest()->paginate(10)->withQueryString();
 
         return view('jobs.listings', compact('jobs', 'companies', 'locations'));
->>>>>>> d3def028a6636791b5390676f51fd78d45b40d80
     }
 
     public function show(JobListing $job)
@@ -81,15 +75,6 @@ class JobListingController extends Controller
             'contact_phone' => 'nullable|string|max:255',
             'expires_at' => 'nullable|date',
         ]);
-<<<<<<< HEAD
-        $validated['status'] = 'approved';
-        $validated['is_admin_posted'] = true;
-        $validated['posted_by'] = auth()->id();
-
-        \App\Models\JobListing::create($validated);
-
-        return redirect()->route('jobs.index')->with('success', 'Job listing created successfully.');
-=======
 
         $validated['status'] = 'pending';
         $validated['is_admin_posted'] = false;
@@ -98,7 +83,6 @@ class JobListingController extends Controller
         
         return redirect()->route('volunteer.dashboard')
             ->with('success', 'Job listing submitted and is pending admin approval.');
->>>>>>> d3def028a6636791b5390676f51fd78d45b40d80
     }
 
     public function adminIndex()

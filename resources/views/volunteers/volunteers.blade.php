@@ -1,4 +1,4 @@
-<x-app-layout>
+<!-- <x-app-layout>
     <div class="p-6 bg-white rounded-lg shadow-sm">
         <h2 class="text-xl font-bold mb-4">Volunteer Actions</h2>
         <div class="space-y-4">
@@ -13,4 +13,4 @@
             </a>
         </div>
     </div>
-</x-app-layout>
+</x-app-layout> -->

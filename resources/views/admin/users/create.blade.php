@@ -78,4 +78,67 @@
             </div>
         </div>
     </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form'); // Assuming this is the only form on the page
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(form);
+        const actionUrl = form.getAttribute('action');
+
+        fetch(actionUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // Include CSRF token
+            },
+            body: formData
+        })
+        .then(response => {
+            // Check if the response is OK or a redirect
+            if (response.ok || response.redirected) { // response.redirected checks for 302 redirects
+                 // Redirect to the volunteer index page on success or if redirected by the server
+                 window.location.href = response.url; // Use response.url to follow the redirect
+            } else {
+                 // Handle errors (e.g., validation errors, server errors)
+                 response.json().then(data => {
+                     console.error('Error:', data);
+                     // Display the error message from the server response
+                     const errorMessage = data.message || 'An unknown error occurred.';
+                     alert('Error creating user: ' + errorMessage);
+
+                     // If there are specific validation errors, you could display them next to the form fields
+                     // Example (assuming your server returns errors in data.errors):
+                     // if (data.errors) {
+                     //     for (const field in data.errors) {
+                     //         const errorMessages = data.errors[field].join(', ');
+                     //         // Find the input field and display the error next to it
+                     //         const inputElement = document.getElementById(field);
+                     //         if (inputElement) {
+                     //             // You'll need to add an element to display the error, e.g., a span with a specific class
+                     //             let errorElement = inputElement.nextElementSibling;
+                     //             if (!errorElement || !errorElement.classList.contains('text-red-600')) {
+                     //                  errorElement = document.createElement('p');
+                     //                  errorElement.classList.add('mt-1', 'text-sm', 'text-red-600');
+                     //                  inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
+                     //             }
+                     //             errorElement.textContent = errorMessages;
+                     //         }
+                     //     }
+                     // }
+                 }).catch(error => {
+                     console.error('Error parsing JSON:', error);
+                     alert('An unexpected error occurred while processing the error response.');
+                 });
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('Network error occurred. Please check your connection.');
+        });
+    });
+});
+</script>
 </x-app-layout>

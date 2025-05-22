@@ -17,8 +17,8 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <!-- navigation -->
-<div class="flex">
-        <div class="w-64 min-h-screen bg-[#1B4B5A] text-white">
+<div class="flex h-screen">
+        <div class="w-64 bg-[#1B4B5A] text-white overflow-y-auto">
             <div class="p-4 flex items-center space-x-2">
             <img src="{{ asset('image/logohauzhayag.jpg') }}" alt="Hauz Hayag Logo" class="h-16 w-auto rounded-lg shadow-md">
                 <h1 class="text-2xl font-bold">Hauz Hayag</h1>
@@ -52,13 +52,13 @@
                     </svg>
                     Students
                 </a>
-                <a href="/volunteers" class="flex items-center px-4 py-3 bg-[#2C5F6E] hover:bg-[#2C5F6E] transition-colors">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
-                    Volunteers
-                </a>
+                <a href="{{ route('admin.volunteers.index') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        Volunteers
+                    </a>
                 <a href="/jobs" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -81,7 +81,7 @@
 
 
         <!-- Enhanced Main Content -->
-        <div class="flex-1 p-6 bg-gray-50">
+        <div class="flex-1 p-6 bg-gray-50 overflow-y-auto">
             <!-- Page Header -->
             <div class="mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">Volunteer Management</h1>
@@ -96,10 +96,11 @@
                         <div>
                             <p class="text-sm font-medium text-gray-500">Active Volunteers</p>
                             <p class="text-xl font-bold text-gray-800 mt-1">
-                                @if(isset($volunteers))
-                                    {{ $volunteers->where('status', 'Active')->count() }}
+
+                            @if(isset($activeVolunteersCount))
+                                    {{ $activeVolunteersCount }}
                                 @else
-                                    24
+                                    0
                                 @endif
                             </p>
                         </div>
@@ -208,12 +209,6 @@
                     <a href="#" data-tab="pending-tab" class="volunteer-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">
                         Pending Applications
                     </a>
-                    <a href="#" data-tab="assignments-tab" class="volunteer-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">
-                        Event Assignments
-                    </a>
-                    <a href="#" data-tab="jobs-tab" class="volunteer-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm">
-                        Job Opportunities
-                    </a>
                 </nav>
             </div>
 
@@ -306,9 +301,13 @@
                                                     $skills = is_string($volunteer->skills) ? json_decode($volunteer->skills, true) : $volunteer->skills;
                                                     if (!is_array($skills)) $skills = [];
                                                 @endphp
-                                                @foreach($skills as $skill)
-                                                    <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">{{ $skill }}</span>
-                                                @endforeach
+                                                @if(count($skills) > 0)
+                                                    @foreach($skills as $skill)
+                                                        <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">{{ $skill }}</span>
+                                                    @endforeach
+                                                @else
+                                                    <span class="text-gray-500 text-xs">No skills listed</span>
+                                                @endif
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -318,12 +317,11 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button type="button" data-volunteer-id="{{ $volunteer->id }}" class="view-volunteer-btn inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2C5F6E] hover:bg-[#2C5F6E]/80">
+                                            <button type="button" data-volunteer-id="{{ $volunteer->id }}" class="delete-volunteer-btn inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">
                                                 <svg class="-ml-1 mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm2 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
                                                 </svg>
-                                                View
+                                                Delete
                                             </button>
                                         </td>
                                     </tr>
@@ -358,12 +356,11 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button type="button" data-volunteer-id="1" class="view-volunteer-btn inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2C5F6E] hover:bg-[#2C5F6E]/80">
+                                        <button type="button" data-volunteer-id="1" class="delete-volunteer-btn inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">
                                             <svg class="-ml-1 mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm2 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
                                             </svg>
-                                            View
+                                            Delete
                                         </button>
                 </td>
             </tr>
@@ -485,130 +482,6 @@
                                 </div>
                             </div>
                         @endif
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Event Assignments Tab Content -->
-            <div id="assignments-tab" class="tab-content hidden">
-                <div class="bg-white rounded-lg shadow-sm p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Volunteer Event Assignments</h3>
-                    
-                    <!-- Event cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Event 1 -->
-                        <div class="border border-gray-200 rounded-lg p-4">
-                            <h4 class="text-md font-medium text-gray-900">Community Cleanup Day</h4>
-                            <p class="text-sm text-gray-600 mt-1">Date: Nov 5, 2023 • 9:00 AM - 1:00 PM</p>
-                            <p class="text-sm text-gray-600">Location: City Park</p>
-                            
-                            <div class="mt-3">
-                                <h5 class="text-sm font-medium text-gray-700">Assigned Volunteers:</h5>
-                                <ul class="mt-2 space-y-2">
-                                    <li class="flex items-center justify-between">
-                                        <span class="text-sm text-gray-600">John Doe</span>
-                                        <button type="button" class="text-xs text-[#2C5F6E] hover:text-[#2C5F6E]/80">Change</button>
-                                    </li>
-                                    <li class="flex items-center justify-between">
-                                        <span class="text-sm text-gray-600">Robert Johnson</span>
-                                        <button type="button" class="text-xs text-[#2C5F6E] hover:text-[#2C5F6E]/80">Change</button>
-                                    </li>
-                                </ul>
-                            </div>
-                            
-                            <div class="mt-4">
-                                <button type="button" class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2C5F6E] hover:bg-[#2C5F6E]/80">
-                                    Assign More Volunteers
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Event 2 -->
-                        <div class="border border-gray-200 rounded-lg p-4">
-                            <h4 class="text-md font-medium text-gray-900">Tutoring Session</h4>
-                            <p class="text-sm text-gray-600 mt-1">Date: Nov 10, 2023 • 4:00 PM - 6:00 PM</p>
-                            <p class="text-sm text-gray-600">Location: Community Center</p>
-                            
-                            <div class="mt-3">
-                                <h5 class="text-sm font-medium text-gray-700">Assigned Volunteers:</h5>
-                                <p class="mt-1 text-sm text-gray-500 italic">No volunteers assigned yet</p>
-                            </div>
-                            
-                            <div class="mt-4">
-                                <button type="button" class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2C5F6E] hover:bg-[#2C5F6E]/80">
-                                    Assign Volunteers
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Job Opportunities Tab Content -->
-            <div id="jobs-tab" class="tab-content hidden">
-                <div class="bg-white rounded-lg shadow-sm p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-medium text-gray-900">Available Volunteer Positions</h3>
-                        <button type="button" class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2C5F6E] hover:bg-[#2C5F6E]/80">
-                            <svg class="-ml-1 mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                            </svg>
-                            Add New Position
-                        </button>
-                    </div>
-                    
-                    <!-- Job listings -->
-                    <div class="space-y-4">
-                        <!-- Job 1 -->
-                        <div class="border border-gray-200 rounded-lg p-4">
-                            <h4 class="text-md font-medium text-gray-900">Event Coordinator</h4>
-                            <p class="text-sm text-gray-600 mt-1">Help organize and coordinate community events and fundraisers</p>
-                            
-                            <div class="mt-2 flex flex-wrap gap-1">
-                                <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Event Planning</span>
-                                <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">Communication</span>
-                                <span class="px-2 py-1 text-xs rounded bg-purple-100 text-purple-800">Leadership</span>
-                            </div>
-                            
-                            <div class="mt-3">
-                                <p class="text-sm text-gray-600"><span class="font-medium">Time Commitment:</span> 5-10 hours/week</p>
-                                <p class="text-sm text-gray-600"><span class="font-medium">Duration:</span> 3 months</p>
-                            </div>
-                            
-                            <div class="mt-4 flex justify-end space-x-2">
-                                <button type="button" class="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                                    Edit
-                                </button>
-                                <button type="button" class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2C5F6E] hover:bg-[#2C5F6E]/80">
-                                    View Applicants (3)
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Job 2 -->
-                        <div class="border border-gray-200 rounded-lg p-4">
-                            <h4 class="text-md font-medium text-gray-900">Teaching Assistant</h4>
-                            <p class="text-sm text-gray-600 mt-1">Assist with after-school tutoring programs for elementary students</p>
-                            
-                            <div class="mt-2 flex flex-wrap gap-1">
-                                <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">Teaching</span>
-                                <span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">Patience</span>
-                            </div>
-                            
-                            <div class="mt-3">
-                                <p class="text-sm text-gray-600"><span class="font-medium">Time Commitment:</span> 4 hours/week</p>
-                                <p class="text-sm text-gray-600"><span class="font-medium">Duration:</span> School year</p>
-                            </div>
-                            
-                            <div class="mt-4 flex justify-end space-x-2">
-                                <button type="button" class="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                                    Edit
-                                </button>
-                                <button type="button" class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2C5F6E] hover:bg-[#2C5F6E]/80">
-                                    View Applicants (5)
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -744,11 +617,31 @@
             // Get form data
             const formData = new FormData(form);
             
+            // Convert FormData to JSON
+            const jsonData = {};
+            formData.forEach((value, key) => {
+                if (key === 'skills[]') {
+                    // Handle skills array
+                    if (!jsonData.skills) {
+                        jsonData.skills = [];
+                    }
+                    jsonData.skills.push(value);
+                } else {
+                    jsonData[key] = value;
+                }
+            });
+
+            // Ensure skills is an array
+            if (!jsonData.skills) {
+                jsonData.skills = [];
+            }
+            
             // Send AJAX request
             fetch(form.action, {
                 method: 'POST',
-                body: formData,
+                body: JSON.stringify(jsonData),
                 headers: {
+                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
                 }
@@ -761,7 +654,7 @@
                             const errorMessages = Object.values(data.errors).flat();
                             throw new Error(errorMessages.join('\n'));
                         }
-                        throw new Error(data.message || 'An error occurred');
+                        throw new Error(data.message || 'An error occurred while creating the volunteer');
                     });
                 }
                 return response.json();
@@ -888,35 +781,140 @@
         
         // Tab navigation functionality
         const tabs = document.querySelectorAll('.volunteer-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Function to switch tabs
+        function switchTab(activeTabId) {
+        tabs.forEach(tab => {
+                const tabId = tab.getAttribute('data-tab');
+                if (tabId === activeTabId) {
+                    tab.classList.remove('border-transparent', 'text-gray-500');
+                    tab.classList.add('border-[#2C5F6E]', 'text-[#2C5F6E]');
+                } else {
+                    tab.classList.remove('border-[#2C5F6E]', 'text-[#2C5F6E]');
+                    tab.classList.add('border-transparent', 'text-gray-500');
+                }
+            });
+
+            tabContents.forEach(content => {
+                const contentId = content.getAttribute('id');
+                if (contentId === activeTabId) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
+        }
+
+        // Set initial active tab based on URL hash or default to all-volunteers-tab
+        const initialTabId = window.location.hash ? window.location.hash.substring(1) : 'all-volunteers-tab';
+        switchTab(initialTabId);
+
+        // Add event listeners to tabs
         tabs.forEach(tab => {
             tab.addEventListener('click', function(e) {
                 e.preventDefault();
-                
-                // Remove active class from all tabs
-                tabs.forEach(t => {
-                    t.classList.remove('border-[#2C5F6E]', 'text-[#2C5F6E]');
-                    t.classList.add('border-transparent', 'text-gray-500');
-                });
-                
-                // Add active class to clicked tab
-                this.classList.remove('border-transparent', 'text-gray-500');
-                this.classList.add('border-[#2C5F6E]', 'text-[#2C5F6E]');
-                
-                // Show/hide appropriate content based on tab
                 const tabId = this.getAttribute('data-tab');
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.add('hidden');
-                });
-                document.getElementById(tabId).classList.remove('hidden');
+                switchTab(tabId);
+                // Optional: Update URL hash
+                history.pushState(null, '', `#${tabId}`);
             });
+        });
+        
+        // Listen for hash changes in URL
+        window.addEventListener('hashchange', function() {
+            const tabId = window.location.hash.substring(1);
+            if (tabId) {
+                switchTab(tabId);
+            }
         });
         
         // View volunteer profile functionality
         const viewButtons = document.querySelectorAll('.view-volunteer-btn');
         viewButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', async function(e) {
+                e.preventDefault(); // Prevent default link behavior
                 const volunteerId = this.getAttribute('data-volunteer-id');
-                window.location.href = `/volunteers/${volunteerId}`;
+                
+                try {
+                    // Fetch volunteer data (assuming you have an API route like /api/volunteers/{id})
+                    const volunteerData = await fetchData(`/api/volunteers/${volunteerId}`);
+                    
+                    // Populate the modal with fetched data
+                    viewVolunteerName.textContent = volunteerData.name;
+                    viewVolunteerStatus.textContent = `Status: ${volunteerData.status}`;
+                    viewVolunteerEmail.textContent = volunteerData.email;
+                    viewVolunteerPhone.textContent = volunteerData.phone;
+                    viewVolunteerStartDate.textContent = `Start Date: ${volunteerData.start_date || 'N/A'}`;
+                    viewVolunteerNotes.textContent = volunteerData.notes || 'N/A';
+
+                    // Populate skills
+                    viewVolunteerSkills.innerHTML = ''; // Clear previous skills
+                    if (volunteerData.skills && Array.isArray(volunteerData.skills)) {
+                        if (volunteerData.skills.length > 0) {
+                             volunteerData.skills.forEach(skill => {
+                                const skillSpan = document.createElement('span');
+                                skillSpan.classList.add('px-2', 'py-1', 'text-xs', 'rounded', 'bg-blue-100', 'text-blue-800');
+                                skillSpan.textContent = skill;
+                                viewVolunteerSkills.appendChild(skillSpan);
+                            });
+                        } else {
+                             viewVolunteerSkills.textContent = 'No skills listed';
+                        }
+                    } else {
+                         viewVolunteerSkills.textContent = 'No skills listed';
+                    }
+
+                    // Show the view modal
+                    viewModal.classList.remove('hidden');
+
+                } catch (error) {
+                    console.error('Failed to fetch volunteer details:', error);
+                    // Optionally display an error message to the user
+                    alert('Could not load volunteer details.');
+                }
+            });
+        });
+        
+        // Delete volunteer functionality
+        const deleteButtons = document.querySelectorAll('.delete-volunteer-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', async function(e) {
+                e.preventDefault(); // Prevent default link behavior
+                const volunteerId = this.getAttribute('data-volunteer-id');
+                const row = this.closest('tr'); // Get the table row to remove it later
+
+                if (confirm('Are you sure you want to delete this volunteer?')) {
+                    try {
+                        // Send a DELETE request to your backend (assuming a route like /api/volunteers/{id})
+                        const response = await fetch(`/api/volunteers/${volunteerId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) {
+                             const errorData = await response.json();
+                             throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                        }
+
+                        // Remove the row from the table
+                        row.remove();
+
+                        // Optionally show a success message
+                        alert('Volunteer deleted successfully!');
+
+                        // You might want to update the active volunteer count here as well
+                        // This would require fetching the new count or decrementing the current count
+
+                    } catch (error) {
+                        console.error('Failed to delete volunteer:', error);
+                        // Optionally display an error message to the user
+                        alert('Could not delete volunteer.');
+                    }
+                }
             });
         });
         

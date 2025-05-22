@@ -60,6 +60,8 @@ class UserController extends Controller
             'status' => 'required|string|in:active,inactive',
             'class_year' => 'nullable|string',  // Add class_year validation
             'profile_picture' => 'nullable|image|max:1024',
+            'phone_number' => 'nullable|string|max:20', // Add phone_number validation
+            'scholarship_type' => 'nullable|string|in:home_based,in_house', // Add scholarship_type validation
         ]);
 
         $user = new User();
@@ -69,6 +71,8 @@ class UserController extends Controller
         $user->role = $request->role;
         $user->status = $request->status;
         $user->class_year = $request->class_year;  // Add class_year
+        $user->phone_number = $request->phone_number; // Add phone_number
+        $user->scholarship_type = $request->scholarship_type; // Add scholarship_type
 
         if ($request->hasFile('profile_picture')) {
             $path = $request->file('profile_picture')->store('profile-pictures', 'public');
@@ -94,6 +98,8 @@ class UserController extends Controller
             'status' => 'required|in:active,inactive',
             'class_year' => 'nullable|string',  // Add this line
             'password' => 'nullable|string|min:8',
+            'phone_number' => 'nullable|string|max:20', // Add phone_number validation
+            'scholarship_type' => 'nullable|string|in:home_based,in_house', // Add scholarship_type validation
         ]);
 
         if (isset($validated['password'])) {

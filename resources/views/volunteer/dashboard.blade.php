@@ -78,7 +78,7 @@
             <!-- Stats Overview -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <!-- Upcoming Events -->
-                <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-blue-500">
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
                     <div class="flex justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Upcoming Events</p>
@@ -94,7 +94,7 @@
                 </div>
 
                 <!-- Hours Volunteered -->
-                <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-green-500">
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
                     <div class="flex justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Hours This Month</p>
@@ -110,7 +110,7 @@
                 </div>
 
                 <!-- Job Applications -->
-                <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-purple-500">
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
                     <div class="flex justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Job Applications</p>
@@ -131,7 +131,7 @@
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Upcoming Events</h2>
                 <div class="space-y-4">
                     <!-- Event Card 1 -->
-                    <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-5 border-l-4 border-blue-600">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h3 class="text-md font-medium text-gray-900">Community Outreach</h3>
@@ -145,7 +145,7 @@
                     </div>
 
                     <!-- Event Card 2 -->
-                    <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-5 border-l-4 border-yellow-600">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h3 class="text-md font-medium text-gray-900">Youth Mentoring</h3>
@@ -165,34 +165,38 @@
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Recent Activity</h2>
                 <div class="space-y-4">
                     <!-- Activity Item 1 -->
-                    <div class="flex items-start space-x-3">
-                        <div class="flex-shrink-0">
-                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
+                    <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-blue-600">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-900">Completed 4 hours of community service</p>
-                            <p class="text-xs text-gray-500">2 days ago</p>
+                            <div>
+                                <p class="text-sm text-gray-900">Completed 4 hours of community service</p>
+                                <p class="text-xs text-gray-500">2 days ago</p>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Activity Item 2 -->
-                    <div class="flex items-start space-x-3">
-                        <div class="flex-shrink-0">
-                            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
+                    <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-green-600">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-900">Applied for Youth Mentor position</p>
-                            <p class="text-xs text-gray-500">5 days ago</p>
+                            <div>
+                                <p class="text-sm text-gray-900">Applied for Youth Mentor position</p>
+                                <p class="text-xs text-gray-500">5 days ago</p>
+                            </div>
                         </div>
                     </div>
                 </div>

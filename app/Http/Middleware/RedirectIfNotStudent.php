@@ -11,7 +11,7 @@ class RedirectIfNotStudent
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::check() || Auth::user()->role !== 'student') {
-            return redirect()->route('student.login');
+            return redirect()->route('login');
         }
 
         return $next($request);

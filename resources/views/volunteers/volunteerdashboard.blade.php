@@ -41,7 +41,7 @@
     <div class="flex-1 px-3 px-md-5 py-4 bg-gray-50">
         <!-- Post a Job Button above main content -->
         <div class="d-flex justify-content-end mb-3">
-            <a href="{{ route('volunteer.job.post') }}" class="btn btn-primary fw-bold shadow px-4 py-2 d-flex align-items-center" style="font-size: 1.1rem; border-radius: 0.6rem; gap: 0.5rem;">
+            <a href="{{ route('volunteer.job-post') }}" class="btn btn-primary fw-bold shadow px-4 py-2 d-flex align-items-center" style="font-size: 1.1rem; border-radius: 0.6rem; gap: 0.5rem;">
                 <i class="fas fa-plus-circle me-2" style="font-size: 1.3rem;"></i>
                 Post a Job
             </a>

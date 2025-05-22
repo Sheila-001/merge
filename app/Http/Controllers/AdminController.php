@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Event;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use App\Models\Volunteer;
 
 class AdminController extends Controller
 {
@@ -86,6 +87,27 @@ class AdminController extends Controller
         ];
 
         return view('admin.dashboard', $data);
+    }
+
+    public function volunteerIndex()
+    {
+        $volunteers = Volunteer::latest()->paginate(10);
+        $activeVolunteersCount = Volunteer::where('status', 'Active')->count();
+        return view('volunteers.index', compact('volunteers', 'activeVolunteersCount'));
+    }
+
+    public function approveVolunteer(Volunteer $volunteer)
+    {
+        $volunteer->status = 'Approved';
+        $volunteer->save();
+        return back()->with('success', 'Volunteer application approved successfully.');
+    }
+
+    public function rejectVolunteer(Volunteer $volunteer)
+    {
+        $volunteer->status = 'Rejected';
+        $volunteer->save();
+        return back()->with('success', 'Volunteer application rejected successfully.');
     }
 
     private function updateCompletedEvents()

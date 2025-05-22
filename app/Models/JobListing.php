@@ -32,35 +32,20 @@ class JobListing extends Model
         'role',
         'qualifications',
         'contact_person',
-<<<<<<< HEAD
         'expires_at',
-=======
-        'contact_email',
-        'contact_phone',
-        'status',
-        'location',
-        'employment_type',
-        'salary_min',
-        'salary_max',
->>>>>>> d3def028a6636791b5390676f51fd78d45b40d80
         'is_admin_posted',
         'posted_by'
     ];
 
     protected $casts = [
-<<<<<<< HEAD
         'start_date' => 'date',
         'end_date' => 'date',
         'expires_at' => 'datetime',
-=======
         'is_admin_posted' => 'boolean',
->>>>>>> d3def028a6636791b5390676f51fd78d45b40d80
         'salary_min' => 'decimal:2',
         'salary_max' => 'decimal:2'
     ];
 
-<<<<<<< HEAD
-=======
     // Add accessors to handle salary values
     public function getSalaryMinAttribute($value)
     {
@@ -77,7 +62,6 @@ class JobListing extends Model
         return $this->belongsTo(User::class, 'posted_by');
     }
 
->>>>>>> d3def028a6636791b5390676f51fd78d45b40d80
     public function scopeActive($query)
     {
         return $query->where('status', 'approved');

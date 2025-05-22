@@ -17,8 +17,8 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $applications = ScholarshipApplication::latest()->get();
-        $students = User::where('role', 'student')->latest()->get();
+        $applications = ScholarshipApplication::where('status', 'pending')->latest()->get();
+        $students = User::where('role', 'student')->where('status', 'active')->latest()->get();
         return view('admin.students.index', compact('applications', 'students'));
     }
 
@@ -39,6 +39,7 @@ class StudentController extends Controller
             // If user exists, update their role to 'student'
             $user->role = 'student';
             $user->status = 'active'; // Assuming active status upon approval
+            $user->scholarship_type = $application->scholarship_type; // Update scholarship type for existing user
             $user->save();
         } else {
             // If user does not exist, create a new student user
@@ -49,6 +50,7 @@ class StudentController extends Controller
                 'role' => 'student',
                 'status' => 'active',
                 'phone_number' => $application->phone_number,
+                'scholarship_type' => $application->scholarship_type,
             ]);
         }
 
@@ -87,5 +89,18 @@ class StudentController extends Controller
         $application = ScholarshipApplication::where('tracking_code', $tracking_code)->firstOrFail();
         $application->delete();
         return redirect()->back()->with('success', 'Application deleted successfully.');
+    }
+
+    /**
+     * Delete a student user.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroyUser($id)
+    {
+        $user = User::where('role', 'student')->findOrFail($id);
+        $user->delete();
+        return redirect()->route('admin.students.index')->with('success', 'Student deleted successfully.');
     }
 }

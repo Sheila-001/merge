@@ -68,6 +68,8 @@ class ScholarshipController extends Controller
                 'role' => 'student', // Set role to student
                 'class_year' => Carbon::now()->format('Y'), // Add current year as class year
                 'status' => 'active', // Add status field
+                'phone_number' => $validatedData['phone_number'], // Add phone_number
+                'scholarship_type' => $validatedData['scholarship_type'], // Add scholarship_type
             ]);
         }
 
