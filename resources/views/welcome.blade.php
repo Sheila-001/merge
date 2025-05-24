@@ -256,9 +256,9 @@
                     <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in">Welcome to Hauz Hayag</h1>
                     <p class="text-xl md:text-2xl text-white/90 mb-8 animate-fade-in delay-100">Empowering communities through education and opportunities</p>
                     <div class="flex flex-col md:flex-row gap-4 justify-center animate-slide-up delay-200">
-                        <a href="{{ route('donation') }}" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-blue-400 transition hover-scale inline-flex items-center justify-center">
+                        <button class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-blue-400 transition hover-scale" onclick="openDonationModal()">
                             <i class="fas fa-heart mr-2 animate-pulse-slow"></i>Donate Now
-                        </a>
+                        </button>
                         <button class="bg-white text-primary border-2 border-white px-8 py-3 rounded-lg hover:bg-white/90 transition hover-scale" onclick="openEventModal()">
                             <i class="fas fa-calendar-alt mr-2 animate-bounce-slow"></i>Register for Events
                         </button>
