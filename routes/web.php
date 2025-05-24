@@ -16,8 +16,18 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ApplicationReceived;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\JobListingController;
+use App\Http\Controllers\DonationController;
 
-
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
 Route::get('/', function () {
     return view('welcome');
@@ -186,3 +196,26 @@ Route::delete('/admin/jobs/{job}', [JobListingController::class, 'destroy'])->na
 
 Route::post('/admin/jobs/{job}/approve', [JobListingController::class, 'approve'])->name('jobs.approve');
 Route::post('/admin/jobs/{job}/reject', [JobListingController::class, 'reject'])->name('jobs.reject');
+
+Route::get('/donate', function () {
+    return view('donation.donation');
+})->name('donation');
+
+// Donation Routes
+Route::get('/monetary-donation', function () {
+    return view('donation.monetary');
+})->name('monetary_donation');
+
+Route::post('/monetary-donation/submit', [DonationController::class, 'submitMonetaryDonation'])->name('monetary_donation.submit');
+
+// Non-Monetary Donation Routes
+Route::get('/non-monetary-donation', function () {
+    return view('donation.nonmonetary');
+})->name('non_monetary');
+
+Route::post('/non-monetary-donation/submit', [DonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
+
+// Campaign Calendar Route
+Route::get('/user/calendar', function () {
+    return view('donation.usercalendar');
+})->name('user.calendar');

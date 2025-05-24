@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('volunteer_hours', function (Blueprint $table) {
+        Schema::create('monetary_donations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('volunteer_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('event_id')->nullable()->constrained('events')->cascadeOnDelete();
-            $table->date('date');
-            $table->decimal('hours', 8, 2); // Assuming hours can have decimal values
+            $table->string('donor_name');
+            $table->string('email');
+            $table->decimal('amount', 10, 2);
+            $table->string('payment_method');
+            $table->string('status')->default('pending');
+            $table->text('message')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('volunteer_hours');
+        Schema::dropIfExists('monetary_donations');
     }
 };
