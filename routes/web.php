@@ -202,9 +202,9 @@ Route::get('/donate', function () {
 })->name('donation');
 
 // Donation Routes
-Route::get('/monetary-donation', function () {
-    return view('donation.monetary');
-})->name('monetary_donation');
+Route::get('/donation', function () {
+    return view('donation.donation');
+})->name('donation');
 
 Route::post('/monetary-donation/submit', [DonationController::class, 'submitMonetaryDonation'])->name('monetary_donation.submit');
 
@@ -219,3 +219,11 @@ Route::post('/non-monetary-donation/submit', [DonationController::class, 'submit
 Route::get('/user/calendar', function () {
     return view('donation.usercalendar');
 })->name('user.calendar');
+
+Route::get('/monetary-donation', function () {
+    return view('donation.monetary');
+})->name('monetary_donation');
+
+Route::get('/admin/donations', function () {
+    return view('admin.donation.addonation');
+})->name('admin.donations.add');

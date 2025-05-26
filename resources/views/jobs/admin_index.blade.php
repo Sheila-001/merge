@@ -1,19 +1,6 @@
 <x-app-layout>
     <div class="flex">
-        <div class="w-64 min-h-screen bg-[#1B4B5A] text-white">
-            <div class="p-4 flex items-center space-x-2">
-                <img src="{{ asset('image/logohauzhayag.jpg') }}" alt="Hauz Hayag Logo" class="h-16 w-auto rounded-lg shadow-md">
-                <h1 class="text-2xl font-bold">Hauz Hayag</h1>
-            </div>
-            <nav class="mt-8">
-                <a href="/dashboard" class="flex items-center px-4 py-3 bg-[#2C5F6E] hover:bg-[#2C5F6E] transition-colors">Dashboard</a>
-                <a href="/admin/jobs" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors font-bold">Manage Jobs</a>
-                <a href="/admin/jobs/create" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Add Job</a>
-                <div class="mt-auto pt-20">
-                    <a href="/logout" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors text-red-300 hover:text-red-200">Logout</a>
-                </div>
-            </nav>
-        </div>
+        
         <div class="flex-1 p-8 bg-gray-50">
             <h1 class="text-2xl font-bold text-gray-800 mb-6">Manage Job Listings</h1>
             @if(session('success'))

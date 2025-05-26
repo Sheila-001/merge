@@ -60,7 +60,7 @@
         ]
     },
     "extra": {
-        "laravel": {
+            "laravel": {
             "dont-discover": []
         }
     },
