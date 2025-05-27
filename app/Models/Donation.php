@@ -10,24 +10,31 @@ class Donation extends Model
     use HasFactory;
 
     protected $fillable = [
+        'campaign_id',
         'donor_name',
+        'donor_email',
+        'donor_phone',
+        'is_anonymous',
         'type',
         'amount',
-        'description',
+        'item_description',
+        'quantity',
         'status',
-        'email',
-        'phone',
-        'address',
         'payment_method',
-        'transaction_id',
-        'is_acknowledged',
-        'proof_path',
-        'message',
+        'transaction_id'
     ];
 
     protected $casts = [
+        'is_anonymous' => 'boolean',
         'amount' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'quantity' => 'integer'
     ];
+
+    /**
+     * Get the campaign that owns the donation.
+     */
+    public function campaign()
+    {
+        return $this->belongsTo(Campaign::class);
+    }
 } 
