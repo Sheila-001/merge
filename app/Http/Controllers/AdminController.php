@@ -93,7 +93,7 @@ class AdminController extends Controller
     {
         $volunteers = Volunteer::latest()->paginate(10);
         $activeVolunteersCount = Volunteer::where('status', 'Active')->count();
-        return view('volunteers.index', compact('volunteers', 'activeVolunteersCount'));
+        return view('admin.volunteers.index', compact('volunteers', 'activeVolunteersCount'));
     }
 
     public function approveVolunteer(Volunteer $volunteer)

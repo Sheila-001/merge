@@ -154,6 +154,7 @@
                     <button type="button" onclick="window.location.href='/'" class="px-6 py-2.5 bg-white text-[#0A90A4] border border-[#0A90A4] rounded-lg hover:bg-[#B7E4FA] hover:text-[#0A90A4] transition-colors font-medium">Cancel</button>
                     <button type="submit" class="px-6 py-2.5 bg-[#0A90A4] text-white rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">Submit Donation</button>
                 </div>
+                 <input type="hidden" name="donation_preference" id="donationPreferenceInput">
             </form>
         </div>
     </main>
@@ -242,7 +243,7 @@
     </div>
 
     <script>
-        // Function to preview image (already exists in your file, keep it or merge)
+        // Function to preview image
         function previewImage(event) {
             const input = event.target;
             const preview = document.getElementById('preview');
@@ -258,75 +259,100 @@
                 }
 
                 reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = '';
+                preview.classList.add('hidden');
+                uploadText.classList.remove('hidden');
             }
         }
 
-
-        // Get the modal elements
-        const donationOptionsModal = document.getElementById('donationOptionsModal');
-        const thankYouModal = document.getElementById('thankYouModal');
-        const donationForm = document.getElementById('donationForm');
-        const donationPreferenceInput = document.createElement('input'); // Create hidden input dynamically
-        donationPreferenceInput.type = 'hidden';
-        donationPreferenceInput.name = 'donation_preference';
-        donationForm.appendChild(donationPreferenceInput); // Append to form
-
-
-        // Intercept form submission
-        donationForm.addEventListener('submit', function(e) {
+        // Form submission handling to show preference modal
+        document.getElementById('donationForm').addEventListener('submit', function(e) {
             e.preventDefault(); // Prevent default form submission
-
-            // Show the donation options modal
-            donationOptionsModal.classList.remove('hidden');
+            document.getElementById('donationOptionsModal').classList.remove('hidden');
         });
 
-        // Handle donation preference selection (Anonymous)
+        // Handle donation preference selection
         document.getElementById('donateAnonymouslyBtn').addEventListener('click', function() {
-            donationPreferenceInput.value = 'anonymous';
-            donationOptionsModal.classList.add('hidden'); // Hide options modal
-
-            submitForm(); // Submit the form
+            document.getElementById('donationPreferenceInput').value = 'anonymous';
+            submitNonMonetaryForm();
         });
 
-        // Handle donation preference selection (Acknowledged)
         document.getElementById('beAcknowledgedBtn').addEventListener('click', function() {
-            donationPreferenceInput.value = 'acknowledged';
-            donationOptionsModal.classList.add('hidden'); // Hide options modal
-
-            submitForm(); // Submit the form
+            document.getElementById('donationPreferenceInput').value = 'acknowledged';
+            submitNonMonetaryForm();
         });
 
-        // Function to submit the form via fetch
-        function submitForm() {
-            const formData = new FormData(donationForm);
+        // Function to submit the form via Fetch API
+        function submitNonMonetaryForm() {
+            const form = document.getElementById('donationForm');
+            const formData = new FormData(form);
 
-            fetch(donationForm.action, {
-                method: 'POST',
+            // Add the image file to FormData manually if it exists
+            const imageInput = document.getElementById('uploadInput');
+            if (imageInput.files && imageInput.files[0]) {
+                 formData.append('image', imageInput.files[0]);
+            }
+
+            fetch(form.action, {
+                method: form.method,
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json' // Expect JSON response
                 }
             })
-            .then(response => response.json()) // Assuming your backend returns JSON
+            .then(response => {
+                // Check if the response is not OK (status code 400-599)
+                if (!response.ok) {
+                    // Try to parse the JSON response even if it's an error
+                    return response.json().then(errorData => {
+                        // Log the full error response to the console
+                        console.error('Backend Error Response:', errorData);
+                        // Throw an error with details from the backend if available
+                        if (errorData.message) {
+                             throw new Error(errorData.message);
+                        } else if (errorData.errors) {
+                            // If validation errors exist, join them into a single string
+                            const errorMessages = Object.values(errorData.errors).flat();
+                            throw new Error('Validation failed:\n' + errorMessages.join('\n'));
+                        } else {
+                            throw new Error('Something went wrong on the server.');
+                        }
+                    }).catch(() => {
+                        // If JSON parsing fails, throw a generic error with status
+                        throw new Error('Server error: ' + response.status + ' ' + response.statusText);
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    // Show the thank you modal on success
-                    thankYouModal.classList.remove('hidden');
+                    document.getElementById('donationOptionsModal').classList.add('hidden');
+                    document.getElementById('thankYouModal').classList.remove('hidden');
                 } else {
-                    // Handle errors or other responses here
-                    console.error('Form submission failed:', data);
-                    alert('There was an error submitting your donation.'); // Basic error handling
+                    // This part might be less relevant now with the error handling in the first then block,
+                    // but keep it as a fallback.
+                    console.error('Error:', data.message || 'Unknown error');
+                    alert('There was an error submitting your donation.');
+                    document.getElementById('donationOptionsModal').classList.add('hidden'); // Hide modal on error
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('There was an error submitting your donation.'); // Basic error handling
+                console.error('Fetch Error:', error);
+                // Display the error message received from the backend or the generic fetch error
+                alert('Submission failed: ' + error.message);
+                document.getElementById('donationOptionsModal').classList.add('hidden'); // Hide modal on error
             });
         }
 
-         // Optional: Add a way to close the modals if needed (e.g., clicking outside or a close button)
-         // For simplicity, we are only showing the thank you modal on success and linking back to donation page.
-         // If you need close buttons on the modals, you'll need to add them to the HTML and add corresponding JS.
+         // Function to close donation options modal by clicking outside
+        function backgroundCloseDonationModal(event) {
+            const modal = document.getElementById('donationOptionsModal');
+            if (event.target === modal) {
+                modal.classList.add('hidden');
+            }
+        }
 
     </script>
 </body>

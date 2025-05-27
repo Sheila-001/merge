@@ -52,6 +52,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/volunteers', [App\Http\Controllers\AdminController::class, 'volunteerIndex'])->name('admin.volunteers.index');
     Route::post('/admin/volunteers/{volunteer}/approve', [App\Http\Controllers\AdminController::class, 'approveVolunteer'])->name('admin.volunteers.approve');
     Route::post('/admin/volunteers/{volunteer}/reject', [App\Http\Controllers\AdminController::class, 'rejectVolunteer'])->name('admin.volunteers.reject');
+
+    // Admin Donation Routes
+    Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'adminDonation'])->name('admin.donations.index');
+    Route::get('/donations/add', [App\Http\Controllers\Admin\DonationController::class, 'adminDonation'])->name('admin.donations.add');
+    Route::patch('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
+
+    // Route to serve private donation proof images
+    Route::get('/donations/proof/{filename}', [App\Http\Controllers\Admin\DonationController::class, 'serveProofImage'])->name('admin.donations.serve-proof');
 });
 
 // Scholarship Routes
@@ -223,7 +231,3 @@ Route::get('/user/calendar', function () {
 Route::get('/monetary-donation', function () {
     return view('donation.monetary');
 })->name('monetary_donation');
-
-Route::get('/admin/donations', function () {
-    return view('admin.donation.addonation');
-})->name('admin.donations.add');

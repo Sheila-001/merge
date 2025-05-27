@@ -19,7 +19,10 @@ class Donation extends Model
         'phone',
         'address',
         'payment_method',
-        'transaction_id'
+        'transaction_id',
+        'is_acknowledged',
+        'proof_path',
+        'message',
     ];
 
     protected $casts = [

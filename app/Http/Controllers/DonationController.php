@@ -22,6 +22,7 @@ class DonationController extends Controller
             'donor_phone' => 'required|string|max:20',
             'proof' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Max 2MB
             'message' => 'nullable|string',
+            'donation_preference' => 'required|in:anonymous,acknowledged', // Add validation for the preference
         ]);
 
         if ($validator->fails()) {
@@ -29,24 +30,29 @@ class DonationController extends Controller
         }
 
         // Process the donation (e.g., save to database, send email)
-        // For now, let's just handle the file upload
         
         $proofPath = null;
         if ($request->hasFile('proof')) {
-            $proofPath = $request->file('proof')->store('proofs', 'public');
+            $proofPath = $request->file('proof')->store('proofs', 'local');
         }
 
-        // Here you would typically save the donation details to a database table.
-        // Example (assuming a Donation model exists):
-        // \App\Models\MonetaryDonation::create([
-        //     'payment_method' => $request->payment_method,
-        //     'amount' => $request->amount,
-        //     'donor_name' => $request->donor_name,
-        //     'donor_email' => $request->donor_email,
-        //     'donor_phone' => $request->donor_phone,
-        //     'proof_path' => $proofPath,
-        //     'message' => $request->message,
-        // ]);
+        // Determine the is_acknowledged value based on the preference
+        $isAcknowledged = ($request->donation_preference === 'acknowledged');
+        
+        \App\Models\Donation::create([
+            'type' => 'monetary',
+            'donor_name' => $request->donor_name,
+            'email' => $request->donor_email,
+            'phone' => $request->donor_phone,
+            'amount' => $request->amount,
+            'payment_method' => $request->payment_method,
+            'description' => null, // Description is for non-monetary donations
+            'status' => 'pending', // Initial status
+            'transaction_id' => null, // You might get this from a payment gateway
+            'proof_path' => $proofPath,
+            'message' => $request->message,
+            'is_acknowledged' => $isAcknowledged, // Save the acknowledgment preference
+        ]);
 
         // For this example, we'll just return a success response.
         return response()->json(['success' => true, 'message' => 'Donation submitted successfully!']);
@@ -67,6 +73,7 @@ class DonationController extends Controller
             'image' => 'required|file|image|max:2048', // Max 2MB, image file types
             'preferred_time' => 'required|date',
             'description' => 'required|string',
+            'donation_preference' => 'required|in:anonymous,acknowledged', // Add validation for the preference
         ]);
 
         if ($validator->fails()) {
@@ -74,25 +81,30 @@ class DonationController extends Controller
         }
 
         // Process the donation (e.g., save to database, send email)
-        // For now, let's just handle the file upload
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('non-monetary-donations', 'public');
+            $imagePath = $request->file('image')->store('non-monetary-donations', 'local');
         }
 
-        // Here you would typically save the donation details to a database table.
-        // Example (assuming a NonMonetaryDonation model exists):
-        // \App\Models\NonMonetaryDonation::create([
-        //     'category' => $request->category,
-        //     'condition' => $request->condition,
-        //     'donor_name' => $request->donor_name,
-        //     'donor_email' => $request->donor_email,
-        //     'donor_phone' => $request->donor_phone,
-        //     'image_path' => $imagePath,
-        //     'preferred_time' => $request->preferred_time,
-        //     'description' => $request->description,
-        // ]);
+        // Determine the is_acknowledged value based on the preference
+        $isAcknowledged = ($request->donation_preference === 'acknowledged');
+
+        // Create a new record in the donations table
+        \App\Models\Donation::create([
+            'type' => 'non-monetary',
+            'donor_name' => $request->donor_name,
+            'email' => $request->donor_email,
+            'phone' => $request->donor_phone,
+            'amount' => null, // Amount is null for non-monetary donations
+            'payment_method' => null, // Payment method is null for non-monetary donations
+            'description' => 'Category: ' . $request->category . ', Condition: ' . $request->condition . ', Description: ' . $request->description,
+            'status' => 'pending', // Initial status
+            'transaction_id' => null,
+            'proof_path' => $imagePath, // Store image path in proof_path
+            'message' => 'Preferred Time: ' . $request->preferred_time, // Store preferred time in message
+            'is_acknowledged' => $isAcknowledged,
+        ]);
 
         // For this example, we'll just return a success response.
         return response()->json(['success' => true, 'message' => 'Non-monetary donation submitted successfully!']);

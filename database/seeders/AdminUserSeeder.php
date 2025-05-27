@@ -14,16 +14,18 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'status' => 'active',
-            'class_year' => '2024',
-            'is_admin' => true,
-            'email_verified_at' => now(),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@example.com'], // Find user by email
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'status' => 'active', // Assuming 'status' is a valid column and value
+                'class_year' => null, // Or a default value if applicable
+                'is_admin' => true,
+                'email_verified_at' => now(),
+            ]
+        );
 
         // Create a backup admin account
         User::create([
