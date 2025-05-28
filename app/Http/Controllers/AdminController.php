@@ -59,6 +59,11 @@ class AdminController extends Controller
         // Auto-update completed events
         $this->updateCompletedEvents();
 
+        // Add donation stats for dashboard cards
+        $monetaryDonations = \App\Models\Donation::where('type', 'monetary')->count();
+        $nonMonetaryItems = \App\Models\Donation::where('type', 'non-monetary')->count();
+        $totalDonors = \App\Models\Donation::distinct('donor_name')->count('donor_name');
+
         // Get counts for dashboard
         $data = [
             'totalUsers' => User::count(),
@@ -83,7 +88,10 @@ class AdminController extends Controller
                                     ->count(),
             'activeEvents' => Event::where('status', '!=', 'completed')
                                  ->where('status', '!=', 'cancelled')
-                                 ->count()
+                                 ->count(),
+            'monetaryDonations' => $monetaryDonations,
+            'nonMonetaryItems' => $nonMonetaryItems,
+            'totalDonors' => $totalDonors,
         ];
 
         return view('admin.dashboard', $data);

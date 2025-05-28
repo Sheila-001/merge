@@ -8,6 +8,7 @@ use App\Models\Donation;
 use App\Models\Campaign;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class DonationController extends Controller
 {
@@ -124,6 +125,18 @@ class DonationController extends Controller
 
         $donation = Donation::create($validated);
 
+        // For monetary donations
+        if ($request->hasFile('proof')) {
+            $proofPath = $request->file('proof')->store('proofs', 'public');
+            $donation->update(['proof_path' => $proofPath]);
+        }
+
+        // For non-monetary donations
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('non-monetary-donations', 'public');
+            $donation->update(['image_path' => $imagePath]);
+        }
+
         return redirect()
             ->route('admin.donations.show', $donation)
             ->with('success', 'Donation created successfully.');
@@ -155,6 +168,18 @@ class DonationController extends Controller
         ]);
 
         $donation->update($validated);
+
+        // For monetary donations
+        if ($request->hasFile('proof')) {
+            $proofPath = $request->file('proof')->store('proofs', 'public');
+            $donation->update(['proof_path' => $proofPath]);
+        }
+
+        // For non-monetary donations
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('non-monetary-donations', 'public');
+            $donation->update(['image_path' => $imagePath]);
+        }
 
         return redirect()
             ->route('admin.donations.show', $donation)
@@ -194,59 +219,54 @@ class DonationController extends Controller
 
     public function adminDonation()
     {
-        // Get statistics
-        $monetaryDonations = Donation::where('type', 'monetary')->count();
-        $nonMonetaryItems = Donation::where('type', 'non-monetary')->count();
-        $totalDonors = Donation::distinct('donor_name')->count();
-        
-        // Get recent donations with pagination
-        $recentDonations = Donation::latest()
-            ->paginate(3);
-            
-        // Get pending drop-offs
-        $pendingDropoffs = Donation::where('type', 'non-monetary')
+        // Get monetary donations total and change
+        $monetaryTotal = \App\Models\Donation::where('type', 'monetary')->sum('amount');
+        $lastMonthMonetary = \App\Models\Donation::where('type', 'monetary')
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->sum('amount');
+        $monetaryChange = $lastMonthMonetary > 0 ? (($monetaryTotal - $lastMonthMonetary) / $lastMonthMonetary) * 100 : 0;
+
+        // Get non-monetary counts and change
+        $nonMonetaryCount = \App\Models\Donation::where('type', 'non-monetary')->count();
+        $lastMonthNonMonetary = \App\Models\Donation::where('type', 'non-monetary')
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->count();
+        $nonMonetaryChange = $lastMonthNonMonetary > 0 ? (($nonMonetaryCount - $lastMonthNonMonetary) / $lastMonthNonMonetary) * 100 : 0;
+
+        // Get campaign totals and change
+        $campaignTotal = \App\Models\Donation::where('type', 'campaign')->sum('amount');
+        $lastMonthCampaign = \App\Models\Donation::where('type', 'campaign')
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->sum('amount');
+        $campaignChange = $lastMonthCampaign > 0 ? (($campaignTotal - $lastMonthCampaign) / $lastMonthCampaign) * 100 : 0;
+
+        // Get donor counts and change
+        $donorCount = \App\Models\Donation::distinct('donor_name')->count('donor_name');
+        $lastMonthDonors = \App\Models\Donation::whereMonth('created_at', now()->subMonth()->month)
+            ->distinct('donor_name')
+            ->count('donor_name');
+        $donorChange = $lastMonthDonors > 0 ? (($donorCount - $lastMonthDonors) / $lastMonthDonors) * 100 : 0;
+
+        // Get recent donations
+        $donations = \App\Models\Donation::latest()->paginate(10);
+
+        // Get pending dropoffs
+        $pendingDropoffs = \App\Models\Donation::where('type', 'non-monetary')
             ->where('status', 'pending')
             ->latest()
             ->get();
 
         return view('admin.donation.addonation', compact(
-            'monetaryDonations',
-            'nonMonetaryItems',
-            'totalDonors',
-            'recentDonations',
+            'monetaryTotal',
+            'monetaryChange',
+            'nonMonetaryCount',
+            'nonMonetaryChange',
+            'campaignTotal',
+            'campaignChange',
+            'donorCount',
+            'donorChange',
+            'donations',
             'pendingDropoffs'
         ));
-    }
-
-    public function updateStatus(Request $request, Donation $donation)
-    {
-        $request->validate([
-            'status' => 'required|in:pending,completed,rejected'
-        ]);
-
-        $donation->update([
-            'status' => $request->status
-        ]);
-
-        return redirect()->back()->with('success', 'Donation status updated successfully');
-    }
-
-    /**
-     * Serve the private donation proof image.
-     *
-     * @param  string $filename
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function serveProofImage($filename)
-    {
-        $path = 'proofs/' . $filename; // Assuming 'proofs' or 'non-monetary-donations' are top-level folders in local storage
-
-        // Check if the file exists in the local storage
-        if (!\Illuminate\Support\Facades\Storage::disk('local')->exists($path)) {
-            abort(404); // File not found
-        }
-
-        // Return the file as a response
-        return \Illuminate\Support\Facades\Storage::disk('local')->response($path);
     }
 } 

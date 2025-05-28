@@ -33,11 +33,30 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Add donation stats for dashboard cards
+        $monetaryDonations = \App\Models\Donation::where('type', 'monetary')->count();
+        $nonMonetaryItems = \App\Models\Donation::where('type', 'non-monetary')->count();
+        $totalDonors = \App\Models\Donation::distinct('donor_email')->count('donor_email');
+
+        // Get recent donations with pagination
+        $recentDonations = \App\Models\Donation::latest()->paginate(10);
+
+        // Get pending drop-offs
+        $pendingDropoffs = \App\Models\Donation::where('type', 'non-monetary')
+            ->where('status', 'pending')
+            ->latest()
+            ->get();
+
         return view('admin.dashboard', compact(
             'totalUsers',
             'activeStudents',
             'recentEvents',
-            'upcomingEvents'
+            'upcomingEvents',
+            'monetaryDonations',
+            'nonMonetaryItems',
+            'totalDonors',
+            'recentDonations',
+            'pendingDropoffs'
         ));
     }
 }

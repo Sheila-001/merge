@@ -58,7 +58,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Donation Routes
     Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'adminDonation'])->name('admin.donations.index');
-    Route::get('/donations/add', [App\Http\Controllers\Admin\DonationController::class, 'adminDonation'])->name('admin.donations.add');
+    Route::get('/admin/donations', [App\Http\Controllers\Admin\DonationController::class, 'adminDonation'])->name('admin.donations.add');
     Route::patch('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
 
     // Route to serve private donation proof images
@@ -233,11 +233,11 @@ Route::delete('/admin/jobs/{job}', [JobListingController::class, 'destroy'])->na
 Route::post('/admin/jobs/{job}/approve', [JobListingController::class, 'approve'])->name('jobs.approve');
 Route::post('/admin/jobs/{job}/reject', [JobListingController::class, 'reject'])->name('jobs.reject');
 
+// Public Donation Routes (no auth required)
 Route::get('/donate', function () {
     return view('donation.donation');
 })->name('donation');
 
-// Donation Routes
 Route::get('/donation', function () {
     return view('donation.donation');
 })->name('donation');
@@ -260,9 +260,14 @@ Route::get('/monetary-donation', function () {
     return view('donation.monetary');
 })->name('monetary_donation');
 
-Route::get('/admin/donations', function () {
-    return view('admin.donation.addonation');
-})->name('admin.donations.add');
+// Admin Donation Routes (protected by auth)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/donations', [App\Http\Controllers\Admin\DonationController::class, 'adminDonation'])->name('admin.donations.add');
+    Route::get('/admin/donation', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donation.index');
+    Route::patch('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
+});
 
-
-Route::get('/admin/donation', [DonationController::class, 'index'])->name('admin.donation.index');
+// Admin redirect
+Route::get('/admin', function () {
+    return redirect()->route('admin.donations.add');
+});

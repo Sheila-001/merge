@@ -11,7 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     @stack('styles')
 </head>
-<body class="font-sans antialiased">
+<body class="font-sans antialciased">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar Navigation -->
         <div class="w-64 bg-[#1B4B5A] text-white flex flex-col fixed h-full">
@@ -30,7 +30,7 @@
                 <a href="/admin/jobs" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Jobs</a>
                 
                 {{-- Donations parent link --}}
-                <a href="#" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors" onclick="toggleDonationsSubmenu(event)">Donations</a>
+                <a href="{{ route('admin.donations.add') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Donations</a>
 
                 {{-- Donations submenu --}}
                 <div id="donationsSubmenu" style="display: none;">
@@ -49,6 +49,14 @@
         </div>
         <!-- Main Content -->
         <div class="flex-1 bg-gray-100 ml-64 overflow-y-auto h-screen p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="bg-white rounded-xl shadow p-6">
+                    ...
+                </div>
+                <div class="bg-white rounded-xl shadow p-6">
+                    ...
+                </div>
+            </div>
             {{ $slot }}
         </div>
     </div>
