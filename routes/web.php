@@ -17,6 +17,9 @@ use App\Mail\ApplicationReceived;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\UrgentFundsController;
+use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
+use App\Http\Controllers\Admin\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -120,7 +123,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/volunteers/calendar', [VolunteerController::class, 'viewCalendar'])->name('volunteer.calendar');
     Route::post('/volunteers/job-offers', [VolunteerController::class, 'addJobOffer'])->name('volunteer.addJobOffer');
     Route::post('/volunteers/{volunteer}/status', [VolunteerController::class, 'updateStatus'])->name('volunteers.updateStatus');
-    
+
     // New routes for volunteer dashboard and job post
     Route::get('/volunteer/dashboard', [VolunteerController::class, 'dashboard'])->name('volunteer.dashboard');
     Route::get('/volunteer/job-post', [VolunteerController::class, 'jobPost'])->name('volunteer.job-post');
@@ -152,6 +155,31 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Admin Volunteer Management
     Route::get('/volunteers', [App\Http\Controllers\AdminController::class, 'volunteerIndex'])->name('admin.volunteers.index');
+
+    // Urgent Funds Routes
+    Route::get('/urgent-funds', [UrgentFundsController::class, 'index'])->name('admin.urgent-funds.index');
+    Route::get('/urgent-funds/create', [UrgentFundsController::class, 'create'])->name('admin.urgent-funds.create');
+    Route::post('/urgent-funds', [UrgentFundsController::class, 'store'])->name('admin.urgent-funds.store');
+    Route::get('/urgent-funds/{campaign}/edit', [UrgentFundsController::class, 'edit'])->name('admin.urgent-funds.edit');
+    Route::put('/urgent-funds/{campaign}', [UrgentFundsController::class, 'update'])->name('admin.urgent-funds.update');
+    Route::delete('/urgent-funds/{campaign}', [UrgentFundsController::class, 'destroy'])->name('admin.urgent-funds.destroy');
+
+    // Campaign Management Routes
+    Route::resource('/campaigns', AdminCampaignController::class)->names('admin.campaigns');
+
+    // Donations Routes
+    Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.index');
+    Route::get('/donations/create', [App\Http\Controllers\Admin\DonationController::class, 'create'])->name('admin.donations.create');
+    Route::post('/donations', [App\Http\Controllers\Admin\DonationController::class, 'store'])->name('admin.donations.store');
+    Route::get('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'show'])->name('admin.donations.show');
+    Route::get('/donations/{donation}/edit', [App\Http\Controllers\Admin\DonationController::class, 'edit'])->name('admin.donations.edit');
+    Route::put('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'update'])->name('admin.donations.update');
+    Route::delete('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'destroy'])->name('admin.donations.destroy');
+    Route::put('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
+    Route::get('/donations/dropoffs', [App\Http\Controllers\Admin\DonationController::class, 'dropoffs'])->name('admin.donations.dropoffs');
+
+    // Category Management
+    Route::resource('categories', CategoryController::class);
 });
 
 // Admin Scholars Route
@@ -224,6 +252,9 @@ Route::get('/monetary-donation', function () {
     return view('donation.monetary');
 })->name('monetary_donation');
 
-Route::get('/admin/donations', function () {
-    return view('admin.donation.addonation');
-})->name('admin.donations.add');
+Route::get('/admin/donation', function () {
+    return view('admin.donations');
+})->name('admin.donation.add');
+
+
+Route::get('/admin/donation', [DonationController::class, 'index'])->name('admin.donation.index');

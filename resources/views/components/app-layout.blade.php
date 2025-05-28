@@ -28,7 +28,20 @@
                 <a href="/students" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Applicants</a>
                 <a href="{{ route('admin.volunteers.index') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Volunteers</a>
                 <a href="/admin/jobs" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Jobs</a>
-                <a href="{{ route('admin.donations.add') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Donations</a>
+                
+                {{-- Donations parent link --}}
+                <a href="#" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors" onclick="toggleDonationsSubmenu(event)">Donations</a>
+
+                {{-- Donations submenu --}}
+                <div id="donationsSubmenu" style="display: none;">
+                    <a href="{{ route('admin.urgent-funds.index') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                        └ Urgent Funds
+                    </a>
+                    <a href="{{ route('admin.campaigns.index') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                        └ All Campaigns
+                    </a>
+                </div>
+
                 <div class="mt-auto pt-20">
                     <a href="/logout" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors text-red-300 hover:text-red-200">Logout</a>
                 </div>
@@ -40,5 +53,26 @@
         </div>
     </div>
     @stack('scripts')
+    <script>
+    function toggleDonationsSubmenu(event) {
+        event.preventDefault(); // Prevent default link behavior
+        var submenu = document.getElementById('donationsSubmenu');
+        if (submenu.style.display === 'none') {
+            submenu.style.display = 'block';
+        } else {
+            submenu.style.display = 'none';
+        }
+    }
+
+    // Optional: Keep urgentFundsSubmenu toggle if still needed elsewhere, otherwise remove
+    // function toggleUrgentFunds() {
+    //     var submenu = document.getElementById('urgentFundsSubmenu');
+    //     if (submenu.style.display === 'none') {
+    //         submenu.style.display = 'block';
+    //     } else {
+    //         submenu.style.display = 'none';
+    //     }
+    // }
+    </script>
 </body>
 </html>
