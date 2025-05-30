@@ -137,7 +137,6 @@ class AdminController extends Controller
         // Get pending drop-offs
         $pendingDropoffs = Donation::where('type', 'non-monetary')
             ->where('status', 'pending')
-            ->whereNotNull('expected_date')
             ->get();
 
         return view('admin.donation.index', compact(
