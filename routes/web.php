@@ -20,6 +20,7 @@ use App\Http\Controllers\DonationController;
 use App\Http\Controllers\UrgentFundsController;
 use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\PublicDonationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,9 +58,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/volunteers/{volunteer}/reject', [App\Http\Controllers\AdminController::class, 'rejectVolunteer'])->name('admin.volunteers.reject');
 
     // Admin Donation Routes
-    Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'adminDonation'])->name('admin.donations.index');
-    Route::get('/admin/donations', [App\Http\Controllers\Admin\DonationController::class, 'adminDonation'])->name('admin.donations.add');
+    Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.index');
+    Route::get('/donations/create', [App\Http\Controllers\Admin\DonationController::class, 'create'])->name('admin.donations.create');
+    Route::post('/donations', [App\Http\Controllers\Admin\DonationController::class, 'store'])->name('admin.donations.store');
+    Route::get('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'show'])->name('admin.donations.show');
+    Route::get('/donations/{donation}/edit', [App\Http\Controllers\Admin\DonationController::class, 'edit'])->name('admin.donations.edit');
+    Route::put('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'update'])->name('admin.donations.update');
+    Route::delete('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'destroy'])->name('admin.donations.destroy');
     Route::patch('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
+    Route::get('/donations/dropoffs', [App\Http\Controllers\Admin\DonationController::class, 'dropoffs'])->name('admin.donations.dropoffs');
 
     // Route to serve private donation proof images
     Route::get('/donations/proof/{filename}', [App\Http\Controllers\Admin\DonationController::class, 'serveProofImage'])->name('admin.donations.serve-proof');
@@ -183,7 +190,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/donations/{donation}/edit', [App\Http\Controllers\Admin\DonationController::class, 'edit'])->name('admin.donations.edit');
     Route::put('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'update'])->name('admin.donations.update');
     Route::delete('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'destroy'])->name('admin.donations.destroy');
-    Route::put('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
+    Route::patch('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
     Route::get('/donations/dropoffs', [App\Http\Controllers\Admin\DonationController::class, 'dropoffs'])->name('admin.donations.dropoffs');
 
     // Category Management
@@ -242,14 +249,14 @@ Route::get('/donation', function () {
     return view('donation.donation');
 })->name('donation');
 
-Route::post('/monetary-donation/submit', [DonationController::class, 'submitMonetaryDonation'])->name('monetary_donation.submit');
+Route::post('/monetary-donation/submit', [App\Http\Controllers\PublicDonationController::class, 'submitMonetaryDonation'])->name('monetary_donation.submit');
 
 // Non-Monetary Donation Routes
 Route::get('/non-monetary-donation', function () {
     return view('donation.nonmonetary');
 })->name('non_monetary');
 
-Route::post('/non-monetary-donation/submit', [DonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
+Route::post('/non-monetary-donation/submit', [App\Http\Controllers\PublicDonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
 
 // Campaign Calendar Route
 Route::get('/user/calendar', function () {
@@ -262,7 +269,7 @@ Route::get('/monetary-donation', function () {
 
 // Admin Donation Routes (protected by auth)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/donations', [App\Http\Controllers\Admin\DonationController::class, 'adminDonation'])->name('admin.donations.add');
+    Route::get('/admin/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.add');
     Route::get('/admin/donation', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donation.index');
     Route::patch('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
 });
@@ -271,3 +278,11 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/admin', function () {
     return redirect()->route('admin.donations.add');
 });
+
+Route::get('/debug-database', [App\Http\Controllers\PublicDonationController::class, 'debugDatabase']);
+
+// For monetary donations
+Route::post('/donations/monetary', [App\Http\Controllers\PublicDonationController::class, 'storeMonetary'])->name('donations.monetary.store');
+
+// For non-monetary donations
+Route::post('/donations/non-monetary', [App\Http\Controllers\PublicDonationController::class, 'storeNonMonetary'])->name('donations.non-monetary.store');

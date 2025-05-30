@@ -44,7 +44,7 @@
                 Jobs
             </a>
 
-            <a href="{{ route('admin.donations.add') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">
+            <a href="{{ route('admin.donations.index') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1 .668.81 1.095 1.945 1.095 3 0 1.415-.842 2.607-2.035 3.262C11.923 16.468 10.055 18 8 18a7.987 7.987 0 01-2.343-2.599A7.987 7.987 0 014 12c0-1.415.842-2.607 2.035-3.262C6.077 7.532 7.945 6 10 6z"/>
                </svg>

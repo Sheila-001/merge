@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Donation;
 use App\Models\Campaign;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
@@ -51,13 +50,19 @@ class DonationController extends Controller
             : 0;
 
         // Get campaign total and change
-        $campaignTotal = Campaign::where('status', 'active')
-            ->sum('raised_amount');
+        $campaignTotal = Donation::whereHas('campaign', function($query) {
+                $query->where('status', 'active');
+            })
+            ->where('status', 'completed')
+            ->sum('amount');
         
-        $lastMonthCampaign = Campaign::where('status', 'active')
+        $lastMonthCampaign = Donation::whereHas('campaign', function($query) use ($lastMonth) {
+                $query->where('status', 'active');
+            })
+            ->where('status', 'completed')
             ->whereMonth('created_at', $lastMonth->month)
             ->whereYear('created_at', $lastMonth->year)
-            ->sum('raised_amount');
+            ->sum('amount');
         
         $campaignChange = $lastMonthCampaign > 0 
             ? (($campaignTotal - $lastMonthCampaign) / $lastMonthCampaign) * 100 
@@ -79,7 +84,7 @@ class DonationController extends Controller
             : 0;
 
         // Get paginated donations
-        $donations = Donation::with(['campaign', 'donor'])
+        $donations = Donation::with(['campaign'])
             ->latest()
             ->paginate(10);
 
@@ -217,56 +222,14 @@ class DonationController extends Controller
         return view('admin.donation.dropoffs', compact('dropoffs'));
     }
 
-    public function adminDonation()
+    public function serveProofImage($filename)
     {
-        // Get monetary donations total and change
-        $monetaryTotal = \App\Models\Donation::where('type', 'monetary')->sum('amount');
-        $lastMonthMonetary = \App\Models\Donation::where('type', 'monetary')
-            ->whereMonth('created_at', now()->subMonth()->month)
-            ->sum('amount');
-        $monetaryChange = $lastMonthMonetary > 0 ? (($monetaryTotal - $lastMonthMonetary) / $lastMonthMonetary) * 100 : 0;
+        $path = storage_path('app/public/proofs/' . $filename);
+        
+        if (!file_exists($path)) {
+            abort(404);
+        }
 
-        // Get non-monetary counts and change
-        $nonMonetaryCount = \App\Models\Donation::where('type', 'non-monetary')->count();
-        $lastMonthNonMonetary = \App\Models\Donation::where('type', 'non-monetary')
-            ->whereMonth('created_at', now()->subMonth()->month)
-            ->count();
-        $nonMonetaryChange = $lastMonthNonMonetary > 0 ? (($nonMonetaryCount - $lastMonthNonMonetary) / $lastMonthNonMonetary) * 100 : 0;
-
-        // Get campaign totals and change
-        $campaignTotal = \App\Models\Donation::where('type', 'campaign')->sum('amount');
-        $lastMonthCampaign = \App\Models\Donation::where('type', 'campaign')
-            ->whereMonth('created_at', now()->subMonth()->month)
-            ->sum('amount');
-        $campaignChange = $lastMonthCampaign > 0 ? (($campaignTotal - $lastMonthCampaign) / $lastMonthCampaign) * 100 : 0;
-
-        // Get donor counts and change
-        $donorCount = \App\Models\Donation::distinct('donor_name')->count('donor_name');
-        $lastMonthDonors = \App\Models\Donation::whereMonth('created_at', now()->subMonth()->month)
-            ->distinct('donor_name')
-            ->count('donor_name');
-        $donorChange = $lastMonthDonors > 0 ? (($donorCount - $lastMonthDonors) / $lastMonthDonors) * 100 : 0;
-
-        // Get recent donations
-        $donations = \App\Models\Donation::latest()->paginate(10);
-
-        // Get pending dropoffs
-        $pendingDropoffs = \App\Models\Donation::where('type', 'non-monetary')
-            ->where('status', 'pending')
-            ->latest()
-            ->get();
-
-        return view('admin.donation.addonation', compact(
-            'monetaryTotal',
-            'monetaryChange',
-            'nonMonetaryCount',
-            'nonMonetaryChange',
-            'campaignTotal',
-            'campaignChange',
-            'donorCount',
-            'donorChange',
-            'donations',
-            'pendingDropoffs'
-        ));
+        return response()->file($path);
     }
 } 
