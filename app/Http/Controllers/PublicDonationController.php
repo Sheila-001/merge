@@ -96,16 +96,16 @@ class PublicDonationController extends Controller
         \App\Models\Donation::create([
             'type' => 'non-monetary',
             'donor_name' => $request->donor_name,
-            'email' => $request->donor_email,
-            'phone' => $request->donor_phone,
+            'donor_email' => $request->donor_email,
+            'donor_phone' => $request->donor_phone,
             'amount' => null, // Amount is null for non-monetary donations
             'payment_method' => null, // Payment method is null for non-monetary donations
-            'description' => 'Category: ' . $request->category . ', Condition: ' . $request->condition . ', Description: ' . $request->description,
+            'item_description' => 'Category: ' . $request->category . ', Condition: ' . $request->condition . ', Description: ' . $request->description,
             'status' => 'pending', // Initial status
             'transaction_id' => null,
             'proof_path' => $imagePath, // Store image path in proof_path
             'message' => 'Preferred Time: ' . $request->preferred_time, // Store preferred time in message
-            'is_acknowledged' => $isAcknowledged,
+            'is_anonymous' => !($request->donation_preference === 'acknowledged'),
         ]);
 
         // For this example, we'll just return a success response.

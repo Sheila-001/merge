@@ -7,32 +7,67 @@
 
     <title>@yield('title', 'Admin Dashboard')</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- Custom Styles -->
+    <!-- Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
     @stack('styles')
-
 </head>
-<body>
-    <div class="wrapper">
-        <!-- Optional: Include a sidebar or header here -->
+<body class="font-sans antialiased">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <div class="w-64 bg-[#1B4B5A] text-white flex flex-col fixed h-full">
+            <div class="p-4 flex items-center space-x-2">
+                <img src="{{ asset('image/logohauzhayag.jpg') }}"
+                     alt="Hauz Hayag Logo"
+                     class="h-16 w-auto rounded-lg shadow-md">
+                <h1 class="text-2xl font-bold">Hauz Hayag</h1>
+            </div>
+            <nav class="mt-8">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Dashboard</a>
+                <a href="{{ route('users.index') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">User Management</a>
+                <a href="{{ route('events.index') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Events</a>
+                <a href="{{ route('admin.applications.index') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Applicants</a>
+                <a href="{{ route('admin.volunteers.index') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Volunteers</a>
+                <a href="{{ route('jobs.admin.index') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Jobs</a>
 
-        <div class="content">
+                {{-- Donations parent link --}}
+                <a href="#" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors" onclick="toggleDonationsSubmenu(event)">Donations</a>
+
+                {{-- Donations submenu --}}
+                <div id="donationsSubmenu" style="display: none;">
+                    <a href="{{ route('admin.urgent-funds.index') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                        └ Urgent Funds
+                    </a>
+                    <a href="{{ route('admin.campaigns.index') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                        └ All Campaigns
+                    </a>
+                </div>
+
+                {{-- You can add other admin links here --}}
+
+                <div class="mt-auto pt-20">
+                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors text-red-300 hover:text-red-200">Logout</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </div>
+            </nav>
+        </div>
+        <!-- Main Content -->
+        <div class="flex-1 bg-gray-100 ml-64 overflow-y-auto h-screen p-6">
             @yield('content')
         </div>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom Scripts -->
     @stack('scripts')
-
+    <script>
+    function toggleDonationsSubmenu(event) {
+        event.preventDefault(); // Prevent default link behavior
+        var submenu = document.getElementById('donationsSubmenu');
+        if (submenu.style.display === 'none') {
+            submenu.style.display = 'block';
+        } else {
+            submenu.style.display = 'none';
+        }
+    }
+    </script>
 </body>
 </html> 

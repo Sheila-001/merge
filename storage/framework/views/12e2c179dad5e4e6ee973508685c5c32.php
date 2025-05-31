@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title><?php echo e(config('app.name', 'Laravel')); ?></title>
 
     <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body class="font-sans antialciased">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar Navigation -->
         <div class="w-64 bg-[#1B4B5A] text-white flex flex-col fixed h-full">
             <div class="p-4 flex items-center space-x-2">
-                <img src="{{ asset('image/logohauzhayag.jpg') }}"
+                <img src="<?php echo e(asset('image/logohauzhayag.jpg')); ?>"
                      alt="Hauz Hayag Logo"
                      class="h-16 w-auto rounded-lg shadow-md">
                 <h1 class="text-2xl font-bold">Hauz Hayag</h1>
@@ -26,18 +26,18 @@
                 <a href="/users" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">User Management</a>
                 <a href="/events" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Events</a>
                 <a href="/students" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Applicants</a>
-                <a href="{{ route('admin.volunteers.index') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Volunteers</a>
+                <a href="<?php echo e(route('admin.volunteers.index')); ?>" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Volunteers</a>
                 <a href="/admin/jobs" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Jobs</a>
                 
-                {{-- Donations parent link --}}
+                
                 <a href="#" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors" onclick="toggleDonationsSubmenu(event)">Donations</a>
 
-                {{-- Donations submenu --}}
+                
                 <div id="donationsSubmenu" style="display: none;">
-                    <a href="{{ route('admin.urgent-funds.index') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                    <a href="<?php echo e(route('admin.urgent-funds.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
                         └ Urgent Funds
                     </a>
-                    <a href="{{ route('admin.campaigns.index') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                    <a href="<?php echo e(route('admin.campaigns.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
                         └ All Campaigns
                     </a>
                 </div>
@@ -57,10 +57,11 @@
                     ...
                 </div>
             </div>
-            {{ $slot }}
+            <?php echo e($slot); ?>
+
         </div>
     </div>
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
     <script>
     function toggleDonationsSubmenu(event) {
         event.preventDefault(); // Prevent default link behavior
@@ -83,4 +84,4 @@
     // }
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\Users\PNPh\Desktop\sheila\collab\resources\views/components/app-layout.blade.php ENDPATH**/ ?>

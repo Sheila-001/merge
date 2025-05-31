@@ -85,7 +85,7 @@
                 <!-- Right Column -->
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-black mb-2">Upload Image</label>
+                        <label class="block text-sm font-medium text-black mb-2">Proof of Donation</label>
                         <div class="border-2 border-dashed border-[#0A90A4] rounded-lg p-6 text-center cursor-pointer hover:border-[#0A90A4] transition-colors" onclick="document.getElementById('uploadInput').click()">
                             <div id="uploadText" class="space-y-2">
                                 <svg class="mx-auto h-12 w-12 text-[#0A90A4]" stroke="currentColor" fill="none" viewBox="0 0 48 48">
@@ -105,7 +105,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-black mb-2">Note</label>
+                        <label class="block text-sm font-medium text-black mb-2">Note (Optional)</label>
                         <textarea name="description" rows="4" placeholder="Please describe the item you wish to donate..." required class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent"></textarea>
                     </div>
                 </div>

@@ -92,13 +92,13 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-black mb-2">Upload Proof of Payment</label>
+                        <label class="block text-sm font-medium text-black mb-2">Proof of Donation</label>
                         <div class="border-2 border-dashed border-[#0A90A4] rounded-lg p-6 text-center cursor-pointer hover:border-[#0A90A4] transition-colors" onclick="document.getElementById('proofUpload').click()">
                             <div id="proofUploadText" class="space-y-2">
                                 <svg class="mx-auto h-12 w-12 text-[#0A90A4]" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
-                                <div class="text-[#0A90A4] font-medium">browse files</div>
+                                <div class="text-[#0A90A4] font-medium">Browse Files</div>
                                 <div class="text-xs text-[#0A90A4]">(Screenshot or photo of transaction receipt)</div>
                             </div>
                             <input type="file" id="proofUpload" name="proof" accept="image/*,.pdf" class="hidden" onchange="previewProof(event)">
@@ -110,7 +110,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-black mb-2">Message (Optional)</label>
+                        <label class="block text-sm font-medium text-black mb-2">Note (Optional)</label>
                         <textarea name="message" rows="3" placeholder="Any additional message..." class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent"></textarea>
                     </div>
                 </div>

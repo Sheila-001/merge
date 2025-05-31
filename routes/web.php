@@ -180,7 +180,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::delete('/urgent-funds/{campaign}', [UrgentFundsController::class, 'destroy'])->name('admin.urgent-funds.destroy');
 
     // Campaign Management Routes
-    Route::resource('/campaigns', AdminCampaignController::class)->names('admin.campaigns');
+    Route::get('/campaigns', [AdminCampaignController::class, 'dashboard'])->name('admin.campaigns.index');
+    Route::resource('/campaigns', AdminCampaignController::class)->names('admin.campaigns')->except('index');
 
     // Donations Routes
     Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.index');
@@ -251,12 +252,10 @@ Route::get('/donation', function () {
 
 Route::post('/monetary-donation/submit', [App\Http\Controllers\PublicDonationController::class, 'submitMonetaryDonation'])->name('monetary_donation.submit');
 
-// Non-Monetary Donation Routes
+// Add non-monetary donation route
 Route::get('/non-monetary-donation', function () {
     return view('donation.nonmonetary');
 })->name('non_monetary');
-
-Route::post('/non-monetary-donation/submit', [App\Http\Controllers\PublicDonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
 
 // Campaign Calendar Route
 Route::get('/user/calendar', function () {
@@ -286,3 +285,5 @@ Route::post('/donations/monetary', [App\Http\Controllers\PublicDonationControlle
 
 // For non-monetary donations
 Route::post('/donations/non-monetary', [App\Http\Controllers\PublicDonationController::class, 'storeNonMonetary'])->name('donations.non-monetary.store');
+
+Route::post('/non-monetary-donation', [PublicDonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
