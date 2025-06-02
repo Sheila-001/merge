@@ -175,6 +175,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Campaign Management Routes
     Route::resource('/campaigns', AdminCampaignController::class)->names('admin.campaigns');
 
+    Route::prefix('calendar')->name('calendar.')->group(function () {
+        Route::get('/', [CalendarController::class, 'index'])->name('index');
+        Route::post('/', [CalendarController::class, 'store'])->name('store');
+        Route::put('/{campaign}', [CalendarController::class, 'update'])->name('update');
+        Route::delete('/{campaign}', [CalendarController::class, 'destroy'])->name('destroy');
+    });
+    
     // Donations Routes
     Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.index');
     Route::get('/donations/create', [App\Http\Controllers\Admin\DonationController::class, 'create'])->name('admin.donations.create');
