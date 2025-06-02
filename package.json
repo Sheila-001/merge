@@ -1,0 +1,51 @@
+{
+  "name": "collab",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sheila-001/collab.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sheila-001/collab/issues"
+  },
+  "homepage": "https://github.com/Sheila-001/collab#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "laravel-vite-plugin": "^1.2.0",
+    "postcss": "^8.5.4",
+    "tailwindcss": "^4.1.8",
+    "vite": "^6.3.5",
+    "browserslist": "^4.25.0",
+    "caniuse-lite": "^1.0.30001720",
+    "electron-to-chromium": "^1.5.161",
+    "esbuild": "^0.25.5",
+    "escalade": "^3.2.0",
+    "fdir": "^6.4.5",
+    "fraction.js": "^4.3.7",
+    "nanoid": "^3.3.11",
+    "node-releases": "^2.0.19",
+    "normalize-range": "^0.1.2",
+    "picocolors": "^1.1.1",
+    "picomatch": "^4.0.2",
+    "postcss-value-parser": "^4.2.0",
+    "rollup": "^4.41.1"
+  },
+  "dependencies": {
+    "source-map-js": "^1.2.1",
+    "tinyglobby": "^0.2.14",
+    "update-browserslist-db": "^1.1.3",
+    "vite-plugin-full-reload": "^1.2.0"
+  },
+  "description": ""
+}

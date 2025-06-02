@@ -9,6 +9,9 @@ use App\Models\Event;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Models\Volunteer;
+use App\Models\Donation;
+use App\Models\Campaign;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -56,45 +59,98 @@ class AdminController extends Controller
 
     public function index()
     {
-        // Auto-update completed events
-        $this->updateCompletedEvents();
+        // Get current month's data
+        $currentMonth = Carbon::now();
+        $lastMonth = Carbon::now()->subMonth();
 
-        // Add donation stats for dashboard cards
-        $monetaryDonations = \App\Models\Donation::where('type', 'monetary')->count();
-        $nonMonetaryItems = \App\Models\Donation::where('type', 'non-monetary')->count();
-        $totalDonors = \App\Models\Donation::distinct('donor_name')->count('donor_name');
+        // Get total monetary donations
+        $monetaryTotal = Donation::where('type', 'monetary')
+            ->where('status', 'completed')
+            ->sum('amount');
 
-        // Get counts for dashboard
-        $data = [
-            'totalUsers' => User::count(),
-            'totalEvents' => Event::where('status', '!=', 'completed')->count(),
-            'upcomingEvents' => Event::where('start_date', '>', Carbon::now())
-                                   ->where('status', '!=', 'completed')
-                                   ->orderBy('start_date', 'asc')
-                                   ->take(5)
-                                   ->get(),
-            'completedEvents' => Event::where('status', 'completed')
-                                    ->orderBy('end_date', 'desc')
-                                    ->take(5)
-                                    ->get(),
-            'recentEvents' => Event::orderBy('created_at', 'desc')
-                                 ->take(5)
-                                 ->get(),
-            'activeStudents' => User::where('role', 'student')
-                                  ->where('status', 'active')
-                                  ->count(),
-            'pendingApplicants' => User::where('role', 'applicant')
-                                    ->where('status', 'pending')
-                                    ->count(),
-            'activeEvents' => Event::where('status', '!=', 'completed')
-                                 ->where('status', '!=', 'cancelled')
-                                 ->count(),
-            'monetaryDonations' => $monetaryDonations,
-            'nonMonetaryItems' => $nonMonetaryItems,
-            'totalDonors' => $totalDonors,
-        ];
+        // Calculate monetary change
+        $lastMonthMonetary = Donation::where('type', 'monetary')
+            ->where('status', 'completed')
+            ->whereMonth('created_at', $lastMonth->month)
+            ->whereYear('created_at', $lastMonth->year)
+            ->sum('amount');
+        
+        $monetaryChange = $lastMonthMonetary > 0 
+            ? (($monetaryTotal - $lastMonthMonetary) / $lastMonthMonetary) * 100 
+            : 0;
 
-        return view('admin.dashboard', $data);
+        // Get count of non-monetary donations
+        $nonMonetaryCount = Donation::where('type', 'non-monetary')
+            ->where('status', 'completed')
+            ->count();
+
+        // Calculate non-monetary change
+        $lastMonthNonMonetary = Donation::where('type', 'non-monetary')
+            ->where('status', 'completed')
+            ->whereMonth('created_at', $lastMonth->month)
+            ->whereYear('created_at', $lastMonth->year)
+            ->count();
+        
+        $nonMonetaryChange = $lastMonthNonMonetary > 0 
+            ? (($nonMonetaryCount - $lastMonthNonMonetary) / $lastMonthNonMonetary) * 100 
+            : 0;
+
+        // Get campaign total and change
+        $campaignTotal = Donation::whereHas('campaign', function($query) {
+                $query->where('status', 'active');
+            })
+            ->where('status', 'completed')
+            ->sum('amount');
+        
+        $lastMonthCampaign = Donation::whereHas('campaign', function($query) use ($lastMonth) {
+                $query->where('status', 'active');
+            })
+            ->where('status', 'completed')
+            ->whereMonth('created_at', $lastMonth->month)
+            ->whereYear('created_at', $lastMonth->year)
+            ->sum('amount');
+        
+        $campaignChange = $lastMonthCampaign > 0 
+            ? (($campaignTotal - $lastMonthCampaign) / $lastMonthCampaign) * 100 
+            : 0;
+
+        // Get donor count and change
+        $donorCount = Donation::select('donor_email')
+            ->distinct()
+            ->count();
+        
+        $lastMonthDonors = Donation::select('donor_email')
+            ->distinct()
+            ->whereMonth('created_at', $lastMonth->month)
+            ->whereYear('created_at', $lastMonth->year)
+            ->count();
+        
+        $donorChange = $lastMonthDonors > 0 
+            ? (($donorCount - $lastMonthDonors) / $lastMonthDonors) * 100 
+            : 0;
+
+        // Get paginated donations
+        $donations = Donation::with(['campaign'])
+            ->latest()
+            ->paginate(10);
+
+        // Get pending drop-offs
+        $pendingDropoffs = Donation::where('type', 'non-monetary')
+            ->where('status', 'pending')
+            ->get();
+
+        return view('admin.donation.index', compact(
+            'monetaryTotal',
+            'monetaryChange',
+            'nonMonetaryCount',
+            'nonMonetaryChange',
+            'campaignTotal',
+            'campaignChange',
+            'donorCount',
+            'donorChange',
+            'donations',
+            'pendingDropoffs'
+        ));
     }
 
     public function volunteerIndex()

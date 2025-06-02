@@ -1,156 +1,146 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container py-4">
+<div class="container mx-auto px-4 py-8">
     <!-- Create Button -->
-    <div class="mb-4">
-        <a href="{{ route('admin.urgent-funds.create') }}" class="btn btn-success">
-            <i class="fas fa-plus"></i> Create New Campaign
+    <div class="mb-6">
+        <a href="{{ route('admin.urgent-funds.create') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            <span>Create New Campaign</span>
         </a>
     </div>
 
     <!-- Urgent Campaigns Section -->
-    <div class="donation-card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Urgent Campaigns</h5>
-            <span class="badge bg-danger">Priority</span>
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-800">Urgent Campaigns</h2>
+            <span class="bg-red-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">Priority</span>
         </div>
-        <div class="dashboard">
+        <div class="space-y-4">
             @forelse ($urgentCampaigns ?? [] as $campaign)
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                @if ($campaign->is_urgent)
-                                    <span class="badge bg-danger mb-2">Urgent</span>
-                                @endif
-                                <h3 class="card-title h5">{{ $campaign->title }}</h3>
-                                <p class="card-text text-muted">{{ Str::limit($campaign->description, 150) }}</p>
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            @if ($campaign->is_urgent)
+                                <span class="bg-red-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full mb-2 inline-block">Urgent</span>
+                            @endif
+                            <h3 class="text-lg font-bold text-gray-900">{{ $campaign->title }}</h3>
+                            <p class="text-gray-600 text-sm mt-1">{{ Str::limit($campaign->description, 150) }}</p>
 
-                                <div class="progress mb-3" style="height: 10px;">
-                                    @php
-                                        $progress = ($campaign->funds_raised / $campaign->goal_amount) * 100;
-                                    @endphp
-                                    <div class="progress-bar bg-success" role="progressbar"
-                                         style="width: {{ min($progress, 100) }}%"
-                                         aria-valuenow="{{ $progress }}"
-                                         aria-valuemin="0"
-                                         aria-valuemax="100">
-                                    </div>
-                                </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4 mb-2">
+                                @php
+                                    $progress = ($campaign->funds_raised / $campaign->goal_amount) * 100;
+                                @endphp
+                                <div class="bg-green-600 h-2.5 rounded-full" style="width: {{ min($progress, 100) }}%"></div>
+                            </div>
 
-                                <div class="d-flex justify-content-between mb-2">
-                                    <small class="text-muted">Raised: ₱{{ number_format($campaign->funds_raised, 2) }}</small>
-                                    <small class="text-muted">Goal: ₱{{ number_format($campaign->goal_amount, 2) }}</small>
-                                </div>
+                            <div class="flex justify-between text-gray-600 text-sm mb-4">
+                                <span>Raised: ₱{{ number_format($campaign->funds_raised, 2) }}</span>
+                                <span>Goal: ₱{{ number_format($campaign->goal_amount, 2) }}</span>
+                            </div>
 
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted">
-                                        <i class="fas fa-clock"></i>
-                                        {{ now()->diffInDays($campaign->created_at->addDays(30)) }} days remaining
-                                    </small>
-                                    <div class="btn-group">
-                                        <a href="{{ route('admin.urgent-funds.edit', $campaign->id) }}"
-                                           class="btn btn-sm btn-warning me-2">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                        <form action="{{ route('admin.urgent-funds.destroy', $campaign->id) }}"
-                                              method="POST"
-                                              class="d-inline"
-                                              onsubmit="return confirm('Are you sure you want to delete this campaign?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
-                                        </form>
-                                    </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500 text-xs flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    {{ now()->diffInDays($campaign->created_at->addDays(30)) }} days remaining
+                                </span>
+                                <div class="flex space-x-2">
+                                    <a href="{{ route('admin.urgent-funds.edit', $campaign->id) }}"
+                                       class="text-yellow-600 hover:text-yellow-900 text-sm font-medium">
+                                        <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5l10.305-10.305z"></path></svg>
+                                        Edit
+                                    </a>
+                                    <form action="{{ route('admin.urgent-funds.destroy', $campaign->id) }}"
+                                          method="POST"
+                                          class="inline"
+                                          onsubmit="return confirm('Are you sure you want to delete this campaign?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium">
+                                            <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m14 0H5m2 0V5a2 2 0 012-2h6a2 2 0 012 2v2m-4 0h.01M12 13l-3 3m3-3l3 3"></path></svg>
+                                            Delete
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="text-center py-4">
-                    <i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">No urgent campaigns at the moment.</p>
+                <div class="text-center py-8">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0h-3m2 0l-3 3m4-3v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2m4 14h.01M12 13l-3 3m3-3l3 3"></path></svg>
+                    <p class="mt-1 text-sm text-gray-500">No urgent campaigns at the moment.</p>
                 </div>
             @endforelse
         </div>
     </div>
 
     <!-- All Campaigns Table -->
-    <div class="donation-card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">All Campaigns</h5>
-            <span class="badge bg-primary">Total: {{ $allCampaigns->count() }}</span>
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-800">All Campaigns</h2>
+            <span class="bg-blue-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">Total: {{ $allCampaigns->count() }}</span>
         </div>
-        <div class="donation-table-container">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Goal</th>
-                            <th>Raised</th>
-                            <th>Progress</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($allCampaigns ?? [] as $campaign)
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Goal</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Raised</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse ($allCampaigns ?? [] as $campaign)
                             <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
                                         @if ($campaign->is_urgent)
-                                            <span class="badge bg-danger me-2">Urgent</span>
+                                            <span class="bg-red-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full mr-2">Urgent</span>
                                         @endif
-                                        {{ $campaign->title }}
+                                        <div class="text-sm font-medium text-gray-900">{{ $campaign->title }}</div>
                                     </div>
                                 </td>
-                                <td>{{ Str::limit($campaign->description, 50) }}</td>
-                                <td>₱{{ number_format($campaign->goal_amount, 2) }}</td>
-                                <td>₱{{ number_format($campaign->funds_raised, 2) }}</td>
-                                <td style="width: 150px;">
-                                    <div class="progress" style="height: 5px;">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ Str::limit($campaign->description, 50) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₱{{ number_format($campaign->goal_amount, 2) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₱{{ number_format($campaign->funds_raised, 2) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 w-36">
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
                                         @php
-                                            $progress = ($campaign->funds_raised / $campaign->goal_amount) * 100;
+                                            $progress = ($campaign->goal_amount > 0) ? min(round(($campaign->funds_raised / $campaign->goal_amount) * 100), 100) : 0;
                                         @endphp
-                                        <div class="progress-bar bg-success" role="progressbar"
-                                             style="width: {{ min($progress, 100) }}%"
-                                             aria-valuenow="{{ $progress }}"
-                                             aria-valuemin="0"
-                                             aria-valuemax="100">
-                                        </div>
+                                        <div class="bg-green-600 h-2.5 rounded-full" style="width: {{ $progress }}%"></div>
                                     </div>
-                                    <small class="text-muted">{{ number_format($progress, 1) }}%</small>
+                                    <small class="text-gray-500">{{ number_format($progress, 1) }}%</small>
                                 </td>
-                                <td>
+                                <td class="px-6 py-4 whitespace-nowrap">
                                     @if ($campaign->is_urgent)
-                                        <span class="badge bg-danger">Urgent</span>
+                                        <span class="bg-red-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">Urgent</span>
                                     @else
-                                        <span class="badge bg-secondary">Normal</span>
+                                        <span class="bg-gray-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">Normal</span>
                                     @endif
                                 </td>
-                                <td>
-                                    <div class="d-flex gap-2">
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex space-x-2">
                                         <a href="{{ route('admin.urgent-funds.edit', $campaign->id) }}"
-                                           class="btn btn-sm btn-warning"
-                                           title="Edit Campaign">
-                                            <i class="fas fa-edit"></i> Edit
+                                           class="text-yellow-600 hover:text-yellow-900">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5l10.305-10.305z"></path></svg>
+                                            Edit
                                         </a>
                                         <form action="{{ route('admin.urgent-funds.destroy', $campaign->id) }}"
                                               method="POST"
-                                              class="d-inline"
+                                              class="inline"
                                               onsubmit="return confirm('Are you sure you want to delete this campaign?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
-                                                    class="btn btn-sm btn-danger"
-                                                    title="Delete Campaign">
-                                                <i class="fas fa-trash"></i> Delete
+                                                    class="text-red-600 hover:text-red-900">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m14 0H5m2 0V5a2 2 0 012-2h6a2 2 0 012 2v2m-4 0h.01M12 13l-3 3m3-3l3 3"></path></svg>
+                                                Delete
                                             </button>
                                         </form>
                                     </div>
@@ -158,9 +148,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">
-                                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">No campaigns found.</p>
+                                <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0h-3m2 0l-3 3m4-3v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2m4 14h.01M12 13l-3 3m3-3l3 3"></path></svg>
+                                    <p class="mt-1 text-sm text-gray-500">No campaigns found.</p>
                                 </td>
                             </tr>
                         @endforelse
@@ -173,28 +163,5 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="{{ asset('css/donation-panel.css') }}">
-<style>
-    .progress {
-        background-color: #e9ecef;
-        border-radius: 0.25rem;
-    }
-    .btn-group {
-        gap: 0.25rem;
-    }
-    .table > :not(caption) > * > * {
-        padding: 1rem;
-    }
-    .badge {
-        font-weight: 500;
-    }
-    .gap-2 {
-        gap: 0.5rem;
-    }
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-    }
-</style>
+{{-- Any specific styles for this page --}}
 @endpush

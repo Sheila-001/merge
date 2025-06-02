@@ -1,175 +1,67 @@
 @php use Illuminate\Support\Facades\Storage; @endphp
 <x-app-layout>
-<div class="p-8 bg-[#f3f6fb] min-h-screen">
-    <div class="mb-8 flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Donation </h1>
-        <div class="flex items-center space-x-2">
-            <span class="text-gray-600">Admin</span>
-            <div class="bg-blue-200 text-blue-700 rounded-full px-3 py-1 font-semibold">AD</div>
+    <div class="max-w-7xl mx-auto py-8">
+        <!-- Header Row: Title and User Badge -->
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-2xl font-bold">Dashboard Overview</h1>
+            <div class="flex items-center gap-2">
+                <span class="text-gray-500">Admin</span>
+                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">AD</span>
+            </div>
         </div>
-    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-xl p-6 shadow flex flex-col">
-            <div class="flex items-center justify-between">
-                <span class="font-semibold text-gray-700">Monetary Donations</span>
-                <span class="bg-blue-100 text-blue-600 p-2 rounded-full">
-                    <i class="fas fa-dollar-sign"></i>
-                </span>
+        <!-- Statistic Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow p-6 flex flex-col items-start relative">
+                <span class="text-gray-500 font-semibold">Total Users</span>
+                <span class="text-3xl font-bold mt-2">{{ $totalUsers ?? 0 }}</span>
+                <span class="absolute top-6 right-6 h-3 w-3 rounded-full bg-blue-100"></span>
             </div>
-            <span class="mt-4 text-2xl font-bold">{{ $monetaryDonations }}</span>
-            <span class="text-xs text-green-500 mt-1">↑12% from last month</span>
-        </div>
-        <div class="bg-white rounded-xl p-6 shadow flex flex-col">
-            <div class="flex items-center justify-between">
-                <span class="font-semibold text-gray-700">Non-Monetary Items</span>
-                <span class="bg-purple-100 text-purple-600 p-2 rounded-full">
-                    <i class="fas fa-box"></i>
-                </span>
+            <div class="bg-white rounded-xl shadow p-6 flex flex-col items-start relative">
+                <span class="text-gray-500 font-semibold">Pending Applicants</span>
+                <span class="text-3xl font-bold mt-2">{{ $pendingApplicants ?? 0 }}</span>
+                 <span class="absolute top-6 right-6 h-3 w-3 rounded-full bg-yellow-100"></span>
             </div>
-            <span class="mt-4 text-2xl font-bold">{{ $nonMonetaryItems }}</span>
-            <span class="text-xs text-green-500 mt-1">↑8% from last month</span>
-        </div>
-        <div class="bg-white rounded-xl p-6 shadow flex flex-col">
-            <div class="flex items-center justify-between">
-                <span class="font-semibold text-gray-700">Campaign</span>
-                <span class="bg-orange-100 text-orange-600 p-2 rounded-full">
-                    <i class="fas fa-bullhorn"></i>
-                </span>
+            <div class="bg-white rounded-xl shadow p-6 flex flex-col items-start relative">
+                <span class="text-gray-500 font-semibold">Active Students</span>
+                <span class="text-3xl font-bold mt-2">{{ $activeStudents ?? 0 }}</span>
+                 <span class="absolute top-6 right-6 h-3 w-3 rounded-full bg-green-100"></span>
             </div>
-            <span class="mt-4 text-2xl font-bold">0</span>
-            <span class="text-xs text-green-500 mt-1">↑10% from last month</span>
-        </div>
-        <div class="bg-white rounded-xl p-6 shadow flex flex-col">
-            <div class="flex items-center justify-between">
-                <span class="font-semibold text-gray-700">Total Donors</span>
-                <span class="bg-green-100 text-green-600 p-2 rounded-full">
-                    <i class="fas fa-users"></i>
-                </span>
+            <div class="bg-white rounded-xl shadow p-6 flex flex-col items-start relative">
+                <span class="text-gray-500 font-semibold">Active Events</span>
+                <span class="text-3xl font-bold mt-2">{{ $activeEvents ?? 0 }}</span>
+                 <span class="absolute top-6 right-6 h-3 w-3 rounded-full bg-purple-100"></span>
             </div>
-            <span class="mt-4 text-2xl font-bold">{{ $totalDonors }}</span>
-            <span class="text-xs text-green-500 mt-1">↑13% from last month</span>
         </div>
-    </div>
 
-    <!-- Recent Donations Table -->
-    <div class="bg-white rounded-xl shadow p-6 mb-8">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="font-bold text-lg">Recent Donations</h2>
-            <div class="flex items-center space-x-2">
-                <input type="text" placeholder="Search donors..." class="border rounded px-3 py-1 text-sm">
-                <button class="bg-blue-600 text-white px-4 py-1 rounded">Filter</button>
-            </div>
-        </div>
-        <table class="min-w-full text-sm">
-            <thead>
-                <tr class="border-b">
-                    <th class="py-2 text-left">Donor</th>
-                    <th class="py-2 text-left">Type</th>
-                    <th class="py-2 text-left">Amount</th>
-                    <th class="py-2 text-left">Status</th>
-                    <th class="py-2 text-left">Date</th>
-                    <th class="py-2 text-left">Proof</th>
-                    <th class="py-2 text-left">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($recentDonations as $donation)
-                <tr class="border-b">
-                    <td class="py-2 flex items-center space-x-2">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode($donation->donor_name) }}&background=random" class="w-8 h-8 rounded-full" alt="{{ $donation->donor_name }}">
-                        <span>
-                            <div class="font-semibold">{{ $donation->donor_name }}</div>
-                            <div class="text-xs text-gray-500">{{ $donation->email }}</div>
-                        </span>
-                    </td>
-                    <td class="py-2">{{ ucfirst($donation->type) }}</td>
-                    <td class="py-2 font-bold">
-                        @if($donation->type === 'monetary')
-                            ₱{{ number_format($donation->amount, 2) }}
-                        @else
-                            {{ $donation->description }}
-                        @endif
-                    </td>
-                    <td class="py-2">
-                        <span class="bg-{{ $donation->status === 'completed' ? 'green' : 'yellow' }}-100 text-{{ $donation->status === 'completed' ? 'green' : 'yellow' }}-600 px-2 py-1 rounded">
-                            {{ ucfirst($donation->status) }}
-                        </span>
-                    </td>
-                    <td class="py-2">{{ $donation->created_at->format('M d, Y') }}</td>
-                    <td class="py-2">
-                        @if($donation->proof_path)
-                            <img src="{{ Storage::url($donation->proof_path) }}"
-                                 alt="Donation Proof"
-                                 class="w-16 h-16 object-cover rounded-md">
-                        @else
-                            N/A
-                        @endif
-                    </td>
-                    <td class="py-2">
-                        <div class="flex space-x-2">
-                            <button class="text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="text-green-600 hover:text-green-800">
-                                <i class="fas fa-check"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <div class="flex justify-between items-center mt-4">
-            <span class="text-xs text-gray-500">Showing {{ $recentDonations->count() }} of {{ $recentDonations->total() }} entries</span>
-            <div class="flex space-x-1">
-                @if($recentDonations->hasPages())
-                    @if($recentDonations->currentPage() > 1)
-                        <a href="{{ $recentDonations->previousPageUrl() }}" class="px-2 py-1 rounded bg-white border border-gray-300">Previous</a>
-                    @endif
-                    
-                    @for($i = 1; $i <= $recentDonations->lastPage(); $i++)
-                        <a href="{{ $recentDonations->url($i) }}" 
-                           class="px-2 py-1 rounded {{ $i === $recentDonations->currentPage() ? 'bg-gray-200 text-gray-600' : 'bg-white border border-gray-300' }}">
-                            {{ $i }}
-                        </a>
-                    @endfor
-                    
-                    @if($recentDonations->hasMorePages())
-                        <a href="{{ $recentDonations->nextPageUrl() }}" class="px-2 py-1 rounded bg-white border border-gray-300">Next</a>
-                    @endif
+        <!-- Recent Events and Recent Activity Sections -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Recent Events -->
+            <div class="bg-white rounded-xl shadow p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-bold text-lg">Recent Events</h2>
+                    <a href="#" class="text-blue-600 hover:underline">View all</a>
+                </div>
+                @if($recentEvents->count() > 0)
+                    <ul class="space-y-4">
+                        @foreach($recentEvents as $event)
+                            <li class="border-b pb-2 last:border-b-0 last:pb-0">
+                                <p class="font-semibold">{{ $event->title }}</p>
+                                <p class="text-sm text-gray-500">{{ $event->start_date->format('M d, Y H:i A') }} - {{ $event->end_date->format('M d, Y H:i A') }}</p>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p class="text-gray-500">No recent events found.</p>
                 @endif
             </div>
-        </div>
-    </div>
 
-    <!-- Drop-Off Confirmation -->
-    <div class="bg-white rounded-xl shadow p-6">
-        <h2 class="font-bold text-lg mb-2">Drop-Off Confirmation</h2>
-        <p class="text-gray-500 mb-4">Manage and track non-monetary donations</p>
-        <div class="bg-blue-50 p-4 rounded-xl mb-2">
-            <h3 class="font-semibold mb-1">Pending Drop-offs</h3>
-            <div class="space-y-2">
-                @foreach($pendingDropoffs as $dropoff)
-                <div class="flex justify-between items-center bg-white p-3 rounded-lg shadow mb-2">
-                    <div class="flex items-center space-x-2">
-                        <span class="bg-blue-100 p-2 rounded"><i class="fas fa-box"></i></span>
-                        <span>{{ $dropoff->description }}</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xs text-gray-400">Expected: {{ $dropoff->created_at->addDays(7)->format('M d, Y') }}</span>
-                        <span class="bg-yellow-100 text-yellow-600 px-2 py-1 rounded">Pending</span>
-                        <form action="{{ route('admin.donations.update-status', $dropoff->id) }}" method="POST" class="inline">
-                            @csrf
-                            @method('PATCH')
-                            <input type="hidden" name="status" value="completed">
-                            <button type="submit" class="bg-green-100 text-green-600 px-2 py-1 rounded">Received</button>
-                        </form>
-                    </div>
-                </div>
-                @endforeach
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-xl shadow p-6">
+                <h2 class="font-bold text-lg mb-4">Recent Activity</h2>
+                <p class="text-gray-500">No recent activity to display.</p>
+                {{-- You would typically loop through recent activity data here --}}
             </div>
         </div>
     </div>
-</div>
 </x-app-layout>

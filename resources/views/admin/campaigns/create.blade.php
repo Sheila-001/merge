@@ -1,136 +1,172 @@
+<<<<<<< HEAD
 @extends('layouts.app')
 
+
+
 @section('content')
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Create Campaign</h1>
-        <a href="{{ route('admin.campaigns.dashboard') }}" class="btn btn-outline-primary">
-            <i class="fas fa-arrow-left me-2"></i> Back to Campaigns
-        </a>
-    </div>
-
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('admin.campaigns.dashboard') }}">Campaigns</a></li>
-            <li class="breadcrumb-item active">Create New Campaign</li>
-        </ol>
-    </nav>
-
-    <!-- Create Form -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-
-                <!-- Image Upload -->
-                <div class="mb-4">
-                    <label for="image" class="form-label">Campaign Image</label>
-                    <input type="file" class="form-control @error('image') is-invalid @enderror"
-                           id="image" name="image" accept="image/*">
-                    @error('image')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Create New Category</h5>
+                    <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Categories
+                    </a>
                 </div>
 
-                <!-- Title -->
-                <div class="mb-4">
-                    <label for="title" class="form-label">Campaign Title</label>
-                    <input type="text" class="form-control @error('title') is-invalid @enderror"
-                           id="title" name="title" value="{{ old('title') }}" required>
-                    @error('title')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
-                <!-- Description -->
-                <div class="mb-4">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control @error('description') is-invalid @enderror"
-                              id="description" name="description" rows="4" required>{{ old('description') }}</textarea>
-                    @error('description')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                    <form action="{{ route('admin.categories.store') }}" method="POST">
+                        @csrf
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Category Name</label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                                id="name" name="name" value="{{ old('name') }}" required>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                <!-- Type -->
-                <div class="mb-4">
-                    <label for="type" class="form-label">Campaign Type</label>
-                    <select class="form-select @error('type') is-invalid @enderror"
-                            id="type" name="type" required>
-                        <option value="">Select Type</option>
-                        <option value="regular" {{ old('type') === 'regular' ? 'selected' : '' }}>Regular</option>
-                        <option value="featured" {{ old('type') === 'featured' ? 'selected' : '' }}>Featured</option>
-                        <option value="emergency" {{ old('type') === 'emergency' ? 'selected' : '' }}>Emergency</option>
-                    </select>
-                    @error('type')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                        <div class="mb-3">
+                            <label for="color" class="form-label">Color</label>
+                            <input type="color" class="form-control form-control-color @error('color') is-invalid @enderror" 
+                                id="color" name="color" value="{{ old('color', '#3490dc') }}" required>
+                            @error('color')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                <!-- Goal Amount -->
-                <div class="mb-4">
-                    <label for="goal_amount" class="form-label">Goal Amount</label>
-                    <div class="input-group">
-                        <span class="input-group-text">₱</span>
-                        <input type="number" step="0.01" min="0"
-                               class="form-control @error('goal_amount') is-invalid @enderror"
-                               id="goal_amount" name="goal_amount"
-                               value="{{ old('goal_amount') }}" required>
-                    </div>
-                    @error('goal_amount')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control @error('description') is-invalid @enderror" 
+                                id="description" name="description" rows="3">{{ old('description') }}</textarea>
+                            @error('description')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                <!-- Start Date -->
-                <div class="mb-4">
-                    <label for="start_date" class="form-label">Start Date</label>
-                    <input type="date" class="form-control @error('start_date') is-invalid @enderror"
-                           id="start_date" name="start_date"
-                           value="{{ old('start_date', date('Y-m-d')) }}" required>
-                    @error('start_date')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Create Category
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <!-- End Date -->
-                <div class="mb-4">
-                    <label for="end_date" class="form-label">End Date</label>
-                    <input type="date" class="form-control @error('end_date') is-invalid @enderror"
-                           id="end_date" name="end_date"
-                           value="{{ old('end_date', date('Y-m-d', strtotime('+30 days'))) }}" required>
-                    @error('end_date')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('admin.campaigns.dashboard') }}" class="btn btn-light">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Create Campaign</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Validate end date is after start date
-    const startDate = document.getElementById('start_date');
-    const endDate = document.getElementById('end_date');
-
-    function validateDates() {
-        if (startDate.value && endDate.value && startDate.value >= endDate.value) {
-            endDate.setCustomValidity('End date must be after start date');
-        } else {
-            endDate.setCustomValidity('');
-        }
-    }
-
-    startDate.addEventListener('change', validateDates);
-    endDate.addEventListener('change', validateDates);
-});
-</script>
-@endpush
 @endsection
+
+@push('styles')
+<style>
+    .form-control-color {
+        width: 100px;
+    }
+</style>
+@endpush 
+=======
+@extends('layouts.admin')
+
+@section('content')
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Create New Campaign</h1>
+        <a href="{{ route('admin.campaigns.index') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg inline-flex items-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <span>Back to Campaigns</span>
+        </a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+
+            <div class="mb-4">
+                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Campaign Title</label>
+                <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('title') border-red-500 @enderror" id="title" name="title" value="{{ old('title') }}" required>
+                @error('title')
+                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('description') border-red-500 @enderror" id="description" name="description" rows="5" required>{{ old('description') }}</textarea>
+                @error('description')
+                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="mb-4">
+                    <label for="goal_amount" class="block text-gray-700 text-sm font-bold mb-2">Goal Amount (₱)</label>
+                    <input type="number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('goal_amount') border-red-500 @enderror" id="goal_amount" name="goal_amount" value="{{ old('goal_amount') }}" step="0.01" required>
+                    @error('goal_amount')
+                        <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="mb-4">
+                    <label for="category_id" class="block text-gray-700 text-sm font-bold mb-2">Category</label>
+                    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('category_id') border-red-500 @enderror" id="category_id" name="category_id">
+                        <option value="">Select a Category</option>
+                        {{-- You will need to pass categories from the controller --}}
+                        @isset($categories)
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                            @endforeach
+                        @endisset
+                    </select>
+                    @error('category_id')
+                        <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div class="mb-4">
+                    <label for="start_date" class="block text-gray-700 text-sm font-bold mb-2">Start Date</label>
+                    <input type="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('start_date') border-red-500 @enderror" id="start_date" name="start_date" value="{{ old('start_date') }}" required>
+                    @error('start_date')
+                        <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="mb-4">
+                    <label for="end_date" class="block text-gray-700 text-sm font-bold mb-2">End Date</label>
+                    <input type="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('end_date') border-red-500 @enderror" id="end_date" name="end_date" value="{{ old('end_date') }}" required>
+                    @error('end_date')
+                        <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Campaign Image</label>
+                <input type="file" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('image') border-red-500 @enderror" id="image" name="image">
+                @error('image')
+                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="flex items-center justify-end">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline inline-flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    <span>Create Campaign</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection 
+>>>>>>> 2ee16f2223cec672605dbeecc11678df77f08915

@@ -1,65 +1,165 @@
-@extends('layouts.app')
-
-@section('title', 'Reports Dashboard')
+@extends('layouts.admin')
 
 @section('content')
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Reports Dashboard</h1>
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
-                <i class="fas fa-filter me-2"></i>Filter
+<<<<<<< HEAD
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Reports Dashboard</h1>
+        <a href="{{ route('admin.reports.export') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div class="row">
+
+        <!-- Total Donations Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Donations</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">${{ number_format($totalDonations, 2) }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+=======
+<div class="container mx-auto px-4 py-6">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800">Reports Dashboard</h1>
+        <div class="flex space-x-2">
+            <button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-sm">
+                <i class="fas fa-filter mr-1"></i> Filter
             </button>
-            <a href="{{ route('admin.reports.export') }}" class="btn btn-success">
-                <i class="fas fa-file-excel me-2"></i>Export to Excel
+            <a href="{{ route('admin.reports.export') }}" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50 text-sm">
+                <i class="fas fa-file-excel mr-1"></i> Export to Excel
             </a>
         </div>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white h-100">
+    <!-- Summary Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+        <!-- Total Donations Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card text-white shadow h-100" style="background-color: #4e73df;">
                 <div class="card-body">
-                    <h5 class="card-title">Total Donations</h5>
-                    <h2 class="mb-0">{{ $donations->count() }}</h2>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Total Donations</div>
+                            <div class5 mb-0 font-weight-bold">${{ number_format($totalDonations, 2) }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-white"></i>
+>>>>>>> 2ee16f2223cec672605dbeecc11678df77f08915
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white h-100">
+
+        <!-- Active Campaigns Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+<<<<<<< HEAD
+            <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
-                    <h5 class="card-title">Active Campaigns</h5>
-                    <h2 class="mb-0">{{ $campaigns->where('status', 'active')->count() }}</h2>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Active Campaigns</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $activeCampaigns }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check fa-2x text-gray-300"></i>
+=======
+            <div class="card text-white shadow h-100" style="background-color: #1cc88a;">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Active Campaigns</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ $activeCampaigns }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check fa-2x text-white"></i>
+>>>>>>> 2ee16f2223cec672605dbeecc11678df77f08915
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white h-100">
+
+        <!-- Total Donors Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+<<<<<<< HEAD
+            <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
-                    <h5 class="card-title">Total Donors</h5>
-                    <h2 class="mb-0">{{ $donations->pluck('donor_id')->unique()->count() }}</h2>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Donors
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalDonors }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+=======
+            <div class="card text-white shadow h-100" style="background-color: #36b9cc;">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Total Donors
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold">{{ $totalDonors }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-white"></i>
+>>>>>>> 2ee16f2223cec672605dbeecc11678df77f08915
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white h-100">
+
+        <!-- Pending Donations Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+<<<<<<< HEAD
+            <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
-                    <h5 class="card-title">Pending Donations</h5>
-                    <h2 class="mb-0">{{ $donations->where('status', 'pending')->count() }}</h2>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pending Donations</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $pendingDonations }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+=======
+            <div class="card text-white shadow h-100" style="background-color: #f6c23e;">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Pending Donations</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ $pendingDonations }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-white"></i>
+>>>>>>> 2ee16f2223cec672605dbeecc11678df77f08915
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Campaign Performance -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="card-title mb-0">Campaign Performance</h5>
+<<<<<<< HEAD
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Campaign Performance</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-bordered" id="campaignsTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>Campaign</th>
@@ -71,19 +171,44 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($campaigns as $campaign)
+                        @foreach($campaignPerformance as $campaign)
                         <tr>
-                            <td>{{ $campaign->title }}</td>
+                            <td>{{ $campaign->name }}</td>
+                            <td>{{ $campaign->status }}</td>
+                            <td>{{ \Carbon\Carbon::parse($campaign->start_date)->format('M d, Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($campaign->end_date)->format('M d, Y') }}</td>
+                            <td>{{ number_format($campaign->total_donations, 2) }}</td>
                             <td>
-                                <span class="badge bg-{{ $campaign->status === 'active' ? 'success' : 'warning' }}">
-                                    {{ ucfirst($campaign->status) }}
-                                </span>
-                            </td>
-                            <td>{{ $campaign->start_date->format('M d, Y') }}</td>
-                            <td>{{ $campaign->end_date->format('M d, Y') }}</td>
-                            <td>{{ $campaign->donations_count }}</td>
-                            <td>
-                                <a href="{{ route('admin.campaigns.show', $campaign) }}" class="btn btn-sm btn-outline-primary">
+                                <a href="#" class="btn btn-info btn-sm">
+=======
+    <div class="bg-white rounded-lg shadow-md mb-8">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h6 class="text-lg font-semibold text-gray-800">Campaign Performance</h6>
+        </div>
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campaign</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Donations</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($campaignPerformance as $campaign)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $campaign->name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $campaign->status }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ \Carbon\Carbon::parse($campaign->start_date)->format('M d, Y') }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ \Carbon\Carbon::parse($campaign->end_date)->format('M d, Y') }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ number_format($campaign->total_donations, 2) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#" class="text-blue-600 hover:text-blue-900">
+>>>>>>> 2ee16f2223cec672605dbeecc11678df77f08915
                                     <i class="fas fa-eye"></i>
                                 </a>
                             </td>
@@ -96,13 +221,14 @@
     </div>
 
     <!-- Recent Donations -->
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">Recent Donations</h5>
+<<<<<<< HEAD
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Recent Donations</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-bordered" id="recentDonationsTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>Donor</th>
@@ -114,19 +240,44 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($donations->take(10) as $donation)
+                        @foreach($recentDonations as $donation)
                         <tr>
-                            <td>{{ $donation->donor->name }}</td>
-                            <td>{{ $donation->campaign->title }}</td>
-                            <td>{{ $donation->created_at->format('M d, Y H:i') }}</td>
+                            <td>{{ $donation->donor_name }}</td>
+                            <td>{{ $donation->campaign ? $donation->campaign->name : 'N/A' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($donation->created_at)->format('M d, Y') }}</td>
+                            <td>{{ $donation->status }}</td>
+                            <td>{{ $donation->type }}</td>
                             <td>
-                                <span class="badge bg-{{ $donation->status === 'completed' ? 'success' : ($donation->status === 'pending' ? 'warning' : 'secondary') }}">
-                                    {{ ucfirst($donation->status) }}
-                                </span>
-                            </td>
-                            <td>{{ ucfirst($donation->type) }}</td>
-                            <td>
-                                <a href="{{ route('admin.donations.show', $donation) }}" class="btn btn-sm btn-outline-primary">
+                                <a href="#" class="btn btn-info btn-sm">
+=======
+    <div class="bg-white rounded-lg shadow-md mb-8">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h6 class="text-lg font-semibold text-gray-800">Recent Donations</h6>
+        </div>
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donor</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campaign</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($recentDonations as $donation)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $donation->donor_name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $donation->campaign ? $donation->campaign->name : 'N/A' }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ \Carbon\Carbon::parse($donation->created_at)->format('M d, Y') }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $donation->status }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $donation->type }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#" class="text-blue-600 hover:text-blue-900">
+>>>>>>> 2ee16f2223cec672605dbeecc11678df77f08915
                                     <i class="fas fa-eye"></i>
                                 </a>
                             </td>
@@ -137,74 +288,6 @@
             </div>
         </div>
     </div>
-</div>
 
-<!-- Filter Modal -->
-<div class="modal fade" id="filterModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Filter Reports</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="{{ route('admin.reports.index') }}" method="GET">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="dateRange" class="form-label">Date Range</label>
-                        <select class="form-select" id="dateRange" name="date_range">
-                            <option value="7" {{ request('date_range') == 7 ? 'selected' : '' }}>Last 7 Days</option>
-                            <option value="30" {{ request('date_range') == 30 ? 'selected' : '' }}>Last 30 Days</option>
-                            <option value="90" {{ request('date_range') == 90 ? 'selected' : '' }}>Last 3 Months</option>
-                            <option value="180" {{ request('date_range') == 180 ? 'selected' : '' }}>Last 6 Months</option>
-                            <option value="365" {{ request('date_range') == 365 ? 'selected' : '' }}>Last Year</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="campaignFilter" class="form-label">Campaign</label>
-                        <select class="form-select" id="campaignFilter" name="campaign_id">
-                            <option value="">All Campaigns</option>
-                            @foreach($campaigns as $campaign)
-                                <option value="{{ $campaign->id }}" {{ request('campaign_id') == $campaign->id ? 'selected' : '' }}>
-                                    {{ $campaign->title }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="statusFilter" class="form-label">Status</label>
-                        <select class="form-select" id="statusFilter" name="status">
-                            <option value="">All Statuses</option>
-                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                            <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Apply Filters</button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
-@endsection
-
-@push('styles')
-<style>
-    .card {
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    }
-    .card-title {
-        color: #333;
-        font-weight: 600;
-    }
-    .table th {
-        font-weight: 600;
-        color: #333;
-    }
-    .badge {
-        font-weight: 500;
-    }
-</style>
-@endpush 
+@endsection 

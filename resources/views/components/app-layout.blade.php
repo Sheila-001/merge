@@ -22,7 +22,7 @@
                 <h1 class="text-2xl font-bold">Hauz Hayag</h1>
             </div>
             <nav class="mt-8">
-                <a href="/dashboard" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Dashboard</a>
+                <a hredashboard" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Dashboard</a>
                 <a href="/users" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">User Management</a>
                 <a href="/events" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Events</a>
                 <a href="/students" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Applicants</a>
@@ -30,7 +30,7 @@
                 <a href="/admin/jobs" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Jobs</a>
                 
                 {{-- Donations parent link --}}
-                <a href="{{ route('admin.donations.add') }}" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Donations</a>
+                <a href="#" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors" onclick="toggleDonationsSubmenu(event)">Donations</a>
 
                 {{-- Donations submenu --}}
                 <div id="donationsSubmenu" style="display: none;">
