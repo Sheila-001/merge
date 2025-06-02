@@ -35,17 +35,18 @@ class PublicDonationController extends Controller
         
         $proofPath = null;
         if ($request->hasFile('proof')) {
-            $proofPath = $request->file('proof')->store('proofs', 'local');
+            $proofPath = $request->file('proof')->store('monetary', 'public');
         }
 
         // Determine the is_acknowledged value based on the preference
         $isAcknowledged = ($request->donation_preference === 'acknowledged');
+        $isAnonymous = !$isAcknowledged; // If not acknowledged, then it's anonymous
         
         \App\Models\Donation::create([
             'type' => 'monetary',
             'donor_name' => $request->donor_name,
-            'email' => $request->donor_email,
-            'phone' => $request->donor_phone,
+            'donor_email' => $request->donor_email,
+            'donor_phone' => $request->donor_phone,
             'amount' => $request->amount,
             'payment_method' => $request->payment_method,
             'description' => null, // Description is for non-monetary donations
@@ -53,7 +54,8 @@ class PublicDonationController extends Controller
             'transaction_id' => null, // You might get this from a payment gateway
             'proof_path' => $proofPath,
             'message' => $request->message,
-            'is_acknowledged' => $isAcknowledged, // Save the acknowledgment preference
+            'is_acknowledged' => $isAcknowledged,
+            'is_anonymous' => $isAnonymous,
         ]);
 
         // For this example, we'll just return a success response.
@@ -65,6 +67,9 @@ class PublicDonationController extends Controller
      */
     public function submitNonMonetaryDonation(Request $request)
     {
+        // Log the incoming request data
+        \Illuminate\Support\Facades\Log::info('Non-monetary donation request data:', $request->all());
+
         // Validate the incoming request data
         $validator = Validator::make($request->all(), [
             'category' => 'required|string|max:255',
@@ -74,7 +79,7 @@ class PublicDonationController extends Controller
             'donor_phone' => 'required|string|max:20',
             'image' => 'required|file|image|max:2048', // Max 2MB, image file types
             'preferred_time' => 'required|date',
-            'description' => 'required|string',
+            'description' => 'nullable|string', // Made nullable as it's optional in UI
             'donation_preference' => 'required|in:anonymous,acknowledged', // Add validation for the preference
         ]);
 
@@ -86,11 +91,12 @@ class PublicDonationController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('non-monetary-donations', 'local');
+            $imagePath = $request->file('image')->store('non-monetary', 'public');
         }
 
         // Determine the is_acknowledged value based on the preference
         $isAcknowledged = ($request->donation_preference === 'acknowledged');
+        $isAnonymous = !$isAcknowledged; // If not acknowledged, then it's anonymous
 
         // Create a new record in the donations table
         \App\Models\Donation::create([
@@ -100,12 +106,16 @@ class PublicDonationController extends Controller
             'donor_phone' => $request->donor_phone,
             'amount' => null, // Amount is null for non-monetary donations
             'payment_method' => null, // Payment method is null for non-monetary donations
-            'item_description' => 'Category: ' . $request->category . ', Condition: ' . $request->condition . ', Description: ' . $request->description,
+            'category' => $request->category, // Save category to the correct column
+            'condition' => $request->condition, // Save condition to the correct column
+            'notes' => $request->description, // Save description (Note) to the notes column
+            'expected_date' => \Carbon\Carbon::parse($request->preferred_time)->format('Y-m-d'), // Format and save only the date part
             'status' => 'pending', // Initial status
             'transaction_id' => null,
             'proof_path' => $imagePath, // Store image path in proof_path
-            'message' => 'Preferred Time: ' . $request->preferred_time, // Store preferred time in message
-            'is_anonymous' => !($request->donation_preference === 'acknowledged'),
+            'message' => null, // Clear message or use for other purposes if needed
+            'is_acknowledged' => $isAcknowledged,
+            'is_anonymous' => $isAnonymous,
         ]);
 
         // For this example, we'll just return a success response.
@@ -113,4 +123,4 @@ class PublicDonationController extends Controller
     }
 
     // You might add other methods here for non-monetary donations or campaigns
-} 
+}
