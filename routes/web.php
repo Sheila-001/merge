@@ -21,6 +21,7 @@ use App\Http\Controllers\UrgentFundsController;
 use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\PublicDonationController;
+use App\Http\Controllers\Admin\ReportsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -154,6 +155,7 @@ Route::middleware(['auth'])->group(function () {
 // Admin routes
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/', [App\Http\Controllers\AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/reports', [App\Http\Controllers\Admin\ReportsController::class, 'index'])->name('admin.reports');
     Route::get('/applications', [ScholarshipController::class, 'index'])->name('admin.applications.index');
     Route::post('/applications/{id}/status', [ScholarshipController::class, 'updateStatus'])->name('admin.applications.updateStatus');
     // Student management
@@ -196,6 +198,12 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Category Management
     Route::resource('categories', CategoryController::class);
+
+    // Reports Routes
+    Route::prefix('reports')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\ReportsController::class, 'index'])->name('admin.reports');
+        Route::get('/export', [App\Http\Controllers\Admin\ReportsController::class, 'export'])->name('admin.reports.export');
+    });
 });
 
 // Admin Scholars Route
