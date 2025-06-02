@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-s
-=======
 <!DOCTYPE html>
 <html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
 <head>
@@ -40,8 +37,12 @@ s
                     <a href="<?php echo e(route('admin.urgent-funds.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
                         └ Urgent Funds
                     </a>
-                    <a href="<?php echo e(route('admin.campaigns.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
-                        └ All Campaigns
+                    <a href="<?php echo e(route('admin.campaigns.dashboard')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                        └ Campaigns
+                    </a>
+
+                    <a href="<?php echo e(route('admin.calendar.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                        └ Calendar
                     </a>
                 </div>
 
@@ -73,6 +74,5 @@ s
     }
     </script>
 </body>
-</html> 
->>>>>>> 2ee16f2223cec672605dbeecc11678df77f08915
+</html>
 <?php /**PATH C:\collab\resources\views/layouts/admin.blade.php ENDPATH**/ ?>
