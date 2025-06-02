@@ -17,7 +17,7 @@ use App\Mail\ApplicationReceived;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\DonationController;
-use App\Http\Controllers\UrgentFundsController;
+use App\Http\Controllers\Admin\UrgentFundsController;
 use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\PublicDonationController;
@@ -302,3 +302,8 @@ Route::post('/donations/monetary', [App\Http\Controllers\PublicDonationControlle
 Route::post('/donations/non-monetary', [App\Http\Controllers\PublicDonationController::class, 'storeNonMonetary'])->name('donations.non-monetary.store');
 
 Route::post('/non-monetary-donation', [PublicDonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
+
+// Urgent Funds Routes
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/urgent-funds', [UrgentFundsController::class, 'index'])->name('admin.urgent-funds.index');
+});
