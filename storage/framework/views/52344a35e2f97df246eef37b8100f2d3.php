@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title>Monetary Donation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -28,8 +28,8 @@
             <h2 class="text-2xl md:text-3xl font-bold text-black text-center mb-2">Monetary Donation</h2>
             <p class="text-lg text-black text-center mb-8">Your generosity makes a difference</p>
             
-            <form id="donationForm" action="{{ route('monetary_donation.submit') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                @csrf
+            <form id="donationForm" action="<?php echo e(route('monetary_donation.submit')); ?>" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <?php echo csrf_field(); ?>
 
                 <!-- Left Column -->
                 <div class="space-y-6">
@@ -134,7 +134,7 @@
 
                 <!-- Buttons -->
                 <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
-                    <button type="button" onclick="window.location.href='{{ route('donation') }}'" class="px-6 py-2.5 bg-white text-[#0A90A4] border border-[#0A90A4] rounded-lg hover:bg-[#B7E4FA] hover:text-[#0A90A4] transition-colors font-medium">Cancel</button>
+                    <button type="button" onclick="window.location.href='<?php echo e(route('donation')); ?>'" class="px-6 py-2.5 bg-white text-[#0A90A4] border border-[#0A90A4] rounded-lg hover:bg-[#B7E4FA] hover:text-[#0A90A4] transition-colors font-medium">Cancel</button>
                     <button type="submit" class="px-6 py-2.5 bg-[#0A90A4] text-white rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">Submit Donation</button>
                 </div>
                 <input type="hidden" name="donation_preference" id="donationPreferenceInput">
@@ -217,7 +217,7 @@
                     </p>
                 </div>
                 <div class="items-center px-4 py-3">
-                    <a href="{{ route('donation') }}" class="px-4 py-2 bg-[#0A90A4] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#098a9d] focus:outline-none focus:ring-2 focus:ring-[#0A90A4] transition-colors">
+                    <a href="<?php echo e(route('donation')); ?>" class="px-4 py-2 bg-[#0A90A4] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#098a9d] focus:outline-none focus:ring-2 focus:ring-[#0A90A4] transition-colors">
                         Back to Home
                     </a>
                 </div>
@@ -409,4 +409,4 @@
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\Users\PNPh\Desktop\sheila\collab\resources\views/donation/monetary.blade.php ENDPATH**/ ?>

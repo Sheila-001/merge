@@ -13,6 +13,11 @@ class DonationController extends Controller
 {
     public function index()
     {
+        // If the URL contains /all, redirect to /all-donors
+        if (request()->is('admin/donations/all')) {
+            return redirect()->route('admin.donations.all-donors');
+        }
+
         // Get current month's data
         $currentMonth = Carbon::now();
         $lastMonth = Carbon::now()->subMonth();
@@ -124,7 +129,9 @@ class DonationController extends Controller
             'item_name' => 'required_if:type,non-monetary|string|max:255',
             'quantity' => 'required_if:type,non-monetary|integer|min:1',
             'expected_date' => 'required_if:type,non-monetary|date|after:today',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            'category' => 'required_if:type,non-monetary|nullable|string|max:255',
+            'condition' => 'required_if:type,non-monetary|nullable|string|max:255',
         ]);
 
         $donation = Donation::create($validated);
@@ -148,7 +155,7 @@ class DonationController extends Controller
 
     public function show(Donation $donation)
     {
-        return view('admin.donation.show', compact('donation'));
+        return view('admin.donation.donation.show', compact('donation'));
     }
 
     public function edit(Donation $donation)
@@ -168,7 +175,9 @@ class DonationController extends Controller
             'item_name' => 'required_if:type,non-monetary|string|max:255',
             'quantity' => 'required_if:type,non-monetary|integer|min:1',
             'expected_date' => 'required_if:type,non-monetary|date|after:today',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            'category' => 'required_if:type,non-monetary|nullable|string|max:255',
+            'condition' => 'required_if:type,non-monetary|nullable|string|max:255',
         ]);
 
         $donation->update($validated);
@@ -230,5 +239,15 @@ class DonationController extends Controller
         }
 
         return response()->file($path);
+    }
+
+    public function allDonors()
+    {
+        \Illuminate\Support\Facades\Log::info('allDonors method reached');
+        $donations = Donation::with(['campaign'])
+            ->latest()
+            ->get(); // Get all donations without pagination
+
+        return view('admin.donation.all-donors', compact('donations'));
     }
 } 

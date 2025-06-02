@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="container-fluid py-4">
     <div class="row">
         <!-- Main Content -->
@@ -9,127 +7,129 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Donation Details</h5>
                     <div>
-                        <a href="{{ route('admin.donations.index') }}" class="btn btn-secondary">
+                        <a href="<?php echo e(route('admin.donations.index')); ?>" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-2"></i>Back
                         </a>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        {{-- Proof/Image Display - Moved to left column --}}
+                        
                         <div class="col-md-6">
-                            @if($donation->proof_path || $donation->image_path)
-                            <h6 class="text-muted mb-3">{{ $donation->type === 'monetary' ? 'Donation Proof' : 'Item Image' }}</h6>
+                            <?php if($donation->proof_path || $donation->image_path): ?>
+                            <h6 class="text-muted mb-3"><?php echo e($donation->type === 'monetary' ? 'Donation Proof' : 'Item Image'); ?></h6>
                             <div class="text-center mb-4">
-                                @if($donation->proof_path)
-                                    <img src="{{ Storage::url($donation->proof_path) }}" alt="Donation Proof" class="img-fluid rounded max-h-96 mx-auto">
-                                @elseif($donation->image_path)
-                                    <img src="{{ Storage::url($donation->image_path) }}" alt="Item Image" class="img-fluid rounded max-h-96 mx-auto">
-                                @endif
+                                <?php if($donation->proof_path): ?>
+                                    <img src="<?php echo e(Storage::url($donation->proof_path)); ?>" alt="Donation Proof" class="img-fluid rounded max-h-96 mx-auto">
+                                <?php elseif($donation->image_path): ?>
+                                    <img src="<?php echo e(Storage::url($donation->image_path)); ?>" alt="Item Image" class="img-fluid rounded max-h-96 mx-auto">
+                                <?php endif; ?>
                             </div>
-                            @endif
+                            <?php endif; ?>
                         </div>
 
                         <div class="col-md-6">
                             <h6 class="text-muted mb-3">Donor Information</h6>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Name</label>
-                                <p>{{ $donation->donor_name }}</p>
+                                <p><?php echo e($donation->donor_name); ?></p>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Email</label>
-                                <p>{{ $donation->donor_email }}</p>
+                                <p><?php echo e($donation->donor_email); ?></p>
                             </div>
-                            {{-- Assuming phone number exists in donation model based on image --}}
-                            @if($donation->donor_phone ?? false)
+                            
+                            <?php if($donation->donor_phone ?? false): ?>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Phone</label>
-                                <p>{{ $donation->donor_phone }}</p>
+                                <p><?php echo e($donation->donor_phone); ?></p>
                             </div>
-                            @endif
+                            <?php endif; ?>
 
                             <h6 class="text-muted mb-3 mt-4">Donation Information</h6>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Type</label>
                                 <p>
-                                    <span class="badge bg-{{ $donation->type === 'monetary' ? 'primary' : 'success' }}">
-                                        {{ ucfirst($donation->type) }}
+                                    <span class="badge bg-<?php echo e($donation->type === 'monetary' ? 'primary' : 'success'); ?>">
+                                        <?php echo e(ucfirst($donation->type)); ?>
+
                                     </span>
                                 </p>
                             </div>
-                            @if($donation->type === 'monetary')
+                            <?php if($donation->type === 'monetary'): ?>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Amount</label>
-                                <p>₱{{ number_format($donation->amount, 2) }}</p>
+                                <p>₱<?php echo e(number_format($donation->amount, 2)); ?></p>
                             </div>
-                            {{-- Add Payment Method for Monetary --}}
+                            
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Payment Method</label>
-                                <p>{{ ucfirst($donation->payment_method) }}</p>
+                                <p><?php echo e(ucfirst($donation->payment_method)); ?></p>
                             </div>
-                            @else
+                            <?php else: ?>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Expected Drop-off Date</label>
-                                <p>{{ $donation->expected_date?->format('M d, Y') ?? 'N/A' }}</p>
+                                <p><?php echo e($donation->expected_date?->format('M d, Y') ?? 'N/A'); ?></p>
                             </div>
-                            {{-- Display Contact Number for non-monetary --}}
-                            @if($donation->donor_phone)
+                            
+                            <?php if($donation->donor_phone): ?>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Contact Number</label>
-                                <p>{{ $donation->donor_phone }}</p>
+                                <p><?php echo e($donation->donor_phone); ?></p>
                             </div>
-                            @endif
-                            {{-- Display Notes for non-monetary --}}
-                            @if($donation->notes)
+                            <?php endif; ?>
+                            
+                            <?php if($donation->notes): ?>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Note</label>
-                                <p>{{ $donation->notes }}</p>
+                                <p><?php echo e($donation->notes); ?></p>
                             </div>
-                            @endif
-                            {{-- Display Category for non-monetary --}}
-                            @if($donation->category)
+                            <?php endif; ?>
+                            
+                            <?php if($donation->category): ?>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Category</label>
-                                <p>{{ $donation->category }}</p>
+                                <p><?php echo e($donation->category); ?></p>
                             </div>
-                            @endif
-                            {{-- Display Item Condition for non-monetary --}}
-                            @if($donation->condition)
+                            <?php endif; ?>
+                            
+                            <?php if($donation->condition): ?>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Item Condition</label>
-                                <p>{{ $donation->condition }}</p>
+                                <p><?php echo e($donation->condition); ?></p>
                             </div>
-                            @endif
-                            @endif
+                            <?php endif; ?>
+                            <?php endif; ?>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Status</label>
                                 <p>
-                                    <span class="badge bg-{{ $donation->status === 'completed' ? 'success' : ($donation->status === 'rejected' ? 'danger' : 'warning') }}">
-                                        {{ ucfirst($donation->status) }}
+                                    <span class="badge bg-<?php echo e($donation->status === 'completed' ? 'success' : ($donation->status === 'rejected' ? 'danger' : 'warning')); ?>">
+                                        <?php echo e(ucfirst($donation->status)); ?>
+
                                     </span>
                                 </p>
                             </div>
-                            {{-- Display Acknowledged Status --}}
+                            
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Acknowledged</label>
-                                <p>{{ $donation->is_acknowledged ? 'Yes' : 'No' }}</p>
+                                <p><?php echo e($donation->is_acknowledged ? 'Yes' : 'No'); ?></p>
                             </div>
-                            {{-- Display Anonymous Status --}}
+                            
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Anonymous</label>
-                                <p>{{ $donation->is_anonymous ? 'Yes' : 'No' }}</p>
+                                <p><?php echo e($donation->is_anonymous ? 'Yes' : 'No'); ?></p>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Status Update Form --}}
-                    @if($donation->status === 'pending')
+                    
+                    <?php if($donation->status === 'pending'): ?>
                         <div class="row mt-4">
                             <div class="col-12">
                                 <h6 class="text-muted mb-3">Update Status</h6>
-                                <form action="{{ route('admin.donations.update-status', $donation->id) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
+                                <form action="<?php echo e(route('admin.donations.update-status', $donation->id)); ?>" method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <?php echo method_field('PATCH'); ?>
                                     <div class="input-group mb-3">
                                         <select class="form-select" name="status">
                                             <option value="completed">Mark as Confirmed</option>
@@ -140,36 +140,38 @@
                                 </form>
                             </div>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
-                    {{-- Additional Notes - Keeping if they exist, outside the two columns --}}
-                    @if($donation->notes)
+                    
+                    <?php if($donation->notes): ?>
                     <div class="row mt-4">
                         <div class="col-12">
                             <h6 class="text-muted mb-3">Additional Notes</h6>
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    {{ $donation->notes }}
+                                    <?php echo e($donation->notes); ?>
+
                                 </div>
                             </div>
                         </div>
                     </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
 /* Add any specific styles needed for this page */
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 // Add any specific scripts needed for this page
 </script>
-@endpush 
+<?php $__env->stopPush(); ?> 
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\PNPh\Desktop\sheila\collab\resources\views/admin/donation/donation/show.blade.php ENDPATH**/ ?>

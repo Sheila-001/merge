@@ -354,7 +354,7 @@
     </div>
 </div>
 
- <!-- Top Donors -->
+ <!-- Top Donors --> 
  <div class="max-w-6xl mx-auto mb-40 mt-12">
      <h2 class="text-2xl font-semibold text-gray-800 mb-8 text-center">Our Top Donors</h2>
      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">

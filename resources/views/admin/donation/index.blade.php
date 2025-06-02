@@ -57,8 +57,7 @@
             <div class="flex justify-between items-center mb-4">
                 <h2 class="font-bold text-lg">Recent Donations</h2>
                 <div class="flex items-center space-x-2">
-                    <input type="text" placeholder="Search donors..." class="border rounded px-3 py-1 text-sm">
-                    <button class="bg-blue-600 text-white px-4 py-1 rounded">Filter</button>
+                    <a href="{{ route('admin.donations.all-donors') }}" class="bg-blue-600 text-white px-4 py-1 rounded">Show all Donors</a>
                 </div>
             </div>
             <table class="min-w-full text-sm">
@@ -99,17 +98,19 @@
                         <td class="py-2">{{ $donation->created_at->format('M d, Y') }}</td>
                         <td class="py-2">
                             @if($donation->proof_path)
-                                <img src="{{ Storage::url('proof/monetary/' . basename($donation->proof_path)) }}" alt="Donation Proof" class="w-10 h-10 object-cover rounded">
-                            @elseif($donation->image_path)
-                                <img src="{{ Storage::url('non-monetary-donations/' . basename($donation->image_path)) }}" alt="Item Image" class="w-10 h-10 object-cover rounded">
+                                <img src="{{ Storage::url($donation->proof_path) }}" alt="Donation Proof" class="w-10 h-10 object-cover rounded">
                             @else
                                 N/A
                             @endif
                         </td>
                         <td class="py-2">
                             <div class="flex space-x-2">
-                                 <a href="{{ route('admin.donations.show', $donation) }}" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></a>
-                                 <a href="{{ route('admin.donations.edit', $donation) }}" class="text-green-600 hover:text-green-800"><i class="fas fa-edit"></i></a>
+                                 <a href="{{ route('admin.donations.show', $donation) }}" class="text-green-800 bg-green-100 px-2 py-1 rounded hover:bg-green-200"><i class="fas fa-eye"></i> View</a>
+                                 <form action="{{ route('admin.donations.destroy', $donation->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this donation?');">
+                                     @csrf
+                                     @method('DELETE')
+                                     <button type="submit" class="text-red-800 bg-red-100 px-2 py-1 rounded hover:bg-red-200"><i class="fas fa-trash"></i> Delete</button>
+                                 </form>
                             </div>
                         </td>
                     </tr>
@@ -128,34 +129,44 @@
         <div class="bg-white rounded-xl shadow p-6">
             <h2 class="font-bold text-lg mb-2">Drop-Off Confirmation</h2>
             <p class="text-gray-500 mb-4">Manage and track non-monetary donations</p>
-            <div class="bg-blue-50 p-4 rounded-xl mb-2">
-                <h3 class="font-semibold mb-1">Pending Drop-offs</h3>
-                <div class="space-y-2">
-                    @foreach($pendingDropoffs as $dropoff)
-                    <div class="flex justify-between items-center bg-white p-3 rounded-lg shadow mb-2">
-                        <div class="flex items-center space-x-2">
-                            <span class="bg-blue-100 p-2 rounded"><i class="fas fa-box"></i></span>
-                            <span>{{ $dropoff->item_name }} - {{ $dropoff->quantity }} units</span> {{-- Changed from $dropoff->description --}}
+            <div class="space-y-4">
+                @forelse($pendingDropoffs as $dropoff)
+                <div class="border rounded-lg p-4 bg-gray-50">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Donor Name: <span class="font-semibold text-gray-800">{{ $dropoff->donor_name }}</span></p>
+                            <p class="text-sm text-gray-600">Donor Email: <span class="font-semibold text-gray-800">{{ $dropoff->donor_email }}</span></p>
+                            <p class="text-sm text-gray-600">Donor Phone: <span class="font-semibold text-gray-800">{{ $dropoff->donor_phone ?? 'N/A' }}</span></p>
+                            <p class="text-sm text-gray-600">Category: <span class="font-semibold text-gray-800">{{ $dropoff->category ?? 'N/A' }}</span></p>
+                            <p class="text-sm text-gray-600">Condition: <span class="font-semibold text-gray-800">{{ $dropoff->condition ?? 'N/A' }}</span></p>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs text-gray-400">Expected: {{ $dropoff->expected_date?->format('M d, Y') ?? 'N/A' }}</span> {{-- Changed from created_at->addDays(7) --}}
-                            <span class="bg-yellow-100 text-yellow-600 px-2 py-1 rounded">Pending</span>
-                             <form action="{{ route('admin.donations.update-status', $dropoff->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('PATCH')
-                                <input type="hidden" name="status" value="completed">
-                                <button type="submit" class="bg-green-100 text-green-600 px-2 py-1 rounded">Received</button>
-                            </form>
-                             <form action="{{ route('admin.donations.update-status', $dropoff->id) }}" method="POST" class="inline">
-                                @csrf
-                                @method('PATCH')
-                                <input type="hidden" name="status" value="rejected">
-                                 <button type="submit" class="bg-red-100 text-red-600 px-2 py-1 rounded">Reject</button>
-                            </form>
+                        <div>
+                            <p class="text-sm text-gray-600">Item: <span class="font-semibold text-gray-800">{{ $dropoff->item_name ?? 'N/A' }}</span></p>
+                            <p class="text-sm text-gray-600">Quantity: <span class="font-semibold text-gray-800">{{ $dropoff->quantity ?? 'N/A' }}</span></p>
+                            <p class="text-sm text-gray-600">Expected Date: <span class="font-semibold text-gray-800">{{ $dropoff->expected_date?->format('M d, Y') ?? 'N/A' }}</span></p>
+                            <p class="text-sm text-gray-600">Status: <span class="badge bg-warning">{{ ucfirst($dropoff->status) }}</span></p>
                         </div>
                     </div>
-                    @endforeach
+
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('admin.donations.show', $dropoff) }}" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-blue-700">Review</a>
+                        <form action="{{ route('admin.donations.update-status', $dropoff->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="status" value="completed">
+                            <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-green-600">Confirmed</button>
+                        </form>
+                        <form action="{{ route('admin.donations.update-status', $dropoff->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="status" value="rejected">
+                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-red-600">Reject</button>
+                        </form>
+                    </div>
                 </div>
+                @empty
+                <p class="text-gray-600">No pending drop-offs at this time.</p>
+                @endforelse
             </div>
         </div>
     </div>
