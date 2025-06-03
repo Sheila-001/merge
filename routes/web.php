@@ -20,6 +20,9 @@ use App\Http\Controllers\DonationController;
 use App\Http\Controllers\UrgentFundsController;
 use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\PublicDonationController;
+use App\Http\Controllers\Admin\DonationController as AdminDonationController;
+use App\Models\Donation;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,22 +42,60 @@ Route::get('/', function () {
 //login Routes
 
 // Admin Protected Routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
-    Route::get('/applications', [ScholarshipController::class, 'index'])->name('admin.applications.index');
-    Route::post('/applications/{id}/status', [ScholarshipController::class, 'updateStatus'])->name('admin.applications.updateStatus');
+
+    // Applications Routes
+    Route::get('/applications', [App\Http\Controllers\Admin\ScholarshipController::class, 'index'])->name('admin.applications.index');
+    Route::post('/applications/{id}/status', [App\Http\Controllers\Admin\ScholarshipController::class, 'updateStatus'])->name('admin.applications.updateStatus');
+
+    // Scholars Routes
     Route::get('/scholars', [AdminController::class, 'showScholars'])->name('admin.scholars');
+
+    // Settings Routes
     Route::get('/settings', [AdminController::class, 'showSettings'])->name('admin.settings');
     Route::put('/settings', [AdminController::class, 'updateSettings'])->name('admin.settings.update');
-    Route::resource('jobs', \App\Http\Controllers\Admin\JobListingController::class);
-    Route::post('jobs/{job}/approve', [\App\Http\Controllers\Admin\JobListingController::class, 'approve'])->name('jobs.approve');
-    Route::post('jobs/{job}/reject', [\App\Http\Controllers\Admin\JobListingController::class, 'reject'])->name('jobs.reject');
 
-    // Admin Volunteer Management Routes
-    Route::get('/admin/volunteers', [App\Http\Controllers\AdminController::class, 'volunteerIndex'])->name('admin.volunteers.index');
-    Route::post('/admin/volunteers/{volunteer}/approve', [App\Http\Controllers\AdminController::class, 'approveVolunteer'])->name('admin.volunteers.approve');
-    Route::post('/admin/volunteers/{volunteer}/reject', [App\Http\Controllers\AdminController::class, 'rejectVolunteer'])->name('admin.volunteers.reject');
+    // Job Listing Routes
+    Route::resource('jobs', \App\Http\Controllers\Admin\JobListingController::class)->names('admin.jobs');
+    Route::post('jobs/{job}/approve', [\App\Http\Controllers\Admin\JobListingController::class, 'approve'])->name('admin.jobs.approve');
+    Route::post('jobs/{job}/reject', [\App\Http\Controllers\Admin\JobListingController::class, 'reject'])->name('admin.jobs.reject');
+
+    // Volunteer Management Routes
+    Route::get('/volunteers', [App\Http\Controllers\AdminController::class, 'volunteerIndex'])->name('admin.volunteers.index');
+    Route::post('/volunteers/{volunteer}/approve', [App\Http\Controllers\AdminController::class, 'approveVolunteer'])->name('admin.volunteers.approve');
+    Route::post('/volunteers/{volunteer}/reject', [App\Http\Controllers\AdminController::class, 'rejectVolunteer'])->name('admin.volunteers.reject');
+
+    // Donation Routes
+    Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.index');
+    Route::get('/donations/create', [App\Http\Controllers\Admin\DonationController::class, 'create'])->name('admin.donations.create');
+    Route::post('/donations', [App\Http\Controllers\Admin\DonationController::class, 'store'])->name('admin.donations.store');
+    Route::get('/donations/dropoffs', [App\Http\Controllers\Admin\DonationController::class, 'dropoffs'])->name('admin.donations.dropoffs');
+    Route::get('/donations/all', [App\Http\Controllers\Admin\DonationController::class, 'allDonors'])->name('admin.donations.all');
+    Route::get('/donations/all-donors', [App\Http\Controllers\Admin\DonationController::class, 'allDonors'])->name('admin.donations.all-donors');
+    Route::get('/donations/proof/{filename}', [App\Http\Controllers\Admin\DonationController::class, 'serveProofImage'])->name('admin.donations.serve-proof');
+    Route::get('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'show'])->name('admin.donations.show');
+    Route::get('/donations/{donation}/edit', [App\Http\Controllers\Admin\DonationController::class, 'edit'])->name('admin.donations.edit');
+    Route::put('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'update'])->name('admin.donations.update');
+    Route::delete('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'destroy'])->name('admin.donations.destroy');
+    Route::patch('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
+
+    // Student Management Routes
+    Route::get('/students', [App\Http\Controllers\Admin\StudentController::class, 'index'])->name('admin.students.index');
+    Route::post('/students/{tracking_code}/approve', [App\Http\Controllers\Admin\StudentController::class, 'approve'])->name('admin.students.approve');
+    Route::post('/students/{tracking_code}/reject', [App\Http\Controllers\Admin\StudentController::class, 'reject'])->name('admin.students.reject');
+    Route::delete('/students/{tracking_code}', [App\Http\Controllers\Admin\StudentController::class, 'destroy'])->name('admin.students.destroy');
+    Route::delete('/students/user/{id}', [App\Http\Controllers\Admin\StudentController::class, 'destroyUser'])->name('admin.students.destroyUser');
+
+    // Urgent Funds Routes
+    Route::resource('urgent-funds', UrgentFundsController::class)->names('admin.urgent-funds');
+
+    // Campaign Management Routes
+    Route::resource('campaigns', AdminCampaignController::class)->names('admin.campaigns');
+
+    // Category Management Routes
+    Route::resource('categories', CategoryController::class)->names('admin.categories');
 });
 
 // Scholarship Routes
@@ -165,18 +206,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::delete('/urgent-funds/{campaign}', [UrgentFundsController::class, 'destroy'])->name('admin.urgent-funds.destroy');
 
     // Campaign Management Routes
-    Route::resource('/campaigns', AdminCampaignController::class)->names('admin.campaigns');
-
-    // Donations Routes
-    Route::get('/donations', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('admin.donations.index');
-    Route::get('/donations/create', [App\Http\Controllers\Admin\DonationController::class, 'create'])->name('admin.donations.create');
-    Route::post('/donations', [App\Http\Controllers\Admin\DonationController::class, 'store'])->name('admin.donations.store');
-    Route::get('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'show'])->name('admin.donations.show');
-    Route::get('/donations/{donation}/edit', [App\Http\Controllers\Admin\DonationController::class, 'edit'])->name('admin.donations.edit');
-    Route::put('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'update'])->name('admin.donations.update');
-    Route::delete('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'destroy'])->name('admin.donations.destroy');
-    Route::put('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
-    Route::get('/donations/dropoffs', [App\Http\Controllers\Admin\DonationController::class, 'dropoffs'])->name('admin.donations.dropoffs');
+    Route::get('/campaigns', [AdminCampaignController::class, 'dashboard'])->name('admin.campaigns.index');
+    Route::resource('/campaigns', AdminCampaignController::class)->names('admin.campaigns')->except('index');
 
     // Category Management
     Route::resource('categories', CategoryController::class);
@@ -225,23 +256,21 @@ Route::delete('/admin/jobs/{job}', [JobListingController::class, 'destroy'])->na
 Route::post('/admin/jobs/{job}/approve', [JobListingController::class, 'approve'])->name('jobs.approve');
 Route::post('/admin/jobs/{job}/reject', [JobListingController::class, 'reject'])->name('jobs.reject');
 
+// Public Donation Routes (no auth required)
 Route::get('/donate', function () {
     return view('donation.donation');
 })->name('donation');
 
-// Donation Routes
 Route::get('/donation', function () {
     return view('donation.donation');
 })->name('donation');
 
-Route::post('/monetary-donation/submit', [DonationController::class, 'submitMonetaryDonation'])->name('monetary_donation.submit');
+Route::post('/monetary-donation/submit', [App\Http\Controllers\PublicDonationController::class, 'submitMonetaryDonation'])->name('monetary_donation.submit');
 
-// Non-Monetary Donation Routes
+// Add non-monetary donation route
 Route::get('/non-monetary-donation', function () {
     return view('donation.nonmonetary');
 })->name('non_monetary');
-
-Route::post('/non-monetary-donation/submit', [DonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
 
 // Campaign Calendar Route
 Route::get('/user/calendar', function () {
@@ -252,9 +281,22 @@ Route::get('/monetary-donation', function () {
     return view('donation.monetary');
 })->name('monetary_donation');
 
-Route::get('/admin/donation', function () {
-    return view('admin.donations');
-})->name('admin.donation.add');
+// Admin redirect
+Route::get('/admin', function () {
+    return redirect()->route('admin.donations.index');
+});
 
+Route::get('/debug-database', [App\Http\Controllers\PublicDonationController::class, 'debugDatabase']);
 
-Route::get('/admin/donation', [DonationController::class, 'index'])->name('admin.donation.index');
+// For monetary donations
+Route::post('/donations/monetary', [App\Http\Controllers\PublicDonationController::class, 'storeMonetary'])->name('donations.monetary.store');
+
+// For non-monetary donations
+Route::post('/donations/non-monetary', [App\Http\Controllers\PublicDonationController::class, 'storeNonMonetary'])->name('donations.non-monetary.store');
+
+Route::post('/non-monetary-donation', [PublicDonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
+
+// Get total monetary donations
+$monetaryTotal = Donation::where('type', 'monetary')
+    ->where('status', 'completed')
+    ->sum('amount');

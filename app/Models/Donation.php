@@ -15,6 +15,7 @@ class Donation extends Model
         'donor_email',
         'donor_phone',
         'is_anonymous',
+        'is_acknowledged',
         'type',
         'amount',
         'item_description',
@@ -22,13 +23,18 @@ class Donation extends Model
         'status',
         'payment_method',
         'transaction_id',
-        'notes'
+        'proof_path',
+        'message',
+        'category',
+        'condition',
     ];
 
     protected $casts = [
         'is_anonymous' => 'boolean',
+        'is_acknowledged' => 'boolean',
         'amount' => 'decimal:2',
-        'quantity' => 'integer'
+        'quantity' => 'integer',
+        'expected_date' => 'datetime',
     ];
 
     /**

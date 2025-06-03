@@ -6,13 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Donation;
 use App\Models\Campaign;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class DonationController extends Controller
 {
     public function index()
     {
+        // If the URL contains /all, redirect to /all-donors
+        if (request()->is('admin/donations/all')) {
+            return redirect()->route('admin.donations.all-donors');
+        }
+
         // Get current month's data
         $currentMonth = Carbon::now();
         $lastMonth = Carbon::now()->subMonth();
@@ -50,13 +55,19 @@ class DonationController extends Controller
             : 0;
 
         // Get campaign total and change
-        $campaignTotal = Campaign::where('status', 'active')
-            ->sum('raised_amount');
+        $campaignTotal = Donation::whereHas('campaign', function($query) {
+                $query->where('status', 'active');
+            })
+            ->where('status', 'completed')
+            ->sum('amount');
         
-        $lastMonthCampaign = Campaign::where('status', 'active')
+        $lastMonthCampaign = Donation::whereHas('campaign', function($query) use ($lastMonth) {
+                $query->where('status', 'active');
+            })
+            ->where('status', 'completed')
             ->whereMonth('created_at', $lastMonth->month)
             ->whereYear('created_at', $lastMonth->year)
-            ->sum('raised_amount');
+            ->sum('amount');
         
         $campaignChange = $lastMonthCampaign > 0 
             ? (($campaignTotal - $lastMonthCampaign) / $lastMonthCampaign) * 100 
@@ -78,14 +89,13 @@ class DonationController extends Controller
             : 0;
 
         // Get paginated donations
-        $donations = Donation::with(['campaign', 'donor'])
+        $donations = Donation::with(['campaign'])
             ->latest()
             ->paginate(10);
 
         // Get pending drop-offs
         $pendingDropoffs = Donation::where('type', 'non-monetary')
             ->where('status', 'pending')
-            ->whereNotNull('expected_date')
             ->get();
 
         return view('admin.donation.index', compact(
@@ -119,10 +129,24 @@ class DonationController extends Controller
             'item_name' => 'required_if:type,non-monetary|string|max:255',
             'quantity' => 'required_if:type,non-monetary|integer|min:1',
             'expected_date' => 'required_if:type,non-monetary|date|after:today',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            'category' => 'required_if:type,non-monetary|nullable|string|max:255',
+            'condition' => 'required_if:type,non-monetary|nullable|string|max:255',
         ]);
 
         $donation = Donation::create($validated);
+
+        // For monetary donations
+        if ($request->hasFile('proof')) {
+            $proofPath = $request->file('proof')->store('proofs', 'public');
+            $donation->update(['proof_path' => $proofPath]);
+        }
+
+        // For non-monetary donations
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('non-monetary-donations', 'public');
+            $donation->update(['image_path' => $imagePath]);
+        }
 
         return redirect()
             ->route('admin.donations.show', $donation)
@@ -131,7 +155,7 @@ class DonationController extends Controller
 
     public function show(Donation $donation)
     {
-        return view('admin.donation.show', compact('donation'));
+        return view('admin.donation.donation.show', compact('donation'));
     }
 
     public function edit(Donation $donation)
@@ -151,10 +175,24 @@ class DonationController extends Controller
             'item_name' => 'required_if:type,non-monetary|string|max:255',
             'quantity' => 'required_if:type,non-monetary|integer|min:1',
             'expected_date' => 'required_if:type,non-monetary|date|after:today',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            'category' => 'required_if:type,non-monetary|nullable|string|max:255',
+            'condition' => 'required_if:type,non-monetary|nullable|string|max:255',
         ]);
 
         $donation->update($validated);
+
+        // For monetary donations
+        if ($request->hasFile('proof')) {
+            $proofPath = $request->file('proof')->store('proofs', 'public');
+            $donation->update(['proof_path' => $proofPath]);
+        }
+
+        // For non-monetary donations
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('non-monetary-donations', 'public');
+            $donation->update(['image_path' => $imagePath]);
+        }
 
         return redirect()
             ->route('admin.donations.show', $donation)
@@ -190,5 +228,26 @@ class DonationController extends Controller
             ->paginate(20);
 
         return view('admin.donation.dropoffs', compact('dropoffs'));
+    }
+
+    public function serveProofImage($filename)
+    {
+        $path = storage_path('app/public/proofs/' . $filename);
+        
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->file($path);
+    }
+
+    public function allDonors()
+    {
+        \Illuminate\Support\Facades\Log::info('allDonors method reached');
+        $donations = Donation::with(['campaign'])
+            ->latest()
+            ->get(); // Get all donations without pagination
+
+        return view('admin.donation.all-donors', compact('donations'));
     }
 } 

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('components.admin-layout')
 
 @section('title', 'Manage Campaigns')
 
@@ -38,8 +38,8 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         @if($campaign->image)
-                                            <img src="{{ Storage::url($campaign->image) }}" 
-                                                 alt="{{ $campaign->title }}" 
+                                            <img src="{{ Storage::url($campaign->image) }}"
+                                                 alt="{{ $campaign->title }}"
                                                  class="rounded me-3"
                                                  style="width: 40px; height: 40px; object-fit: cover;">
                                         @else
@@ -64,17 +64,17 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="{{ route('admin.campaigns.show', $campaign) }}" 
+                                        <a href="{{ route('admin.campaigns.show', $campaign) }}"
                                            class="btn btn-sm btn-info text-white">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.campaigns.edit', $campaign) }}" 
+                                        <a href="{{ route('admin.campaigns.edit', $campaign) }}"
                                            class="btn btn-sm btn-primary">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <button type="button" 
-                                                class="btn btn-sm btn-danger" 
-                                                data-bs-toggle="modal" 
+                                        <button type="button"
+                                                class="btn btn-sm btn-danger"
+                                                data-bs-toggle="modal"
                                                 data-bs-target="#deleteCampaignModal{{ $campaign->id }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -117,4 +117,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

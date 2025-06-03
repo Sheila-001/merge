@@ -88,22 +88,23 @@
 
                     <div>
                         <label class="block text-sm font-medium text-black mb-2">Contact Number</label>
-                        <input type="tel" name="donor_phone" placeholder="Your contact number" required class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent">
+                        <input type="tel" name="donor_phone" placeholder="Your contact number" required class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent" inputmode="numeric" pattern="[0-9]*">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-black mb-2">Upload Proof of Payment</label>
+                        <label class="block text-sm font-medium text-black mb-2">Proof of Donation</label>
                         <div class="border-2 border-dashed border-[#0A90A4] rounded-lg p-6 text-center cursor-pointer hover:border-[#0A90A4] transition-colors" onclick="document.getElementById('proofUpload').click()">
                             <div id="proofUploadText" class="space-y-2">
                                 <svg class="mx-auto h-12 w-12 text-[#0A90A4]" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
-                                <div class="text-[#0A90A4] font-medium">browse files</div>
+                                <div class="text-[#0A90A4] font-medium">Browse Files</div>
                                 <div class="text-xs text-[#0A90A4]">(Screenshot or photo of transaction receipt)</div>
                             </div>
                             <input type="file" id="proofUpload" name="proof" accept="image/*,.pdf" class="hidden" onchange="previewProof(event)">
                             <div id="proofPreview" class="hidden mt-4">
-                                <p class="text-sm font-medium text-black">Selected file:</p>
+                                <img id="proofImagePreview" class="mx-auto max-h-40 object-contain" src="#" alt="Proof of Donation Preview">
+                                <p class="text-sm font-medium text-black mt-2">Selected file:</p>
                                 <p id="proofFilename" class="text-sm text-[#0A90A4]"></p>
                             </div>
                         </div>
@@ -243,20 +244,46 @@
             const proofPreview = document.getElementById('proofPreview');
             const proofUploadText = document.getElementById('proofUploadText');
             const proofFilename = document.getElementById('proofFilename');
-            
+            const proofImagePreview = document.getElementById('proofImagePreview');
+
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 const maxSize = 2 * 1024 * 1024; // 2MB
-                
+
                 if (file.size > maxSize) {
                     alert('File size must be less than 2MB');
                     input.value = '';
+                    proofImagePreview.classList.add('hidden');
+                    proofPreview.classList.add('hidden');
+                    proofUploadText.classList.remove('hidden');
                     return;
                 }
-                
+
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        proofImagePreview.src = e.target.result;
+                        proofImagePreview.classList.remove('hidden');
+                        proofUploadText.classList.add('hidden');
+                        proofPreview.classList.remove('hidden');
+                    }
+
+                    reader.readAsDataURL(file);
+                } else {
+                    proofImagePreview.classList.add('hidden');
+                    proofUploadText.classList.add('hidden');
+                    proofPreview.classList.remove('hidden');
+                }
+
                 proofFilename.textContent = file.name;
-                proofPreview.classList.remove('hidden');
-                proofUploadText.classList.add('hidden');
+
+            } else {
+                proofImagePreview.src = '#';
+                proofImagePreview.classList.add('hidden');
+                proofPreview.classList.add('hidden');
+                proofUploadText.classList.remove('hidden');
+                proofFilename.textContent = '';
             }
         }
 
@@ -280,17 +307,45 @@
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').content
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    // If response is not ok (e.g., 422 status)
+                    return response.json().then(errorData => {
+                        console.error('Backend Error Response:', errorData);
+                        if (errorData.message) {
+                             // Display generic error message if available
+                             throw new Error(errorData.message);
+                        } else if (errorData.errors) {
+                            // Display specific validation errors
+                            const errorMessages = Object.values(errorData.errors).flat();
+                            throw new Error('Validation failed:\\n' + errorMessages.join('\\n'));
+                        } else {
+                            // Fallback for unexpected error structure
+                            throw new Error('Something went wrong on the server.');
+                        }
+                    }).catch(() => {
+                        // Handle cases where response is not JSON
+                        throw new Error('Server error: ' + response.status + ' ' + response.statusText);
+                    });
+                }
+                // If response is ok
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     document.getElementById('thankYouModal').classList.remove('hidden');
+                } else {
+                    // This block might be redundant if backend always sends non-success as !response.ok
+                    console.error('Error:', data.message || 'Unknown error');
+                    alert('There was an error submitting your donation: ' + (data.message || 'Please check the console for details.'));
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Fetch Error:', error);
+                alert('Submission failed: ' + error.message);
             });
         });
 
@@ -306,18 +361,51 @@
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').content
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    // If response is not ok (e.g., 422 status)
+                    return response.json().then(errorData => {
+                        console.error('Backend Error Response:', errorData);
+                        if (errorData.message) {
+                             // Display generic error message if available
+                             throw new Error(errorData.message);
+                        } else if (errorData.errors) {
+                            // Display specific validation errors
+                            const errorMessages = Object.values(errorData.errors).flat();
+                            throw new Error('Validation failed:\\n' + errorMessages.join('\\n'));
+                        } else {
+                            // Fallback for unexpected error structure
+                            throw new Error('Something went wrong on the server.');
+                        }
+                    }).catch(() => {
+                        // Handle cases where response is not JSON
+                        throw new Error('Server error: ' + response.status + ' ' + response.statusText);
+                    });
+                }
+                // If response is ok
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     document.getElementById('thankYouModal').classList.remove('hidden');
+                } else {
+                    // This block might be redundant if backend always sends non-success as !response.ok
+                    console.error('Error:', data.message || 'Unknown error');
+                    alert('There was an error submitting your donation: ' + (data.message || 'Please check the console for details.'));
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Fetch Error:', error);
+                alert('Submission failed: ' + error.message);
             });
+        });
+
+        // Restrict contact number input to numbers only
+        document.getElementById('donationForm').querySelector('input[name="donor_phone"]').addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
         });
     </script>
 </body>

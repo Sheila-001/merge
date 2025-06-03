@@ -69,7 +69,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-black mb-2">Contact Number</label>
-                        <input type="tel" name="donor_phone" placeholder="Your contact number" required class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent">
+                        <input type="tel" name="donor_phone" placeholder="Your contact number" required class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent" inputmode="numeric" pattern="[0-9]*">
                     </div>
 
                     <div>
@@ -101,7 +101,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-black mb-2">Preferred Drop-off Time</label>
-                        <input type="datetime-local" name="preferred_time" required class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent">
+                        <input type="datetime-local" name="expected_date" required class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent">
                     </div>
 
                     <div>
@@ -327,6 +327,11 @@
          // Optional: Add a way to close the modals if needed (e.g., clicking outside or a close button)
          // For simplicity, we are only showing the thank you modal on success and linking back to donation page.
          // If you need close buttons on the modals, you'll need to add them to the HTML and add corresponding JS.
+
+        // Restrict contact number input to numbers only
+        document.getElementById('donationForm').querySelector('input[name="donor_phone"]').addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
 
     </script>
 </body>
