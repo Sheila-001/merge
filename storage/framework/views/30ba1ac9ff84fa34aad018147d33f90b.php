@@ -1,12 +1,12 @@
 <<<<<<< HEAD
-@extends('layouts.app')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
 <div class="container-fluid py-4">
     <div class="row">
         <!-- Sidebar -->
         <div class="col-lg-3">
-            @include('admin.donation.components.sidebar', ['showStats' => true])
+            <?php echo $__env->make('admin.donation.components.sidebar', ['showStats' => true], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         </div>
 
         <!-- Main Content -->
@@ -14,7 +14,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Recent Donations</h5>
-                    <a href="{{ route('admin.donations.create') }}" class="btn btn-primary">
+                    <a href="<?php echo e(route('admin.donations.create')); ?>" class="btn btn-primary">
                         <i class="fas fa-plus me-2"></i>Add New
                     </a>
                 </div>
@@ -32,45 +32,48 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($donations as $donation)
+                                <?php $__empty_1 = true; $__currentLoopData = $donations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $donation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div>
-                                                <h6 class="mb-0">{{ $donation->donor_name }}</h6>
-                                                <small class="text-muted">{{ $donation->donor_email }}</small>
+                                                <h6 class="mb-0"><?php echo e($donation->donor_name); ?></h6>
+                                                <small class="text-muted"><?php echo e($donation->donor_email); ?></small>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-{{ $donation->type === 'monetary' ? 'primary' : 'success' }}">
-                                            {{ ucfirst($donation->type) }}
+                                        <span class="badge bg-<?php echo e($donation->type === 'monetary' ? 'primary' : 'success'); ?>">
+                                            <?php echo e(ucfirst($donation->type)); ?>
+
                                         </span>
                                     </td>
                                     <td>
-                                        @if($donation->type === 'monetary')
-                                            ₱{{ number_format($donation->amount, 2) }}
-                                        @else
-                                            {{ $donation->item_name }} ({{ $donation->quantity }})
-                                        @endif
+                                        <?php if($donation->type === 'monetary'): ?>
+                                            ₱<?php echo e(number_format($donation->amount, 2)); ?>
+
+                                        <?php else: ?>
+                                            <?php echo e($donation->item_name); ?> (<?php echo e($donation->quantity); ?>)
+                                        <?php endif; ?>
                                     </td>
-                                    <td>{{ $donation->created_at->format('M d, Y') }}</td>
+                                    <td><?php echo e($donation->created_at->format('M d, Y')); ?></td>
                                     <td>
-                                        <span class="badge bg-{{ $donation->status === 'completed' ? 'success' : ($donation->status === 'rejected' ? 'danger' : 'warning') }}">
-                                            {{ ucfirst($donation->status) }}
+                                        <span class="badge bg-<?php echo e($donation->status === 'completed' ? 'success' : ($donation->status === 'rejected' ? 'danger' : 'warning')); ?>">
+                                            <?php echo e(ucfirst($donation->status)); ?>
+
                                         </span>
                                     </td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="{{ route('admin.donations.show', $donation) }}" class="btn btn-sm btn-info">
+                                            <a href="<?php echo e(route('admin.donations.show', $donation)); ?>" class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('admin.donations.edit', $donation) }}" class="btn btn-sm btn-primary">
+                                            <a href="<?php echo e(route('admin.donations.edit', $donation)); ?>" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('admin.donations.destroy', $donation) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
+                                            <form action="<?php echo e(route('admin.donations.destroy', $donation)); ?>" method="POST" class="d-inline">
+                                                <?php echo csrf_field(); ?>
+                                                <?php echo method_field('DELETE'); ?>
                                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this donation?')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -78,20 +81,30 @@
                                         </div>
                                     </td>
                                 </tr>
-                                @empty
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                 <tr>
                                     <td colspan="6" class="text-center">No donations found</td>
                                 </tr>
-                                @endforelse
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
 
                     <div class="d-flex justify-content-end mt-4">
-                        {{ $donations->links() }}
+                        <?php echo e($donations->links()); ?>
+
 =======
-@php use Illuminate\Support\Facades\Storage; @endphp
-<x-app-layout>
+<?php use Illuminate\Support\Facades\Storage; ?>
+<?php if (isset($component)) { $__componentOriginal4619374cef299e94fd7263111d0abc69 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal4619374cef299e94fd7263111d0abc69 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.app-layout','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
     <div class="p-8 bg-[#f3f6fb] min-h-screen">
         <div class="mb-8 flex justify-between items-center">
             <h1 class="text-2xl font-bold">Donation </h1>
@@ -109,7 +122,7 @@
                         <i class="fas fa-dollar-sign"></i>
                     </span>
                 </div>
-                <span class="mt-4 text-2xl font-bold">{{ $monetaryTotal ?? 0 }}</span>
+                <span class="mt-4 text-2xl font-bold"><?php echo e($monetaryTotal ?? 0); ?></span>
                 <span class="text-xs text-green-500 mt-1">↑12% from last month</span>
             </div>
             <div class="bg-white rounded-xl p-6 shadow flex flex-col">
@@ -119,7 +132,7 @@
                         <i class="fas fa-box"></i>
                     </span>
                 </div>
-                <span class="mt-4 text-2xl font-bold">{{ $nonMonetaryCount ?? 0 }}</span>
+                <span class="mt-4 text-2xl font-bold"><?php echo e($nonMonetaryCount ?? 0); ?></span>
                 <span class="text-xs text-green-500 mt-1">↑8% from last month</span>
             </div>
             <div class="bg-white rounded-xl p-6 shadow flex flex-col">
@@ -129,7 +142,7 @@
                         <i class="fas fa-bullhorn"></i>
                     </span>
                 </div>
-                <span class="mt-4 text-2xl font-bold">{{ $campaignTotal ?? 0 }}</span>
+                <span class="mt-4 text-2xl font-bold"><?php echo e($campaignTotal ?? 0); ?></span>
                 <span class="text-xs text-green-500 mt-1">↑10% from last month</span>
             </div>
             <div class="bg-white rounded-xl p-6 shadow flex flex-col">
@@ -139,7 +152,7 @@
                         <i class="fas fa-users"></i>
                     </span>
                 </div>
-                <span class="mt-4 text-2xl font-bold">{{ $donorCount ?? 0 }}</span>
+                <span class="mt-4 text-2xl font-bold"><?php echo e($donorCount ?? 0); ?></span>
                 <span class="text-xs text-green-500 mt-1">↑13% from last month</span>
             </div>
         </div>
@@ -149,7 +162,8 @@
             <div class="flex justify-between items-center mb-4">
                 <h2 class="font-bold text-lg">Recent Donations</h2>
                 <div class="flex items-center space-x-2">
-                    <a href="{{ route('admin.donations.all-donors') }}" class="bg-blue-600 text-white px-4 py-1 rounded">Show all Donors</a>
+                    <input type="text" placeholder="Search donors..." class="border rounded px-3 py-1 text-sm">
+                    <button class="bg-blue-600 text-white px-4 py-1 rounded">Filter</button>
                 </div>
             </div>
             <table class="min-w-full text-sm">
@@ -165,54 +179,55 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($donations as $donation)
+                    <?php $__currentLoopData = $donations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $donation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <tr class="border-b">
                         <td class="py-2 flex items-center space-x-2">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode($donation->donor_name) }}&background=random" class="w-8 h-8 rounded-full" alt="{{ $donation->donor_name }}">
+                            <img src="https://ui-avatars.com/api/?name=<?php echo e(urlencode($donation->donor_name)); ?>&background=random" class="w-8 h-8 rounded-full" alt="<?php echo e($donation->donor_name); ?>">
                             <span>
-                                <div class="font-semibold">{{ $donation->donor_name }}</div>
-                                <div class="text-xs text-gray-500">{{ $donation->donor_email }}</div>
+                                <div class="font-semibold"><?php echo e($donation->donor_name); ?></div>
+                                <div class="text-xs text-gray-500"><?php echo e($donation->donor_email); ?></div>
                             </span>
                         </td>
-                        <td class="py-2">{{ ucfirst($donation->type) }}</td>
+                        <td class="py-2"><?php echo e(ucfirst($donation->type)); ?></td>
                         <td class="py-2 font-bold">
-                            @if($donation->type === 'monetary')
-                                ₱{{ number_format($donation->amount, 2) }}
-                            @else
-                                {{ $donation->item_name }} {{-- Changed from $donation->description --}}
-                            @endif
+                            <?php if($donation->type === 'monetary'): ?>
+                                ₱<?php echo e(number_format($donation->amount, 2)); ?>
+
+                            <?php else: ?>
+                                <?php echo e($donation->item_name); ?> 
+                            <?php endif; ?>
                         </td>
                         <td class="py-2">
-                            <span class="bg-{{ $donation->status === 'completed' ? 'green' : 'yellow' }}-100 text-{{ $donation->status === 'completed' ? 'green' : 'yellow' }}-600 px-2 py-1 rounded">
-                                {{ ucfirst($donation->status) }}
+                            <span class="bg-<?php echo e($donation->status === 'completed' ? 'green' : 'yellow'); ?>-100 text-<?php echo e($donation->status === 'completed' ? 'green' : 'yellow'); ?>-600 px-2 py-1 rounded">
+                                <?php echo e(ucfirst($donation->status)); ?>
+
                             </span>
                         </td>
-                        <td class="py-2">{{ $donation->created_at->format('M d, Y') }}</td>
+                        <td class="py-2"><?php echo e($donation->created_at->format('M d, Y')); ?></td>
                         <td class="py-2">
-                            @if($donation->proof_path)
-                                <img src="{{ Storage::url($donation->proof_path) }}" alt="Donation Proof" class="w-10 h-10 object-cover rounded">
-                            @else
+                            <?php if($donation->proof_path): ?>
+                                <img src="<?php echo e(Storage::url('proof/monetary/' . basename($donation->proof_path))); ?>" alt="Donation Proof" class="w-10 h-10 object-cover rounded">
+                            <?php elseif($donation->image_path): ?>
+                                <img src="<?php echo e(Storage::url('non-monetary-donations/' . basename($donation->image_path))); ?>" alt="Item Image" class="w-10 h-10 object-cover rounded">
+                            <?php else: ?>
                                 N/A
-                            @endif
+                            <?php endif; ?>
                         </td>
                         <td class="py-2">
                             <div class="flex space-x-2">
-                                 <a href="{{ route('admin.donations.show', $donation) }}" class="text-green-800 bg-green-100 px-2 py-1 rounded hover:bg-green-200"><i class="fas fa-eye"></i> View</a>
-                                 <form action="{{ route('admin.donations.destroy', $donation->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this donation?');">
-                                     @csrf
-                                     @method('DELETE')
-                                     <button type="submit" class="text-red-800 bg-red-100 px-2 py-1 rounded hover:bg-red-200"><i class="fas fa-trash"></i> Delete</button>
-                                 </form>
+                                 <a href="<?php echo e(route('admin.donations.show', $donation)); ?>" class="text-blue-600 hover:text-blue-800"><i class="fas fa-eye"></i></a>
+                                 <a href="<?php echo e(route('admin.donations.edit', $donation)); ?>" class="text-green-600 hover:text-green-800"><i class="fas fa-edit"></i></a>
                             </div>
                         </td>
                     </tr>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </tbody>
             </table>
              <div class="flex justify-between items-center mt-4">
-                 <span class="text-xs text-gray-500">Showing {{ $donations->firstItem() }} to {{ $donations->lastItem() }} of {{ $donations->total() }} entries</span>
+                 <span class="text-xs text-gray-500">Showing <?php echo e($donations->firstItem()); ?> to <?php echo e($donations->lastItem()); ?> of <?php echo e($donations->total()); ?> entries</span>
                  <div class="flex space-x-1">
-                     {{ $donations->links() }}
+                     <?php echo e($donations->links()); ?>
+
                  </div>
              </div>
         </div>
@@ -221,53 +236,52 @@
         <div class="bg-white rounded-xl shadow p-6">
             <h2 class="font-bold text-lg mb-2">Drop-Off Confirmation</h2>
             <p class="text-gray-500 mb-4">Manage and track non-monetary donations</p>
-            <div class="space-y-4">
-                @forelse($pendingDropoffs as $dropoff)
-                <div class="border rounded-lg p-4 bg-gray-50">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <p class="text-sm text-gray-600">Donor Name: <span class="font-semibold text-gray-800">{{ $dropoff->donor_name }}</span></p>
-                            <p class="text-sm text-gray-600">Donor Email: <span class="font-semibold text-gray-800">{{ $dropoff->donor_email }}</span></p>
-                            <p class="text-sm text-gray-600">Donor Phone: <span class="font-semibold text-gray-800">{{ $dropoff->donor_phone ?? 'N/A' }}</span></p>
-                            <p class="text-sm text-gray-600">Category: <span class="font-semibold text-gray-800">{{ $dropoff->category ?? 'N/A' }}</span></p>
-                            <p class="text-sm text-gray-600">Condition: <span class="font-semibold text-gray-800">{{ $dropoff->condition ?? 'N/A' }}</span></p>
+            <div class="bg-blue-50 p-4 rounded-xl mb-2">
+                <h3 class="font-semibold mb-1">Pending Drop-offs</h3>
+                <div class="space-y-2">
+                    <?php $__currentLoopData = $pendingDropoffs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dropoff): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <div class="flex justify-between items-center bg-white p-3 rounded-lg shadow mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-blue-100 p-2 rounded"><i class="fas fa-box"></i></span>
+                            <span><?php echo e($dropoff->item_name); ?> - <?php echo e($dropoff->quantity); ?> units</span> 
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Item: <span class="font-semibold text-gray-800">{{ $dropoff->item_name ?? 'N/A' }}</span></p>
-                            <p class="text-sm text-gray-600">Quantity: <span class="font-semibold text-gray-800">{{ $dropoff->quantity ?? 'N/A' }}</span></p>
-                            <p class="text-sm text-gray-600">Expected Date: <span class="font-semibold text-gray-800">{{ $dropoff->expected_date?->format('M d, Y') ?? 'N/A' }}</span></p>
-                            <p class="text-sm text-gray-600">Status: <span class="badge bg-warning">{{ ucfirst($dropoff->status) }}</span></p>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-gray-400">Expected: <?php echo e($dropoff->expected_date?->format('M d, Y') ?? 'N/A'); ?></span> 
+                            <span class="bg-yellow-100 text-yellow-600 px-2 py-1 rounded">Pending</span>
+                             <form action="<?php echo e(route('admin.donations.update-status', $dropoff->id)); ?>" method="POST" class="inline">
+                                <?php echo csrf_field(); ?>
+                                <?php echo method_field('PATCH'); ?>
+                                <input type="hidden" name="status" value="completed">
+                                <button type="submit" class="bg-green-100 text-green-600 px-2 py-1 rounded">Received</button>
+                            </form>
+                             <form action="<?php echo e(route('admin.donations.update-status', $dropoff->id)); ?>" method="POST" class="inline">
+                                <?php echo csrf_field(); ?>
+                                <?php echo method_field('PATCH'); ?>
+                                <input type="hidden" name="status" value="rejected">
+                                 <button type="submit" class="bg-red-100 text-red-600 px-2 py-1 rounded">Reject</button>
+                            </form>
                         </div>
 >>>>>>> 2ee16f2223cec672605dbeecc11678df77f08915
                     </div>
-
-                    <div class="flex items-center space-x-2">
-                        <a href="{{ route('admin.donations.show', $dropoff) }}" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-blue-700">Review</a>
-                        <form action="{{ route('admin.donations.update-status', $dropoff->id) }}" method="POST" class="inline">
-                            @csrf
-                            @method('PATCH')
-                            <input type="hidden" name="status" value="completed">
-                            <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-green-600">Confirmed</button>
-                        </form>
-                        <form action="{{ route('admin.donations.update-status', $dropoff->id) }}" method="POST" class="inline">
-                            @csrf
-                            @method('PATCH')
-                            <input type="hidden" name="status" value="rejected">
-                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-red-600">Reject</button>
-                        </form>
-                    </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-                @empty
-                <p class="text-gray-600">No pending drop-offs at this time.</p>
-                @endforelse
             </div>
         </div>
     </div>
 <<<<<<< HEAD
 </div>
-@endsection 
+<?php $__env->stopSection(); ?> 
 =======
-</x-app-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal4619374cef299e94fd7263111d0abc69)): ?>
+<?php $attributes = $__attributesOriginal4619374cef299e94fd7263111d0abc69; ?>
+<?php unset($__attributesOriginal4619374cef299e94fd7263111d0abc69); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal4619374cef299e94fd7263111d0abc69)): ?>
+<?php $component = $__componentOriginal4619374cef299e94fd7263111d0abc69; ?>
+<?php unset($__componentOriginal4619374cef299e94fd7263111d0abc69); ?>
+<?php endif; ?>
 
 <!-- Proof Image Modal -->
 <div id="proofModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
@@ -280,7 +294,7 @@
     </div>
 </div>
 
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
 .card {
     transition: all 0.3s ease;
@@ -309,9 +323,9 @@
     width: 1.25rem;
 }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Search functionality
@@ -371,5 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-@endpush 
+<?php $__env->stopPush(); ?> 
 >>>>>>> 2ee16f2223cec672605dbeecc11678df77f08915
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\collab\resources\views/admin/donation/index.blade.php ENDPATH**/ ?>
