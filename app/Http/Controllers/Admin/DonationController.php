@@ -155,13 +155,13 @@ class DonationController extends Controller
 
     public function show(Donation $donation)
     {
-        return view('admin.donation.donation.show', compact('donation'));
+        return view('admin.donation.show', compact('donation'));
     }
 
     public function edit(Donation $donation)
     {
         $campaigns = Campaign::where('status', 'active')->get();
-        return view('admin.donation.edit', compact('donation', 'campaigns'));
+        return view('admin.donation.adddonation', compact('donation', 'campaigns'));
     }
 
     public function update(Request $request, Donation $donation)

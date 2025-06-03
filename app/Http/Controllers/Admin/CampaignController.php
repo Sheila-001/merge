@@ -50,6 +50,7 @@ class CampaignController extends Controller
             ->map(function ($donation) {
                 return (object)[
                     'donor_name' => $donation->donor_display_name,
+                    'donor_email' => $donation->donor_email,
                     'donor_avatar' => null,
                     'campaign_title' => $donation->campaign->title ?? 'Unknown Campaign',
                     'amount' => $donation->amount,

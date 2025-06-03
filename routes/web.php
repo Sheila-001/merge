@@ -89,13 +89,23 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::delete('/students/user/{id}', [App\Http\Controllers\Admin\StudentController::class, 'destroyUser'])->name('admin.students.destroyUser');
 
     // Urgent Funds Routes
-    Route::resource('urgent-funds', UrgentFundsController::class)->names('admin.urgent-funds');
+    Route::get('/urgent-funds', [App\Http\Controllers\Admin\UrgentFundsController::class, 'index'])->name('admin.urgent-funds.index');
+    Route::get('/urgent-funds/create', [App\Http\Controllers\Admin\UrgentFundsController::class, 'create'])->name('admin.urgent-funds.create');
+    Route::post('/urgent-funds', [App\Http\Controllers\Admin\UrgentFundsController::class, 'store'])->name('admin.urgent-funds.store');
+    Route::get('/urgent-funds/{campaign}/edit', [App\Http\Controllers\Admin\UrgentFundsController::class, 'edit'])->name('admin.urgent-funds.edit');
+    Route::put('/urgent-funds/{campaign}', [App\Http\Controllers\Admin\UrgentFundsController::class, 'update'])->name('admin.urgent-funds.update');
+    Route::delete('/urgent-funds/{campaign}', [App\Http\Controllers\Admin\UrgentFundsController::class, 'destroy'])->name('admin.urgent-funds.destroy');
 
     // Campaign Management Routes
     Route::resource('campaigns', AdminCampaignController::class)->names('admin.campaigns');
 
     // Category Management Routes
     Route::resource('categories', CategoryController::class)->names('admin.categories');
+
+    // Admin Calendar Route
+    Route::get('/calendar', function () {
+        return view('donation.usercalendar');
+    })->name('admin.calendar.index');
 });
 
 // Scholarship Routes
@@ -198,12 +208,12 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/volunteers', [App\Http\Controllers\AdminController::class, 'volunteerIndex'])->name('admin.volunteers.index');
 
     // Urgent Funds Routes
-    Route::get('/urgent-funds', [UrgentFundsController::class, 'index'])->name('admin.urgent-funds.index');
-    Route::get('/urgent-funds/create', [UrgentFundsController::class, 'create'])->name('admin.urgent-funds.create');
-    Route::post('/urgent-funds', [UrgentFundsController::class, 'store'])->name('admin.urgent-funds.store');
-    Route::get('/urgent-funds/{campaign}/edit', [UrgentFundsController::class, 'edit'])->name('admin.urgent-funds.edit');
-    Route::put('/urgent-funds/{campaign}', [UrgentFundsController::class, 'update'])->name('admin.urgent-funds.update');
-    Route::delete('/urgent-funds/{campaign}', [UrgentFundsController::class, 'destroy'])->name('admin.urgent-funds.destroy');
+    Route::get('/urgent-funds', [App\Http\Controllers\Admin\UrgentFundsController::class, 'index'])->name('admin.urgent-funds.index');
+    Route::get('/urgent-funds/create', [App\Http\Controllers\Admin\UrgentFundsController::class, 'create'])->name('admin.urgent-funds.create');
+    Route::post('/urgent-funds', [App\Http\Controllers\Admin\UrgentFundsController::class, 'store'])->name('admin.urgent-funds.store');
+    Route::get('/urgent-funds/{campaign}/edit', [App\Http\Controllers\Admin\UrgentFundsController::class, 'edit'])->name('admin.urgent-funds.edit');
+    Route::put('/urgent-funds/{campaign}', [App\Http\Controllers\Admin\UrgentFundsController::class, 'update'])->name('admin.urgent-funds.update');
+    Route::delete('/urgent-funds/{campaign}', [App\Http\Controllers\Admin\UrgentFundsController::class, 'destroy'])->name('admin.urgent-funds.destroy');
 
     // Campaign Management Routes
     Route::get('/campaigns', [AdminCampaignController::class, 'dashboard'])->name('admin.campaigns.index');

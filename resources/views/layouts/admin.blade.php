@@ -33,16 +33,18 @@
                 <a href="#" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors" onclick="toggleDonationsSubmenu(event)">Donations</a>
 
                 {{-- Donations submenu --}}
-                <div id="donationsSubmenu" style="display: none;">
-                    <a href="{{ route('admin.urgent-funds.index') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                <div id="donationsSubmenu" style="display: block;">
+                    <a href="{{ route('admin.urgent-funds.create') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
                         └ Urgent Funds
                     </a>
-                    <a href="{{ route('admin.campaigns.dashboard') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                    <a href="{{ route('admin.campaigns.index') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
                         └ Campaigns
                     </a>
-
                     <a href="{{ route('admin.calendar.index') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
                         └ Calendar
+                    </a>
+                    <a href="{{ route('admin.campaigns.index') }}" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                        └ Reports
                     </a>
                 </div>
 

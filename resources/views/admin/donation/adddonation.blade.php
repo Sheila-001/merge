@@ -2,7 +2,6 @@
     <div class="max-w-7xl mx-auto py-8">
         <!-- Header Row: Title and User Badge -->
         <div class="flex items-center justify-between mb-8">
-            <h1 class="text-2xl font-bold">Donation</h1>
             <div class="flex items-center gap-2">
                 <span class="text-gray-500">Admin</span>
                 <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">AD</span>

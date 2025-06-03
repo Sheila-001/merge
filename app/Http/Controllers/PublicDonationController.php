@@ -78,7 +78,7 @@ class PublicDonationController extends Controller
             'donor_email' => 'required|email|max:255',
             'donor_phone' => 'required|string|max:20',
             'image' => 'required|file|image|max:2048', // Max 2MB, image file types
-            'preferred_time' => 'required|date',
+            'expected_date' => 'required|date',
             'description' => 'required|string',
             'donation_preference' => 'required|in:anonymous,acknowledged', // Add validation for the preference
         ]);
@@ -113,9 +113,13 @@ class PublicDonationController extends Controller
             'status' => 'pending', // Initial status
             'transaction_id' => null,
             'proof_path' => $imagePath, // Store image path in proof_path
-            'message' => 'Preferred Time: ' . $request->preferred_time, // Store preferred time in message
+            'message' => 'Preferred Time: ' . $request->expected_date, // Store preferred time in message
             'is_anonymous' => !($request->donation_preference === 'acknowledged'),
+            'expected_date' => $request->expected_date,
         ]);
+
+        // Save the donation to the database
+        $donation->save();
 
         // For this example, we'll just return a success response.
         return response()->json(['success' => true, 'message' => 'Non-monetary donation submitted successfully!']);
