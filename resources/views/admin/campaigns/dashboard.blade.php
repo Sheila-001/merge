@@ -12,81 +12,9 @@
             <a href="{{ route('admin.campaigns.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>New Campaign
             </a>
-            <a href="{{ route('admin.campaigns.manage') }}" class="btn btn-outline-primary">
+            <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline-primary">
                 <i class="fas fa-list me-2"></i>Manage Campaigns
             </a>
-        </div>
-    </div>
-
-    <!-- Campaign Statistics -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 me-3">
-                            <div class="rounded-circle bg-primary bg-opacity-10 p-3">
-                                <i class="fas fa-bullhorn text-primary fa-lg"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Active Campaigns</h6>
-                            <h4 class="mb-0">{{ $campaigns->where('status', 'Ongoing')->count() }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 me-3">
-                            <div class="rounded-circle bg-success bg-opacity-10 p-3">
-                                <i class="fas fa-hand-holding-heart text-success fa-lg"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Total Donations</h6>
-                            <h4 class="mb-0">{{ $recentDonations->count() }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 me-3">
-                            <div class="rounded-circle bg-info bg-opacity-10 p-3">
-                                <i class="fas fa-chart-line text-info fa-lg"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Total Raised</h6>
-                            <h4 class="mb-0">₱{{ number_format($recentDonations->sum('amount'), 2) }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 me-3">
-                            <div class="rounded-circle bg-warning bg-opacity-10 p-3">
-                                <i class="fas fa-users text-warning fa-lg"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Total Donors</h6>
-                            <h4 class="mb-0">{{ $recentDonations->unique('donor_email')->count() }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
