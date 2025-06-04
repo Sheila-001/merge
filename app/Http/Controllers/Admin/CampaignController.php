@@ -82,7 +82,7 @@ class CampaignController extends Controller
 
         Campaign::create($validated);
 
-        return redirect()->route('admin.campaigns.dashboard')
+        return redirect()->route('admin.campaigns.index')
             ->with('success', 'Campaign created successfully.');
     }
 
@@ -118,7 +118,7 @@ class CampaignController extends Controller
 
         $campaign->update($validated);
 
-        return redirect()->route('admin.campaigns.dashboard')
+        return redirect()->route('admin.campaigns.index')
             ->with('success', 'Campaign updated successfully.');
     }
 
@@ -133,7 +133,7 @@ class CampaignController extends Controller
         
         $campaign->delete();
 
-        return redirect()->route('admin.campaigns.dashboard')
+        return redirect()->route('admin.campaigns.index')
             ->with('success', 'Campaign deleted successfully.');
     }
 } 

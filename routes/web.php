@@ -92,7 +92,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('urgent-funds', UrgentFundsController::class)->names('admin.urgent-funds');
 
     // Campaign Management Routes
-    Route::resource('campaigns', AdminCampaignController::class)->names('admin.campaigns');
+    Route::get('/campaigns', [AdminCampaignController::class, 'index'])->name('admin.campaigns.index');
+    Route::resource('/campaigns', AdminCampaignController::class)->names('admin.campaigns')->except('index');
 
     // Category Management Routes
     Route::resource('categories', CategoryController::class)->names('admin.categories');
@@ -206,7 +207,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::delete('/urgent-funds/{campaign}', [UrgentFundsController::class, 'destroy'])->name('admin.urgent-funds.destroy');
 
     // Campaign Management Routes
-    Route::get('/campaigns', [AdminCampaignController::class, 'dashboard'])->name('admin.campaigns.index');
+    Route::get('/campaigns', [AdminCampaignController::class, 'index'])->name('admin.campaigns.index');
     Route::resource('/campaigns', AdminCampaignController::class)->names('admin.campaigns')->except('index');
 
     // Category Management
@@ -296,7 +297,5 @@ Route::post('/donations/non-monetary', [App\Http\Controllers\PublicDonationContr
 
 Route::post('/non-monetary-donation', [PublicDonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
 
-// Get total monetary donations
-$monetaryTotal = Donation::where('type', 'monetary')
-    ->where('status', 'completed')
-    ->sum('amount');
+// Get total monetary donations (moved to DonationController)
+Route::get('/donations/total', [App\Http\Controllers\PublicDonationController::class, 'getMonetaryTotal'])->name('donations.total');

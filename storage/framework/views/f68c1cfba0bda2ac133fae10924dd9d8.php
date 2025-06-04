@@ -37,8 +37,11 @@
                     <a href="<?php echo e(route('admin.urgent-funds.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
                         └ Urgent Funds
                     </a>
-                    <a href="<?php echo e(route('admin.campaigns.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                    <a href="<?php echo e(route('admin.campaigns.dashboard')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
                         └ All Campaigns
+                    </a>
+                    <a href="<?php echo e(route('admin.calendar.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                        └ Calendar
                     </a>
                 </div>
 

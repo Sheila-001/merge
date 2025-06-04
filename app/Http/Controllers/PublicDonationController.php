@@ -121,5 +121,18 @@ class PublicDonationController extends Controller
         return response()->json(['success' => true, 'message' => 'Non-monetary donation submitted successfully!']);
     }
 
+    public function getMonetaryTotal()
+    {
+        try {
+            $monetaryTotal = Donation::where('type', 'monetary')
+                ->where('status', 'completed')
+                ->sum('amount');
+            
+            return response()->json(['total' => $monetaryTotal]);
+        } catch (\Exception $e) {
+            return response()->json(['total' => 0]);
+        }
+    }
+
     // You might add other methods here for non-monetary donations or campaigns
 }
