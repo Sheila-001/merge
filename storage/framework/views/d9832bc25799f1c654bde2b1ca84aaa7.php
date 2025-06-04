@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title>Non-Monetary Donation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -27,8 +27,8 @@
             <h2 class="text-2xl md:text-3xl font-bold text-black text-center mb-2">Non-Monetary Donation</h2>
             <p class="text-lg text-black text-center mb-8">Your generosity makes a difference</p>
             
-            <form id="donationForm" action="{{ route('non_monetary.submit') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                @csrf
+            <form id="donationForm" action="<?php echo e(route('non_monetary.submit')); ?>" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <?php echo csrf_field(); ?>
 
                 <!-- Left Column -->
                 <div class="space-y-6">
@@ -140,7 +140,7 @@
                 </div>
 
                 <!-- Validation Errors -->
-                @if($errors->any())
+                <?php if($errors->any()): ?>
                 <div class="md:col-span-2 bg-red-50 p-4 rounded-lg border-l-4 border-red-600">
                     <div class="flex items-start">
                         <svg class="h-6 w-6 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,14 +149,14 @@
                         <div class="ml-3">
                             <p class="text-sm font-semibold text-red-900">Please correct the following errors:</p>
                             <ul class="mt-1 text-sm text-red-600 list-disc list-inside">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
+                                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li><?php echo e($error); ?></li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </ul>
                         </div>
                     </div>
                 </div>
-                @endif
+                <?php endif; ?>
 
                 <!-- Buttons -->
                 <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
@@ -242,7 +242,7 @@
                     </p>
                 </div>
                 <div class="items-center px-4 py-3">
-                    <a href="{{ route('donation') }}" class="px-4 py-2 bg-[#0A90A4] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#098a9d] focus:outline-none focus:ring-2 focus:ring-[#0A90A4] transition-colors">
+                    <a href="<?php echo e(route('donation')); ?>" class="px-4 py-2 bg-[#0A90A4] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#098a9d] focus:outline-none focus:ring-2 focus:ring-[#0A90A4] transition-colors">
                         Back to Donation Page
                     </a>
                 </div>
@@ -379,4 +379,4 @@
 
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\Users\PNPh\Desktop\sheila\collab - Copy\resources\views/donation/nonmonetary.blade.php ENDPATH**/ ?>

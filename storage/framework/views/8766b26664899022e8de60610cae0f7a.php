@@ -8,7 +8,7 @@
 <head>
  <meta charset="UTF-8" />
  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <meta name="csrf-token" content="{{ csrf_token() }}" />
+ <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>" />
  <title>Make a Difference Today</title>
  <script src="https://cdn.tailwindcss.com"></script>
  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -174,7 +174,7 @@
         <div class="max-w-7xl mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-4">
-                    <img src="{{ asset('image/logohauzhayag.jpg') }}"
+                    <img src="<?php echo e(asset('image/logohauzhayag.jpg')); ?>"
                          alt="Hauz Hayag Logo"
                          class="h-16 w-auto rounded-lg shadow-md">
                     <span class="text-2xl font-bold text-primary">Hauz Hayag</span>
@@ -258,19 +258,19 @@
                 <div id="heroSlides" class="flex h-full transition-transform duration-700 ease-in-out">
                     <!-- Slide 1 -->
                     <div class="min-w-full h-full">
-                        <img src="{{ asset('image/feedingprogram.jpg') }}" alt="Description 1" class="w-full h-full object-cover"
+                        <img src="<?php echo e(asset('image/feedingprogram.jpg')); ?>" alt="Description 1" class="w-full h-full object-cover"
                              alt="Students Learning"
                              class="w-full h-full object-cover">
                     </div>
                     <!-- Slide 2 -->
                     <div class="min-w-full h-full">
-                        <img src="{{ asset('image/firedrill.jpg') }}" alt="Description 1" class="w-full h-full object-cover"
+                        <img src="<?php echo e(asset('image/firedrill.jpg')); ?>" alt="Description 1" class="w-full h-full object-cover"
                              alt="Community Support"
                              class="w-full h-full object-cover">
                     </div>
                     <!-- Slide 3 -->
                     <div class="min-w-full h-full">
-                        <img src="{{ asset('image/goods.jpg') }}" alt="Description 1" class="w-full h-full object-cover"
+                        <img src="<?php echo e(asset('image/goods.jpg')); ?>" alt="Description 1" class="w-full h-full object-cover"
                              alt="Education Success"
                              class="w-full h-full object-cover">
                     </div>
@@ -295,7 +295,7 @@
                      </div>
                      <h2 class="text-xl font-semibold text-gray-800 mb-2">Monetary Donation</h2>
                      <p class="text-black mb-6">Support our cause with financial contributions</p>
-                     <a href="{{ route('monetary_donation') }}" class="block w-full bg-[#0A90A4] text-white text-center py-4 rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">
+                     <a href="<?php echo e(route('monetary_donation')); ?>" class="block w-full bg-[#0A90A4] text-white text-center py-4 rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">
                          Donate Now
                      </a>
                  </div>
@@ -309,7 +309,7 @@
                      </div>
                      <h2 class="text-xl font-semibold text-gray-800 mb-2">Non-Monetary Donation</h2>
                      <p class="text-black mb-6">Donate goods, supplies, or materials</p>
-                     <a href="{{ route('non_monetary') }}" class="block w-full bg-[#0A90A4] text-white text-center py-4 rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">
+                     <a href="<?php echo e(route('non_monetary')); ?>" class="block w-full bg-[#0A90A4] text-white text-center py-4 rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">
                          Donate Now
                      </a>
                  </div>
@@ -323,7 +323,7 @@
                      </div>
                      <h2 class="text-xl font-semibold text-black mb-2">Campaigns</h2>
                      <p class="text-black mb-6">Join our specific donation campaigns</p>
-                     <a href="{{ route('user.calendar') }}" class="block w-full bg-[#0A90A4] text-white text-center py-4 rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">
+                     <a href="<?php echo e(route('user.calendar')); ?>" class="block w-full bg-[#0A90A4] text-white text-center py-4 rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">
                          Join Campaign
                      </a>
                  </div>
@@ -348,7 +348,7 @@
             <div class="h-full bg-cyan-400 rounded-full" style="width: <?php echo $progressPercentage; ?>%; background-color: #37b1c4;"></div>
         </div>
         <p class="text-sm text-black mt-2">Urgent support needed for food, shelter, and medical supplies.</p>
-        <a href="{{ route('monetary_donation') }}" class="inline-block bg-[#0A90A4] text-white px-6 py-2 rounded-lg mt-4 font-medium">
+        <a href="<?php echo e(route('monetary_donation')); ?>" class="inline-block bg-[#0A90A4] text-white px-6 py-2 rounded-lg mt-4 font-medium">
             Donate Now
         </a>
     </div>
@@ -358,17 +358,18 @@
  <div class="max-w-6xl mx-auto mb-40 mt-12">
      <h2 class="text-2xl font-semibold text-gray-800 mb-8 text-center">Our Top Donors</h2>
      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-         @foreach($topDonors as $donor)
+         <?php $__currentLoopData = $topDonors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $donor): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
              <div class="bg-[#B7E4FA] rounded-2xl shadow-lg p-8 flex items-center space-x-6">
                  <div class="w-16 h-16 bg-[#B7E4FA] rounded-full flex items-center justify-center">
                      <span class="text-black font-semibold text-lg">
-                         {{ strtoupper(substr($donor->donor_name, 0, 1)) }}{{ isset(explode(' ', $donor->donor_name)[1]) ? strtoupper(substr(explode(' ', $donor->donor_name)[1], 0, 1)) : '' }}
+                         <?php echo e(strtoupper(substr($donor->donor_name, 0, 1))); ?><?php echo e(isset(explode(' ', $donor->donor_name)[1]) ? strtoupper(substr(explode(' ', $donor->donor_name)[1], 0, 1)) : ''); ?>
+
                      </span>
                  </div>
-                 <span class="text-gray-800 font-medium text-lg">{{ $donor->donor_name }}</span>
+                 <span class="text-gray-800 font-medium text-lg"><?php echo e($donor->donor_name); ?></span>
              </div>
-         @endforeach
-         @for($i = $topDonors->count(); $i < 3; $i++)
+         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+         <?php for($i = $topDonors->count(); $i < 3; $i++): ?>
              <div class="bg-[#B7E4FA] rounded-2xl shadow-lg p-8 flex items-center space-x-6">
                  <div class="w-16 h-16 bg-[#B7E4FA] rounded-full flex items-center justify-center">
                      <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -377,10 +378,10 @@
                  </div>
                  <span class="text-gray-800 font-medium text-lg">Anonymous Donor</span>
              </div>
-         @endfor
-         @if($topDonors->isEmpty())
+         <?php endfor; ?>
+         <?php if($topDonors->isEmpty()): ?>
              <div class="col-span-3 text-center text-gray-500">No acknowledged donors yet.</div>
-         @endif
+         <?php endif; ?>
      </div>
  </div>
 
@@ -421,4 +422,4 @@
     </div>
 </footer>
 </body>
-</html>
+</html><?php /**PATH C:\Users\PNPh\Desktop\sheila\collab - Copy\resources\views/donation/donation.blade.php ENDPATH**/ ?>

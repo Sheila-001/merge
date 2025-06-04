@@ -27,6 +27,8 @@ class Donation extends Model
         'message',
         'category',
         'condition',
+        'notes',
+        'expected_date',
     ];
 
     protected $casts = [

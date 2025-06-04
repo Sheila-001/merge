@@ -10,17 +10,17 @@
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
     <div class="p-8 bg-[#f3f6fb] min-h-screen">
-        <div class="mb-8 flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Donation </h1>
+        <!-- Donation Management Header -->
+        <div class="bg-white rounded-xl shadow p-6 mb-8 flex items-center justify-between">
+            <h1 class="text-2xl font-bold">Donation Management</h1>
             <div class="flex items-center space-x-2">
                 <span class="text-gray-600">Admin</span>
                 <div class="bg-blue-200 text-blue-700 rounded-full px-3 py-1 font-semibold">AD</div>
             </div>
         </div>
 
-
-          <!-- Statistic Cards -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Statistic Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-xl shadow p-6 flex flex-col items-start relative">
                 <span class="text-gray-500 font-semibold">Monetary Donations</span>
                 <span class="text-3xl font-bold mt-2"><?php echo e(number_format($monetaryTotal ?? $monetaryDonations ?? 0)); ?></span>
@@ -139,7 +139,9 @@
                             <p class="text-sm text-gray-600">Condition: <span class="font-semibold text-gray-800"><?php echo e($dropoff->condition ?? 'N/A'); ?></span></p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-600">Item: <span class="font-semibold text-gray-800"><?php echo e($dropoff->item_name ?? 'N/A'); ?></span></p>
+                            <?php if(!empty($dropoff->item_name)): ?>
+                                <p class="text-sm text-gray-600">Item: <span class="font-semibold text-gray-800"><?php echo e($dropoff->item_name); ?></span></p>
+                            <?php endif; ?>
                             <p class="text-sm text-gray-600">Quantity: <span class="font-semibold text-gray-800"><?php echo e($dropoff->quantity ?? 'N/A'); ?></span></p>
                             <p class="text-sm text-gray-600">Expected Date: <span class="font-semibold text-gray-800"><?php echo e($dropoff->expected_date?->format('M d, Y') ?? 'N/A'); ?></span></p>
                             <p class="text-sm text-gray-600">Status: <span class="badge bg-warning"><?php echo e(ucfirst($dropoff->status)); ?></span></p>

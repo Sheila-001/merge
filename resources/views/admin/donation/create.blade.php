@@ -85,6 +85,14 @@
                                 @enderror
                             </div>
 
+                            <div class="col-md-6 mb-3" id="notesField">
+                                <label for="notes" class="form-label">Note (Optional)</label>
+                                <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="2" placeholder="Any additional note...">{{ old('notes') }}</textarea>
+                                @error('notes')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">Add Donation</button>
                                 <a href="{{ route('admin.donations.index') }}" class="btn btn-secondary">Cancel</a>

@@ -47,19 +47,21 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 1);
-        z-index: 50;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        overflow-y: auto;
       }
       .modal-content {
         position: relative;
         background-color: #333;
-        margin: 15% auto;
+        margin: 5% auto;
         padding: 20px;
         border-radius: 8px;
-        width: 80%;
+        width: 90%;
         max-width: 500px;
+        z-index: 1100;
       }
     </style>
   </head>
@@ -134,8 +136,8 @@
     </div>
 
     <!-- Join Campaign Details Modal (New) -->
-    <div id="campaignDetailsModal" class="fixed inset-0 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-10 mx-auto p-8 border w-full max-w-md shadow-lg rounded-xl bg-gray-800 text-gray-200">
+    <div id="campaignDetailsModal" class="fixed inset-0 overflow-y-auto h-full w-full hidden z-[1000]" style="z-index:1000;">
+        <div class="relative top-10 mx-auto p-8 border w-full max-w-md shadow-lg rounded-xl bg-gray-800 text-gray-200 z-[1100]" style="z-index:1100;">
             <span class="absolute top-4 right-4 cursor-pointer text-gray-400 hover:text-gray-100" onclick="closeCampaignDetailsModal()">&times;</span>
             <div id="modalCampaignContent">
                 <!-- Campaign details will be loaded here by JavaScript -->

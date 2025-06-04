@@ -272,7 +272,13 @@ Route::get('/donate', function () {
 })->name('donation');
 
 Route::get('/donation', function () {
-    return view('donation.donation');
+    $topDonors = \App\Models\Donation::where('is_acknowledged', true)
+        ->where('is_anonymous', false)
+        ->where('status', 'completed')
+        ->orderByDesc('amount')
+        ->take(3)
+        ->get();
+    return view('donation.donation', compact('topDonors'));
 })->name('donation');
 
 Route::post('/monetary-donation/submit', [App\Http\Controllers\PublicDonationController::class, 'submitMonetaryDonation'])->name('monetary_donation.submit');

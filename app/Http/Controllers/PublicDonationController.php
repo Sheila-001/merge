@@ -53,7 +53,7 @@ class PublicDonationController extends Controller
             'status' => 'pending', // Initial status
             'transaction_id' => null, // You might get this from a payment gateway
             'proof_path' => $proofPath,
-            'message' => $request->message,
+            'notes' => $request->notes, // Store the optional note in notes
             'is_acknowledged' => $isAcknowledged,
             'is_anonymous' => $isAnonymous,
         ]);
@@ -81,6 +81,8 @@ class PublicDonationController extends Controller
             'expected_date' => 'required|date',
             'description' => 'required|string',
             'donation_preference' => 'required|in:anonymous,acknowledged', // Add validation for the preference
+            'quantity' => 'required|integer|min:1', // Add validation for quantity
+            'other_item_name' => 'nullable|string|max:255', // Add validation for other item name
         ]);
 
         if ($validator->fails()) {
@@ -97,7 +99,7 @@ class PublicDonationController extends Controller
             $imagePath = $request->file('image')->store('non-monetary', 'public');
         }
 
-        // Determine the is_acknowledged value based on the preference
+        // Determine the is_acknowledged and is_anonymous values based on the preference
         $isAcknowledged = ($request->donation_preference === 'acknowledged');
         $isAnonymous = !$isAcknowledged; // If not acknowledged, then it's anonymous
 
@@ -109,13 +111,17 @@ class PublicDonationController extends Controller
             'donor_phone' => $request->donor_phone,
             'amount' => null, // Amount is null for non-monetary donations
             'payment_method' => null, // Payment method is null for non-monetary donations
-            'item_description' => 'Category: ' . $request->category . ', Condition: ' . $request->condition . ', Description: ' . $request->description,
             'status' => 'pending', // Initial status
             'transaction_id' => null,
             'proof_path' => $imagePath, // Store image path in proof_path
-            'message' => 'Preferred Time: ' . $request->expected_date, // Store preferred time in message
-            'is_anonymous' => !($request->donation_preference === 'acknowledged'),
+            'is_acknowledged' => $isAcknowledged,
+            'is_anonymous' => $isAnonymous,
             'expected_date' => $request->expected_date,
+            'notes' => $request->description,
+            'category' => $request->category, // Store the selected or specified category
+            'condition' => $request->condition,
+            'quantity' => $request->quantity, // Save the quantity
+            'other_item_name' => null, // other_item_name is no longer used with the new frontend approach
         ]);
 
         // Save the donation to the database
