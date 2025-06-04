@@ -1,8 +1,8 @@
-@extends('components.app-layout')
 
-@section('title', 'Campaign Calendar')
 
-@push('styles')
+<?php $__env->startSection('title', 'Campaign Calendar'); ?>
+
+<?php $__env->startPush('styles'); ?>
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <style>
     /* Calendar Container Styles */
@@ -164,17 +164,17 @@
         margin-right: 6px;
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="bg-white rounded-lg shadow-md p-6">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Campaign Calendar</h1>
         <div class="flex space-x-4">
-            <a href="{{ route('admin.categories.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
+            <a href="<?php echo e(route('admin.categories.index')); ?>" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
                 <i class="fas fa-tags mr-2"></i>Manage Categories
             </a>
-            <a href="{{ route('admin.campaigns.create') }}" class="px-4 py-2 bg-[#1B4B5A] text-white rounded-md hover:bg-[#2C5F6E] transition-colors">
+            <a href="<?php echo e(route('admin.campaigns.create')); ?>" class="px-4 py-2 bg-[#1B4B5A] text-white rounded-md hover:bg-[#2C5F6E] transition-colors">
                 <i class="fas fa-plus mr-2"></i>Add New Campaign
             </a>
         </div>
@@ -220,9 +220,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        events: @json($campaigns),
+        events: <?php echo json_encode($campaigns, 15, 512) ?>,
         eventClick: function(info) {
             showCampaignModal(info.event);
         },
@@ -297,4 +297,5 @@ function closeCampaignModal() {
     modal.classList.remove('flex');
 }
 </script>
-@endpush 
+<?php $__env->stopPush(); ?> 
+<?php echo $__env->make('components.app-layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\collab\resources\views/admin/calendar/index.blade.php ENDPATH**/ ?>

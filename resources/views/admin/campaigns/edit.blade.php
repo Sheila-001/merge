@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('components.app-layout')
 
 @section('title', 'Edit Campaign')
 
@@ -9,14 +9,13 @@
             <h1 class="h3 mb-0">Edit Campaign</h1>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('admin.campaigns.dashboard') }}">Campaigns</a>
-                    </li>
-                    <li class="breadcrumb-item active">Edit</li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.campaigns.index') }}">Campaigns</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Campaign</li>
                 </ol>
             </nav>
         </div>
-        <a href="{{ route('admin.campaigns.dashboard') }}" class="btn btn-outline-primary">
+        <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Back to Campaigns
         </a>
     </div>
@@ -145,9 +144,11 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-2 mt-4">
-                    <a href="{{ route('admin.campaigns.dashboard') }}" class="btn btn-light">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Update Campaign</button>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ route('admin.campaigns.index') }}" class="btn btn-light">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Update Campaign</button>
+                    </div>
                 </div>
             </form>
             </div>

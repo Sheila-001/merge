@@ -139,7 +139,7 @@ class AdminController extends Controller
             ->where('status', 'pending')
             ->get();
 
-        return view('admin.donation.index', compact(
+        return view('admin.dashboard', compact(
             'monetaryTotal',
             'monetaryChange',
             'nonMonetaryCount',

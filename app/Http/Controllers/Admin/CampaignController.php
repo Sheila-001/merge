@@ -25,7 +25,8 @@ class CampaignController extends Controller
                 return $campaign;
             });
 
-        return view('admin.campaigns.index', compact('campaigns'));
+        $recentDonations = Donation::latest()->take(5)->get();
+        return view('admin.campaigns.index', compact('campaigns', 'recentDonations'));
     }
 
     /**

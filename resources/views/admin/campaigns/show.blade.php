@@ -1,10 +1,10 @@
-@extends('layouts.app')
+@extends('components.app-layout')
 
 @section('content')
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3">Campaign Details</h1>
-        <a href="{{ route('admin.campaigns.dashboard') }}" class="btn btn-outline-primary">
+        <a href="{{ route('admin.campaigns.index') }}" class="btn btn-outline-primary">
             <i class="fas fa-arrow-left me-2"></i> Back to Campaigns
         </a>
     </div>

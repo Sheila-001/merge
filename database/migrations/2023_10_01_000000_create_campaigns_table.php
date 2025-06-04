@@ -16,6 +16,7 @@ class CreateCampaignsTable extends Migration
             $table->decimal('current_amount', 10, 2)->default(0);
             $table->string('status')->default('active');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

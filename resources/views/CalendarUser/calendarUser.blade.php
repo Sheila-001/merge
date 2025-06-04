@@ -171,12 +171,7 @@
     <div class="calendar-header">
         <h1 class="calendar-title">Campaign Calendar</h1>
         <div class="d-flex gap-2">
-            <a href="{{ route('admin.categories.index') }}" class="action-btn secondary">
-                <i class="fas fa-tags me-2"></i>Manage Categories
-            </a>
-            <a href="{{ route('admin.campaigns.create') }}" class="action-btn primary">
-                <i class="fas fa-plus me-2"></i>Add New Campaign
-            </a>
+            <!-- Removed admin-only buttons -->
         </div>
     </div>
     <div id="calendar"></div>
@@ -266,7 +261,6 @@ document.addEventListener('DOMContentLoaded', function() {
             meridiem: 'short'
         },
         eventClassNames: function(arg) {
-            // Add category-based class
             return [arg.event.extendedProps.category.toLowerCase().replace(' ', '-')];
         },
         eventContent: function(arg) {
@@ -290,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('eventEnd').value = moment(currentEvent.end).format('YYYY-MM-DD');
             document.getElementById('eventStatus').value = currentEvent.extendedProps.status;
             document.getElementById('eventPledged').value = currentEvent.extendedProps.pledged || 'N/A';
-            document.getElementById('viewCampaign').href = '/admin/campaigns/' + currentEvent.id;
+            document.getElementById('viewCampaign').href = '/campaigns/' + currentEvent.id;
             eventModal.show();
         },
         eventDrop: function(info) {

@@ -13,54 +13,92 @@
         <!-- Statistic Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-xl shadow p-6 flex flex-col items-start relative">
-                <span class="text-gray-500 font-semibold">Total Users</span>
-                <span class="text-3xl font-bold mt-2">{{ $totalUsers ?? 0 }}</span>
-                <span class="absolute top-6 right-6 h-3 w-3 rounded-full bg-blue-100"></span>
+                <span class="text-gray-500 font-semibold">Monetary Donations</span>
+                <span class="text-3xl font-bold mt-2">₱{{ number_format($monetaryTotal, 2) }}</span>
+                @if($monetaryChange != 0)
+                    <span class="text-sm {{ $monetaryChange > 0 ? 'text-green-500' : 'text-red-500' }} mt-1">
+                        {{ $monetaryChange > 0 ? '+' : '' }}{{ number_format($monetaryChange, 1) }}%
+                    </span>
+                @endif
             </div>
             <div class="bg-white rounded-xl shadow p-6 flex flex-col items-start relative">
-                <span class="text-gray-500 font-semibold">Pending Applicants</span>
-                <span class="text-3xl font-bold mt-2">{{ $pendingApplicants ?? 0 }}</span>
-                 <span class="absolute top-6 right-6 h-3 w-3 rounded-full bg-yellow-100"></span>
+                <span class="text-gray-500 font-semibold">Non-Monetary Donations</span>
+                <span class="text-3xl font-bold mt-2">{{ $nonMonetaryCount }}</span>
+                @if($nonMonetaryChange != 0)
+                    <span class="text-sm {{ $nonMonetaryChange > 0 ? 'text-green-500' : 'text-red-500' }} mt-1">
+                        {{ $nonMonetaryChange > 0 ? '+' : '' }}{{ number_format($nonMonetaryChange, 1) }}%
+                    </span>
+                @endif
             </div>
             <div class="bg-white rounded-xl shadow p-6 flex flex-col items-start relative">
-                <span class="text-gray-500 font-semibold">Active Students</span>
-                <span class="text-3xl font-bold mt-2">{{ $activeStudents ?? 0 }}</span>
-                 <span class="absolute top-6 right-6 h-3 w-3 rounded-full bg-green-100"></span>
+                <span class="text-gray-500 font-semibold">Campaign Donations</span>
+                <span class="text-3xl font-bold mt-2">₱{{ number_format($campaignTotal, 2) }}</span>
+                @if($campaignChange != 0)
+                    <span class="text-sm {{ $campaignChange > 0 ? 'text-green-500' : 'text-red-500' }} mt-1">
+                        {{ $campaignChange > 0 ? '+' : '' }}{{ number_format($campaignChange, 1) }}%
+                    </span>
+                @endif
             </div>
             <div class="bg-white rounded-xl shadow p-6 flex flex-col items-start relative">
-                <span class="text-gray-500 font-semibold">Active Events</span>
-                <span class="text-3xl font-bold mt-2">{{ $activeEvents ?? 0 }}</span>
-                 <span class="absolute top-6 right-6 h-3 w-3 rounded-full bg-purple-100"></span>
+                <span class="text-gray-500 font-semibold">Total Donors</span>
+                <span class="text-3xl font-bold mt-2">{{ $donorCount }}</span>
+                @if($donorChange != 0)
+                    <span class="text-sm {{ $donorChange > 0 ? 'text-green-500' : 'text-red-500' }} mt-1">
+                        {{ $donorChange > 0 ? '+' : '' }}{{ number_format($donorChange, 1) }}%
+                    </span>
+                @endif
             </div>
         </div>
 
-        <!-- Recent Events and Recent Activity Sections -->
+        <!-- Recent Donations and Pending Drop-offs -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Recent Events -->
+            <!-- Recent Donations -->
             <div class="bg-white rounded-xl shadow p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-bold text-lg">Recent Events</h2>
-                    <a href="#" class="text-blue-600 hover:underline">View all</a>
+                    <h2 class="font-bold text-lg">Recent Donations</h2>
+                    <a href="{{ route('admin.donations.index') }}" class="text-blue-600 hover:underline">View all</a>
                 </div>
-                @if($recentEvents->count() > 0)
-                    <ul class="space-y-4">
-                        @foreach($recentEvents as $event)
-                            <li class="border-b pb-2 last:border-b-0 last:pb-0">
-                                <p class="font-semibold">{{ $event->title }}</p>
-                                <p class="text-sm text-gray-500">{{ $event->start_date->format('M d, Y H:i A') }} - {{ $event->end_date->format('M d, Y H:i A') }}</p>
-                            </li>
+                @if($donations->count() > 0)
+                    <div class="space-y-4">
+                        @foreach($donations as $donation)
+                            <div class="border-b pb-4 last:border-b-0 last:pb-0">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-semibold">{{ $donation->donor_name }}</p>
+                                        <p class="text-sm text-gray-500">{{ $donation->type === 'monetary' ? '₱' . number_format($donation->amount, 2) : 'Non-monetary' }}</p>
+                                    </div>
+                                    <span class="px-2 py-1 rounded text-sm {{ $donation->status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                        {{ ucfirst($donation->status) }}
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1">{{ $donation->created_at->format('M d, Y H:i A') }}</p>
+                            </div>
                         @endforeach
-                    </ul>
+                    </div>
                 @else
-                    <p class="text-gray-500">No recent events found.</p>
+                    <p class="text-gray-500">No recent donations found.</p>
                 @endif
             </div>
 
-            <!-- Recent Activity -->
+            <!-- Pending Drop-offs -->
             <div class="bg-white rounded-xl shadow p-6">
-                <h2 class="font-bold text-lg mb-4">Recent Activity</h2>
-                <p class="text-gray-500">No recent activity to display.</p>
-                {{-- You would typically loop through recent activity data here --}}
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-bold text-lg">Pending Drop-offs</h2>
+                    <a href="{{ route('admin.donations.dropoffs') }}" class="text-blue-600 hover:underline">View all</a>
+                </div>
+                @if($pendingDropoffs->count() > 0)
+                    <div class="space-y-4">
+                        @foreach($pendingDropoffs as $dropoff)
+                            <div class="border-b pb-4 last:border-b-0 last:pb-0">
+                                <p class="font-semibold">{{ $dropoff->donor_name }}</p>
+                                <p class="text-sm text-gray-500">{{ $dropoff->description }}</p>
+                                <p class="text-sm text-gray-500 mt-1">Expected: {{ $dropoff->dropoff_date ? $dropoff->dropoff_date->format('M d, Y') : 'Not specified' }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-gray-500">No pending drop-offs.</p>
+                @endif
             </div>
         </div>
     </div>

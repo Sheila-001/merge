@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('components.app-layout')
 
 @section('title', 'Edit Urgent Campaign')
 

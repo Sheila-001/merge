@@ -6,17 +6,24 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\JobListing;
+use App\Models\Campaign;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     /**
-     * Display the student dashboard with events and job listings.
+     * Display the student dashboard with events, campaigns, and job listings.
      *
      * @return \Illuminate\View\View
      */
     public function index()
     {
+        // Get active campaigns
+        $campaigns = Campaign::where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->take(6)
+            ->get();
+
         // Get upcoming events (not started yet)
         $upcomingEvents = Event::where('start_date', '>', Carbon::now())
             ->where('status', '!=', 'cancelled')
@@ -51,6 +58,7 @@ class DashboardController extends Controller
             ->get();
 
         return view('student.dashboard', compact(
+            'campaigns',
             'upcomingEvents',
             'adminEvents',
             'latestJobs',

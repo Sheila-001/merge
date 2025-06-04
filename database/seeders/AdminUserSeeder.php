@@ -43,7 +43,7 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@admin.com'],
             [
                 'name' => 'Admin User',
-                'password' => Hash::make('password'), // Change 'password' to your desired password
+                'password' => Hash::make('admin123'),
                 'is_admin' => true, // Assuming you have an is_admin field
                 'status' => 'active',
                 'class_year' => null,

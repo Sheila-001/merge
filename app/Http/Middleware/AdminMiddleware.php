@@ -22,6 +22,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return redirect()->route('admin.login')->with('error', 'Unauthorized access.');
+        return redirect('/')->with('error', 'Unauthorized access. Admin privileges required.');
     }
 }
