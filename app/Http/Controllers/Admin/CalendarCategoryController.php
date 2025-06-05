@@ -44,27 +44,62 @@ class CalendarCategoryController extends Controller
 
     public function update(Request $request, CalendarCategory $category)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'color' => 'required|string|max:7',
-            'description' => 'nullable|string',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'color' => 'required|string|max:7',
+                'description' => 'nullable|string',
+            ]);
 
-        $validated['slug'] = Str::slug($validated['name']);
+            $validated['slug'] = Str::slug($validated['name']);
+            $category->update($validated);
 
-        $category->update($validated);
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Category has been updated successfully.'
+                ]);
+            }
 
-        return redirect()
-            ->route('admin.calendar-categories.index')
-            ->with('success', 'Category has been updated successfully.');
+            return redirect()
+                ->route('admin.calendar-categories.index')
+                ->with('success', 'Category has been updated successfully.');
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to update category: ' . $e->getMessage()
+                ], 422);
+            }
+
+            return back()->withErrors(['error' => 'Failed to update category: ' . $e->getMessage()]);
+        }
     }
 
-    public function destroy(CalendarCategory $category)
+    public function destroy(Request $request, CalendarCategory $category)
     {
-        $category->delete();
+        try {
+            $category->delete();
 
-        return redirect()
-            ->route('admin.calendar-categories.index')
-            ->with('success', 'Category has been deleted successfully.');
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Category has been deleted successfully.'
+                ]);
+            }
+
+            return redirect()
+                ->route('admin.calendar-categories.index')
+                ->with('success', 'Category has been deleted successfully.');
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete category: ' . $e->getMessage()
+                ], 422);
+            }
+
+            return back()->withErrors(['error' => 'Failed to delete category: ' . $e->getMessage()]);
+        }
     }
 } 

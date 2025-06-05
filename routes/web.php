@@ -17,6 +17,7 @@ use App\Http\Controllers\EventController;
 use App\Models\Campaign;
 use App\Http\Controllers\Admin\CalendarCampaignController;
 use App\Http\Controllers\Admin\CalendarCategoryController;
+use App\Http\Controllers\CalendarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -272,11 +273,25 @@ Route::post('/admin/jobs/{job}/reject', [JobController::class, 'reject'])->name(
 
 // Public Donation Routes (no auth required)
 Route::get('/donate', function () {
-    return view('donation.donation');
+    $topDonors = \App\Models\Donation::where('type', 'monetary')
+        ->where('status', 'completed')
+        ->where('is_anonymous', false)
+        ->orderBy('amount', 'desc')
+        ->take(3)
+        ->get();
+    
+    return view('donation.donation', compact('topDonors'));
 })->name('donation');
 
 Route::get('/donation', function () {
-    return view('donation.donation');
+    $topDonors = \App\Models\Donation::where('type', 'monetary')
+        ->where('status', 'completed')
+        ->where('is_anonymous', false)
+        ->orderBy('amount', 'desc')
+        ->take(3)
+        ->get();
+    
+    return view('donation.donation', compact('topDonors'));
 })->name('donation');
 
 Route::post('/monetary-donation/submit', [App\Http\Controllers\PublicDonationController::class, 'submitMonetaryDonation'])->name('monetary_donation.submit');
@@ -287,20 +302,7 @@ Route::get('/non-monetary-donation', function () {
 })->name('non_monetary');
 
 // Public Calendar Route (User)
-Route::get('/calendar', function () {
-    $campaigns = \App\Models\Campaign::where('status', 'active')->get()->map(function($campaign) {
-        return [
-            'id' => $campaign->id,
-            'title' => $campaign->title,
-            'start' => $campaign->start_date,
-            'end' => $campaign->end_date,
-            'category' => $campaign->category ?? 'General',
-            'status' => $campaign->status,
-            'pledged' => $campaign->pledged_amount ? '₱' . number_format($campaign->pledged_amount, 2) : null
-        ];
-    });
-    return view('CalendarUser.calendarUser', compact('campaigns'));
-})->name('user.calendar');
+Route::get('/calendar', [CalendarController::class, 'index'])->name('user.calendar');
 
 Route::get('/monetary-donation', function () {
     return view('donation.monetary');
