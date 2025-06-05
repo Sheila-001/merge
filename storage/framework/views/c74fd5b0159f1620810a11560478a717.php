@@ -1,0 +1,1 @@
+ <?php /**PATH C:\Users\PNPh\Desktop\sheila\collab - Copy\resources\views\admin\settings.blade.php ENDPATH**/ ?>

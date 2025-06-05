@@ -20,8 +20,8 @@ use App\Http\Controllers\DonationController;
 use App\Http\Controllers\UrgentFundsController;
 use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\PublicDonationController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
+use App\Http\Controllers\Admin\DonationReportController;
 use App\Models\Donation;
 
 /*
@@ -45,6 +45,10 @@ Route::get('/', function () {
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+
+    // Donation Reports
+    Route::get('/donations/reports', [DonationReportController::class, 'index'])->name('donations.reports');
+    Route::get('/donations/reports/export', [DonationReportController::class, 'export'])->name('donations.reports.export');
 
     // Applications Routes
     Route::get('/applications', [App\Http\Controllers\Admin\ScholarshipController::class, 'index'])->name('admin.applications.index');
@@ -81,6 +85,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::delete('/donations/{donation}', [App\Http\Controllers\Admin\DonationController::class, 'destroy'])->name('admin.donations.destroy');
     Route::patch('/donations/{donation}/status', [App\Http\Controllers\Admin\DonationController::class, 'updateStatus'])->name('admin.donations.update-status');
 
+    // Add route for Admin Donation Calendar
+    Route::get('/donations/calendar', function () {
+        return view('admin.donation.calendar');
+    })->name('admin.donations.calendar');
+
     // Student Management Routes
     Route::get('/students', [App\Http\Controllers\Admin\StudentController::class, 'index'])->name('admin.students.index');
     Route::post('/students/{tracking_code}/approve', [App\Http\Controllers\Admin\StudentController::class, 'approve'])->name('admin.students.approve');
@@ -104,7 +113,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Admin Calendar Route
     Route::get('/calendar', function () {
-        return view('donation.usercalendar');
+        return view('admin.donation.calendar');
     })->name('admin.calendar.index');
 });
 
@@ -113,21 +122,17 @@ Route::group(['prefix' => 'scholarship'], function () {
     Route::get('/apply', [ScholarshipController::class, 'showApplyForm'])->name('scholarship.apply.form');
     Route::post('/apply', [ScholarshipController::class, 'apply'])->name('scholarship.apply');
     Route::get('/status/{tracking_code}', [ScholarshipController::class, 'show'])->name('scholarship.show');
-    Route::match(['get', 'post'], '/track', [ScholarshipController::class, 'track'])->name('scholarship.track');
+    Route::match(['get', 'post'], '/scholarship/track', [App\Http\Controllers\ScholarshipController::class, 'track'])->name('scholarship.track');
     // Resend tracking code by email
     Route::post('/resend', [ScholarshipController::class, 'resendCode'])->name('scholarship.resend');
-    Route::get('/scholarship/success/{tracking_code}', function ($tracking_code) {
-        return view('scholarship.success', compact('tracking_code'));
-    })->name('scholarship.success');
+    // Add success route
+    Route::get('/success', [ScholarshipController::class, 'success'])->name('scholarship.success');
 });
 
 // Authentication routes
 Auth::routes();
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
-Route::post('logout', [LoginController::class, 'logout'])->name('logout');
-Route::post('/register', [RegisterController::class, 'register'])->name('register');
-Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Student routes
 Route::middleware(['auth', \App\Http\Middleware\RedirectIfNotStudent::class])->prefix('student')->group(function () {
@@ -141,9 +146,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-// Public Volunteer Dashboard Route (no auth required)
-Route::get('/volunteer_dashboard', [VolunteerController::class, 'dashboard'])->name('volunteer.dashboard');
-
 // User management routes with auth
 Route::middleware(['auth'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
@@ -152,6 +154,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    // New routes for volunteer dashboard and job post
+    Route::get('/volunteer/job-post', [VolunteerController::class, 'jobPost'])->name('volunteer.job-post');
+    // Route to handle volunteer job post submission
+    Route::post('/volunteer/job-post', [VolunteerController::class, 'storeJobPost'])->name('volunteer.jobs.store');
 });
 
 // Event routes with auth
@@ -174,12 +181,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/volunteers/calendar', [VolunteerController::class, 'viewCalendar'])->name('volunteer.calendar');
     Route::post('/volunteers/job-offers', [VolunteerController::class, 'addJobOffer'])->name('volunteer.addJobOffer');
     Route::post('/volunteers/{volunteer}/status', [VolunteerController::class, 'updateStatus'])->name('volunteers.updateStatus');
-
-    // New routes for volunteer dashboard and job post
-    Route::get('/volunteer/dashboard', [VolunteerController::class, 'dashboard'])->name('volunteer.dashboard');
-    Route::get('/volunteer/job-post', [VolunteerController::class, 'jobPost'])->name('volunteer.job-post');
-    // Route to handle volunteer job post submission
-    Route::post('/volunteer/job-post', [VolunteerController::class, 'storeJobPost'])->name('volunteer.jobs.store');
 });
 
 // Student Applications Route with auth
@@ -245,13 +246,6 @@ Route::get('/api/job-listings/{id}', function($id) {
     return \App\Models\JobListing::findOrFail($id);
 });
 
-// Scholarship Application Routes
-Route::get('/scholarship/apply', [App\Http\Controllers\ScholarshipController::class, 'showApplyForm'])->name('scholarship.apply.form');
-Route::post('/scholarship/apply', [App\Http\Controllers\ScholarshipController::class, 'apply'])->name('scholarship.apply');
-Route::get('/scholarship/success/{tracking_code}', [App\Http\Controllers\ScholarshipController::class, 'success'])->name('scholarship.success');
-Route::match(['get', 'post'], '/scholarship/track', [App\Http\Controllers\ScholarshipController::class, 'track'])->name('scholarship.track');
-Route::get('/scholarship/track/{tracking_code}', [App\Http\Controllers\ScholarshipController::class, 'show'])->name('scholarship.show');
-
 // New route for students to view job listings
 Route::get('/jobs/listings', [JobListingController::class, 'index'])->name('jobs.listings');
 
@@ -267,10 +261,6 @@ Route::post('/admin/jobs/{job}/approve', [JobListingController::class, 'approve'
 Route::post('/admin/jobs/{job}/reject', [JobListingController::class, 'reject'])->name('jobs.reject');
 
 // Public Donation Routes (no auth required)
-Route::get('/donate', function () {
-    return view('donation.donation');
-})->name('donation');
-
 Route::get('/donation', function () {
     $topDonors = \App\Models\Donation::where('is_acknowledged', true)
         ->where('is_anonymous', false)
@@ -316,3 +306,6 @@ Route::post('/non-monetary-donation', [PublicDonationController::class, 'submitN
 $monetaryTotal = Donation::where('type', 'monetary')
     ->where('status', 'completed')
     ->sum('amount');
+
+// Public Volunteer Dashboard Route (no auth required)
+Route::get('/volunteer_dashboard', [VolunteerController::class, 'dashboard'])->name('volunteer.dashboard');

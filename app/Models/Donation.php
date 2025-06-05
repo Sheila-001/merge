@@ -46,4 +46,28 @@ class Donation extends Model
     {
         return $this->belongsTo(Campaign::class);
     }
+
+    /**
+     * Get the donor associated with the donation.
+     */
+    public function donor()
+    {
+        return $this->belongsTo(\App\Models\User::class);
+    }
+
+    /**
+     * Get the donor's name.
+     */
+    public function getDonorNameAttribute()
+    {
+        return $this->attributes['donor_name'] ?? null;
+    }
+
+    /**
+     * Get the donor's email.
+     */
+    public function getDonorEmailAttribute()
+    {
+        return $this->attributes['donor_email'] ?? null;
+    }
 } 

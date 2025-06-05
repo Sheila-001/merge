@@ -8,6 +8,7 @@ use App\Http\Requests\StoreCampaignRequest;
 use App\Http\Requests\UpdateCampaignRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Donation;
+use Illuminate\Http\Request;
 
 class CampaignController extends Controller
 {
@@ -35,29 +36,14 @@ class CampaignController extends Controller
     {
         $campaigns = Campaign::withCount('donations')
             ->withSum('donations', 'amount')
-            ->latest()
-            ->get()
-            ->map(function ($campaign) {
-                $campaign->current_amount = $campaign->donations_sum_amount ?? 0;
-                $campaign->status = $campaign->is_active ? 'Ongoing' : 'Paused';
-                return $campaign;
-            });
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        $recentDonations = Donation::with('campaign')
-            ->latest()
-            ->take(5)
-            ->get()
-            ->map(function ($donation) {
-                return (object)[
-                    'donor_name' => $donation->donor_display_name,
-                    'donor_email' => $donation->donor_email,
-                    'donor_avatar' => null,
-                    'campaign_title' => $donation->campaign->title ?? 'Unknown Campaign',
-                    'amount' => $donation->amount,
-                    'created_at' => $donation->created_at,
-                    'status' => ucfirst($donation->status)
-                ];
-            });
+        $recentDonations = Donation::whereHas('campaign')
+            ->with('campaign')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
 
         return view('admin.campaigns.dashboard', compact('campaigns', 'recentDonations'));
     }

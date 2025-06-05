@@ -129,7 +129,7 @@
 
                 <!-- Buttons -->
                 <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
-                    <button type="button" onclick="window.location.href='{{ route('donation') }}'" class="px-6 py-2.5 bg-white text-[#0A90A4] border border-[#0A90A4] rounded-lg hover:bg-[#B7E4FA] hover:text-[#0A90A4] transition-colors font-medium">Cancel</button>
+                    <button type="button" onclick="window.location.href='{{ route('welcome') }}'" class="px-6 py-2.5 bg-white text-[#0A90A4] border border-[#0A90A4] rounded-lg hover:bg-[#B7E4FA] hover:text-[#0A90A4] transition-colors font-medium">Cancel</button>
                     <button type="submit" class="px-6 py-2.5 bg-[#0A90A4] text-white rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">Submit Donation</button>
                 </div>
                 <input type="hidden" name="donation_preference" id="donationPreferenceInput">
@@ -212,7 +212,7 @@
                     </p>
                 </div>
                 <div class="items-center px-4 py-3">
-                    <a href="{{ route('donation') }}" class="px-4 py-2 bg-[#0A90A4] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#098a9d] focus:outline-none focus:ring-2 focus:ring-[#0A90A4] transition-colors">
+                    <a href="{{ route('welcome') }}" class="px-4 py-2 bg-[#0A90A4] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#098a9d] focus:outline-none focus:ring-2 focus:ring-[#0A90A4] transition-colors">
                         Back to Home
                     </a>
                 </div>

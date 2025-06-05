@@ -1,6 +1,5 @@
-@extends('layouts.admin')
+<x-app-layout>
 
-@section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-900">Create New Campaign</h1>
@@ -72,6 +71,15 @@
                 </div>
             </div>
 
+            {{-- Add checkbox for Urgent Campaign --}}
+            <div class="mb-4">
+                <label for="is_urgent" class="block text-gray-700 text-sm font-bold mb-2">Mark as Urgent Campaign</label>
+                <input type="checkbox" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="is_urgent" name="is_urgent" value="1" {{ old('is_urgent') ? 'checked' : '' }}>
+                @error('is_urgent')
+                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+
             <div class="mb-4">
                 <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Campaign Image</label>
                 <input type="file" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('image') border-red-500 @enderror" id="image" name="image">
@@ -89,4 +97,5 @@
         </form>
     </div>
 </div>
-@endsection
+
+</x-app-layout>

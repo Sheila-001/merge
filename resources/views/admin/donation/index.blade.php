@@ -4,6 +4,7 @@
         <!-- Donation Management Header -->
         <div class="bg-white rounded-xl shadow p-6 mb-8 flex items-center justify-between">
             <h1 class="text-2xl font-bold">Donation Management</h1>
+            <a href="{{ route('admin.donations.calendar') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition-colors">View Calendar</a>
             <div class="flex items-center space-x-2">
                 <span class="text-gray-600">Admin</span>
                 <div class="bg-blue-200 text-blue-700 rounded-full px-3 py-1 font-semibold">AD</div>

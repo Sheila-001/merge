@@ -22,7 +22,7 @@
                 <h1 class="text-2xl font-bold">Hauz Hayag</h1>
             </div>
             <nav class="mt-8">
-                <a hredashboard" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Dashboard</a>
+                <a href="/dashboard" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Dashboard</a>
                 <a href="/users" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">User Management</a>
                 <a href="/events" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Events</a>
                 <a href="/students" class="flex items-center px-4 py-3 hover:bg-[#2C5F6E] transition-colors">Applicants</a>
@@ -34,13 +34,10 @@
 
                 
                 <div id="donationsSubmenu" style="display: none;">
-                    <a href="<?php echo e(route('admin.urgent-funds.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
-                        └ Urgent Funds
-                    </a>
                     <a href="<?php echo e(route('admin.campaigns.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
                         └ Campaigns
                     </a>
-                    <a href="<?php echo e(route('admin.donations.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
+                    <a href="<?php echo e(route('donations.reports')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">
                         └ Reports
                     </a>
                     <a href="<?php echo e(route('admin.calendar.index')); ?>" class="flex items-center px-8 py-3 hover:bg-[#2C5F6E] transition-colors text-sm">

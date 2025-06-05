@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('components.app-layout')
 
 @section('content')
 <div class="mb-8 flex justify-between items-center">
