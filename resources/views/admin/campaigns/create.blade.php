@@ -1,133 +1,164 @@
-@extends('layouts.app')
+<x-app-layout>
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Create Campaign</h1>
+                <p class="text-sm text-gray-600">Create a new fundraising campaign</p>
+            </div>
+            <a href="{{ route('admin.campaigns.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Campaigns
+            </a>
+        </div>
 
-@section('content')
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Create Campaign</h1>
-        <a href="{{ route('admin.campaigns.list') }}" class="btn btn-outline-primary">
-            <i class="fas fa-arrow-left me-2"></i> Back to Campaigns
-        </a>
-    </div>
+        <nav class="mb-6">
+            <ol class="flex items-center space-x-2 text-sm text-gray-500">
+                <li><a href="{{ route('admin.campaigns.index') }}" class="hover:text-[#1B4B5A]">Campaigns</a></li>
+                <li>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </li>
+                <li class="text-gray-700">Create New Campaign</li>
+            </ol>
+        </nav>
 
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('admin.campaigns.list') }}">Campaigns</a></li>
-            <li class="breadcrumb-item active">Create New Campaign</li>
-        </ol>
-    </nav>
+        <div class="bg-white rounded-lg shadow-sm">
+            <div class="p-6">
+                <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
 
-    <!-- Create Form -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <form action="{{ route('admin.campaigns.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
+                    <!-- Image Upload -->
+                    <div>
+                        <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Campaign Image</label>
+                        <div class="flex items-center">
+                            <div class="w-full">
+                                <label class="block">
+                                    <span class="sr-only">Choose campaign image</span>
+                                    <input type="file" id="image" name="image" accept="image/*"
+                                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#1B4B5A] file:text-white hover:file:bg-[#2C5F6E]"/>
+                                </label>
+                                @error('image')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Image Upload -->
-                <div class="mb-4">
-                    <label for="image" class="form-label">Campaign Image</label>
-                    <input type="file" class="form-control @error('image') is-invalid @enderror" 
-                           id="image" name="image" accept="image/*">
-                    @error('image')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Title -->
-                <div class="mb-4">
-                    <label for="title" class="form-label">Campaign Title</label>
-                    <input type="text" class="form-control @error('title') is-invalid @enderror" 
-                           id="title" name="title" value="{{ old('title') }}" required>
-                    @error('title')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Description -->
-                <div class="mb-4">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control @error('description') is-invalid @enderror" 
-                              id="description" name="description" rows="3" required>{{ old('description') }}</textarea>
-                    @error('description')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Type -->
-                <div class="mb-4">
-                    <label for="type" class="form-label">Campaign Type</label>
-                    <input type="text" class="form-control @error('type') is-invalid @enderror" 
-                           id="type" name="type" value="{{ old('type') }}" 
-                           placeholder="e.g. Feeding Program" required>
-                    @error('type')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Status -->
-                <div class="mb-4">
-                    <label for="status" class="form-label">Status</label>
-                    <select class="form-select @error('status') is-invalid @enderror" 
-                            id="status" name="status" required>
-                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="paused" {{ old('status') == 'paused' ? 'selected' : '' }}>Paused</option>
-                    </select>
-                    @error('status')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="row">
-                    <!-- Goal Amount -->
-                    <div class="col-md-6 mb-4">
-                        <label for="goal_amount" class="form-label">Goal Amount (PHP)</label>
-                        <input type="number" class="form-control @error('goal_amount') is-invalid @enderror" 
-                               id="goal_amount" name="goal_amount" value="{{ old('goal_amount') }}" 
-                               placeholder="e.g. 50000" required>
-                        @error('goal_amount')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                    <!-- Title -->
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Campaign Title</label>
+                        <input type="text" id="title" name="title" value="{{ old('title') }}" required
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1B4B5A] focus:ring focus:ring-[#1B4B5A] focus:ring-opacity-50"/>
+                        @error('title')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Initial Funds -->
-                    <div class="col-md-6 mb-4">
-                        <label for="funds_raised" class="form-label">Initial Funds (PHP)</label>
-                        <input type="number" class="form-control @error('funds_raised') is-invalid @enderror" 
-                               id="funds_raised" name="funds_raised" value="{{ old('funds_raised', 0) }}" required>
-                        @error('funds_raised')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="row">
-                    <!-- Start Date -->
-                    <div class="col-md-6 mb-4">
-                        <label for="start_date" class="form-label">Start Date</label>
-                        <input type="date" class="form-control @error('start_date') is-invalid @enderror" 
-                               id="start_date" name="start_date" value="{{ old('start_date') }}" required>
-                        @error('start_date')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                    <!-- Description -->
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea id="description" name="description" rows="4" required
+                                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1B4B5A] focus:ring focus:ring-[#1B4B5A] focus:ring-opacity-50">{{ old('description') }}</textarea>
+                        @error('description')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- End Date -->
-                    <div class="col-md-6 mb-4">
-                        <label for="end_date" class="form-label">End Date</label>
-                        <input type="date" class="form-control @error('end_date') is-invalid @enderror" 
-                               id="end_date" name="end_date" value="{{ old('end_date') }}" required>
-                        @error('end_date')
-                            <div class="invalid-feedback">{{ $message }}</div>
+                    <!-- Type -->
+                    <div>
+                        <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Campaign Type</label>
+                        <input type="text" id="type" name="type" value="{{ old('type') }}" required
+                               placeholder="e.g. Feeding Program"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1B4B5A] focus:ring focus:ring-[#1B4B5A] focus:ring-opacity-50"/>
+                        @error('type')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                </div>
 
-                <!-- Form Actions -->
-                <div class="d-flex gap-2 justify-content-end">
-                    <a href="{{ route('admin.campaigns.list') }}" class="btn btn-light">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Save Campaign</button>
-                </div>
-            </form>
+                    <!-- Status -->
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <select id="status" name="status" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1B4B5A] focus:ring focus:ring-[#1B4B5A] focus:ring-opacity-50">
+                            <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
+                            <option value="paused" {{ old('status') == 'paused' ? 'selected' : '' }}>Paused</option>
+                        </select>
+                        @error('status')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Goal Amount -->
+                        <div>
+                            <label for="goal_amount" class="block text-sm font-medium text-gray-700 mb-2">Goal Amount (PHP)</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">₱</span>
+                                </div>
+                                <input type="number" id="goal_amount" name="goal_amount" value="{{ old('goal_amount') }}" required
+                                       placeholder="e.g. 50000"
+                                       class="pl-7 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1B4B5A] focus:ring focus:ring-[#1B4B5A] focus:ring-opacity-50"/>
+                            </div>
+                            @error('goal_amount')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Initial Funds -->
+                        <div>
+                            <label for="funds_raised" class="block text-sm font-medium text-gray-700 mb-2">Initial Funds (PHP)</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">₱</span>
+                                </div>
+                                <input type="number" id="funds_raised" name="funds_raised" value="{{ old('funds_raised', 0) }}" required
+                                       class="pl-7 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1B4B5A] focus:ring focus:ring-[#1B4B5A] focus:ring-opacity-50"/>
+                            </div>
+                            @error('funds_raised')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Start Date -->
+                        <div>
+                            <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                            <input type="date" id="start_date" name="start_date" value="{{ old('start_date') }}" required
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1B4B5A] focus:ring focus:ring-[#1B4B5A] focus:ring-opacity-50"/>
+                            @error('start_date')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- End Date -->
+                        <div>
+                            <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                            <input type="date" id="end_date" name="end_date" value="{{ old('end_date') }}" required
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1B4B5A] focus:ring focus:ring-[#1B4B5A] focus:ring-opacity-50"/>
+                            @error('end_date')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex justify-end space-x-3 pt-6">
+                        <a href="{{ route('admin.campaigns.index') }}" 
+                           class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md font-semibold text-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
+                            Cancel
+                        </a>
+                        <button type="submit" 
+                                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-sm text-white bg-[#1B4B5A] hover:bg-[#2C5F6E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
+                            Save Campaign
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-@endsection
+</x-app-layout>

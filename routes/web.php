@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\UrgentFundsController;
 use App\Http\Controllers\EventController;
 use App\Models\Campaign;
+use App\Http\Controllers\Admin\CalendarCampaignController;
+use App\Http\Controllers\Admin\CalendarCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,13 +57,25 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(
         Route::get('events/upcoming', [EventController::class, 'getUpcomingEvents'])->name('events.upcoming');
         
         // Categories
-        Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
+        Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->names([
+            'index' => 'categories.index',
+            'create' => 'categories.create',
+            'store' => 'categories.store',
+            'show' => 'categories.show',
+            'edit' => 'categories.edit',
+            'update' => 'categories.update',
+            'destroy' => 'categories.destroy'
+        ]);
         
         // Calendar
-        Route::get('calendar', [\App\Http\Controllers\Admin\CalendarController::class, 'index'])->name('calendar');
-        Route::post('calendar', [\App\Http\Controllers\Admin\CalendarController::class, 'store'])->name('calendar.store');
-        Route::put('calendar/{campaign}', [\App\Http\Controllers\Admin\CalendarController::class, 'update'])->name('calendar.update');
-        Route::delete('calendar/{campaign}', [\App\Http\Controllers\Admin\CalendarController::class, 'destroy'])->name('calendar.destroy');
+        Route::resource('calendar', \App\Http\Controllers\Admin\CalendarController::class)->only([
+            'index', 'store', 'update', 'destroy'
+        ])->names([
+            'index' => 'calendar.index',
+            'store' => 'calendar.store',
+            'update' => 'calendar.update',
+            'destroy' => 'calendar.destroy'
+        ]);
 
         // Volunteers
         Route::get('volunteers', [AdminController::class, 'volunteerIndex'])->name('volunteers.index');
@@ -94,7 +108,20 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(
 
         // Campaigns
         Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
+        Route::get('campaigns/dashboard', [CampaignController::class, 'dashboard'])->name('admin.campaigns.dashboard');
         Route::resource('campaigns', CampaignController::class)->except('index');
+
+        // Calendar Campaign Routes
+        Route::get('calendar-campaigns/create', [CalendarCampaignController::class, 'create'])->name('calendar-campaigns.create');
+        Route::post('calendar-campaigns', [CalendarCampaignController::class, 'store'])->name('calendar-campaigns.store');
+        
+        // Calendar Categories Routes
+        Route::resource('calendar-categories', CalendarCategoryController::class);
+        
+        // Redirect old campaign creation to calendar campaign
+        Route::get('campaigns/create', function() {
+            return redirect()->route('admin.calendar-campaigns.create');
+        })->name('campaigns.create');
     });
 });
 
@@ -197,10 +224,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Campaign Management Routes
     Route::get('/campaigns', [CampaignController::class, 'index'])->name('admin.campaigns.index');
+    Route::get('/campaigns/dashboard', [CampaignController::class, 'dashboard'])->name('admin.campaigns.dashboard');
     Route::resource('/campaigns', CampaignController::class)->names('admin.campaigns')->except('index');
 
     // Category Management
-    Route::resource('categories', CategoryController::class);
+    Route::resource('categories', CategoryController::class)->names('admin.categories');
 });
 
 // Admin Scholars Route

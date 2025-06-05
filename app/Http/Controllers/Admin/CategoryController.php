@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category; // Assuming a Category model exists
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -32,15 +33,34 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        // Implement store logic here, e.g., validating and saving the new category
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            // Add other validation rules as needed
+            'color' => 'required|string|size:7|regex:/^#[A-Fa-f0-9]{6}$/',
+            'description' => 'nullable|string'
         ]);
 
-        Category::create($validated);
+        // Generate a unique slug from the name
+        $slug = Str::slug($validated['name']);
+        $baseSlug = $slug;
+        $counter = 1;
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
+        // Ensure slug uniqueness
+        while (Category::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
+        // Create the category with the generated slug
+        Category::create([
+            'name' => $validated['name'],
+            'slug' => $slug,
+            'color' => $validated['color'],
+            'description' => $validated['description']
+        ]);
+
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category created successfully.');
     }
 
     /**
@@ -66,15 +86,32 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        // Implement update logic here, e.g., validating and updating the category
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            // Add other validation rules as needed
+            'color' => 'required|string|size:7|regex:/^#[A-Fa-f0-9]{6}$/',
+            'description' => 'nullable|string'
         ]);
+
+        // Only update slug if name has changed
+        if ($category->name !== $validated['name']) {
+            $slug = Str::slug($validated['name']);
+            $baseSlug = $slug;
+            $counter = 1;
+
+            // Ensure slug uniqueness
+            while (Category::where('slug', $slug)->where('id', '!=', $category->id)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+
+            $validated['slug'] = $slug;
+        }
 
         $category->update($validated);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -85,6 +122,8 @@ class CategoryController extends Controller
         // Implement destroy logic here
         $category->delete();
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully.');
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Category deleted successfully.');
     }
 } 
