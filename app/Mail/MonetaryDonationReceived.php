@@ -8,17 +8,20 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Donation;
 
 class MonetaryDonationReceived extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $donation;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(Donation $donation)
     {
-        //
+        $this->donation = $donation;
     }
 
     /**
@@ -37,7 +40,14 @@ class MonetaryDonationReceived extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.monetary_donation_received',
+            view: 'emails.donation_received', // Use the common template
+            with: [
+                'donation' => $this->donation,
+                'donation_type' => 'monetary',
+                'donor_name' => $this->donation->donor_name,
+                'donation_amount' => $this->donation->amount,
+                'donation_date' => $this->donation->created_at?->format('M d, Y H:i'),
+            ]
         );
     }
 

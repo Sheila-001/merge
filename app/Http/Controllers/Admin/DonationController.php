@@ -227,16 +227,9 @@ class DonationController extends Controller
         if ($oldStatus !== 'completed' && $donation->status === 'completed') {
             // Send email based on donation type
             if ($donation->type === 'monetary') {
-                Mail::to($donation->donor_email)->send(new MonetaryDonationReceived(
-                    $donation->donor_name,
-                    $donation->amount,
-                    $donation->created_at->format('M d, Y H:i')
-                ));
+                Mail::to($donation->donor_email)->send(new MonetaryDonationReceived($donation));
             } elseif ($donation->type === 'non-monetary') {
-                Mail::to($donation->donor_email)->send(new NonMonetaryDropoffConfirmed(
-                    $donation->donor_name,
-                    $donation->expected_date?->format('M d, Y H:i')
-                ));
+                Mail::to($donation->donor_email)->send(new NonMonetaryDropoffConfirmed($donation));
             }
         }
 
