@@ -23,6 +23,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DonationController as AdminDonationController;
 use App\Http\Controllers\Admin\DonationReportController;
 use App\Models\Donation;
+use App\Models\Campaign;
+use App\Models\Category;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,7 +93,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     })->name('admin.donations.calendar');
 
     // Student Management Routes
-    Route::get('/students', [App\Http\Controllers\Admin\StudentController::class, 'index'])->name('admin.students.index');
+    Route::get('/students', [App\Http\Controllers\Admin\StudentController::class, 'index'])
+        ->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
+        ->name('admin.students.index.shortcut');
     Route::post('/students/{tracking_code}/approve', [App\Http\Controllers\Admin\StudentController::class, 'approve'])->name('admin.students.approve');
     Route::post('/students/{tracking_code}/reject', [App\Http\Controllers\Admin\StudentController::class, 'reject'])->name('admin.students.reject');
     Route::delete('/students/{tracking_code}', [App\Http\Controllers\Admin\StudentController::class, 'destroy'])->name('admin.students.destroy');
@@ -106,14 +110,29 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::delete('/urgent-funds/{campaign}', [App\Http\Controllers\Admin\UrgentFundsController::class, 'destroy'])->name('admin.urgent-funds.destroy');
 
     // Campaign Management Routes
-    Route::resource('campaigns', AdminCampaignController::class)->names('admin.campaigns');
+    Route::get('/campaigns', [AdminCampaignController::class, 'dashboard'])->name('admin.campaigns.index');
+    Route::resource('/campaigns', AdminCampaignController::class)->names('admin.campaigns')->except('index');
 
-    // Category Management Routes
+    // Category Management
     Route::resource('categories', CategoryController::class)->names('admin.categories');
 
     // Admin Calendar Route
     Route::get('/calendar', function () {
-        return view('admin.donation.calendar');
+        $campaigns = Campaign::with('category')->get()->map(function ($campaign) {
+            return [
+                'id' => $campaign->id,
+                'title' => $campaign->title,
+                'start' => $campaign->start_date,
+                'end' => $campaign->end_date,
+                'category' => $campaign->category ? $campaign->category->name : 'Uncategorized',
+                'status' => $campaign->status,
+                'pledged' => $campaign->pledged,
+                'description' => $campaign->description,
+                'className' => 'bg-[' . ($campaign->category ? $campaign->category->color : '#0A90A4') . ']'
+            ];
+        });
+        $categories = Category::all();
+        return view('admin.calendar.index', compact('campaigns', 'categories'));
     })->name('admin.calendar.index');
 });
 
@@ -221,7 +240,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('/campaigns', AdminCampaignController::class)->names('admin.campaigns')->except('index');
 
     // Category Management
-    Route::resource('categories', CategoryController::class);
+    Route::resource('categories', CategoryController::class)->names('admin.categories');
 });
 
 // Admin Scholars Route
@@ -263,9 +282,8 @@ Route::post('/admin/jobs/{job}/reject', [JobListingController::class, 'reject'])
 // Public Donation Routes (no auth required)
 Route::get('/donation', function () {
     $topDonors = \App\Models\Donation::where('is_acknowledged', true)
-        ->where('is_anonymous', false)
         ->where('status', 'completed')
-        ->orderByDesc('amount')
+        ->orderByDesc('created_at')
         ->take(3)
         ->get();
     return view('donation.donation', compact('topDonors'));
@@ -280,7 +298,21 @@ Route::get('/non-monetary-donation', function () {
 
 // Campaign Calendar Route
 Route::get('/user/calendar', function () {
-    return view('donation.usercalendar');
+    $campaigns = \App\Models\Campaign::with('category')->get()->map(function ($campaign) {
+        return [
+            'id' => $campaign->id,
+            'title' => $campaign->title,
+            'start' => $campaign->start_date ? $campaign->start_date->format('Y-m-d') : now()->format('Y-m-d'),
+            'end' => $campaign->end_date ? $campaign->end_date->format('Y-m-d') : now()->addDays(7)->format('Y-m-d'),
+            'category' => $campaign->category ? strtolower($campaign->category->name) : 'other',
+            'categoryColor' => $campaign->category ? $campaign->category->color : '#0A90A4',
+            'status' => ucfirst($campaign->status),
+            'pledged' => $campaign->pledged_amount ? '₱' . number_format($campaign->pledged_amount, 2) : 
+                        ($campaign->pledged_quantity ? $campaign->pledged_quantity . ' kg' : null),
+            'description' => $campaign->description
+        ];
+    });
+    return view('donation.usercalendar', compact('campaigns'));
 })->name('user.calendar');
 
 Route::get('/monetary-donation', function () {
@@ -300,7 +332,7 @@ Route::post('/donations/monetary', [App\Http\Controllers\PublicDonationControlle
 // For non-monetary donations
 Route::post('/donations/non-monetary', [App\Http\Controllers\PublicDonationController::class, 'storeNonMonetary'])->name('donations.non-monetary.store');
 
-Route::post('/non-monetary-donation', [PublicDonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
+Route::post('/non-monetary-donation', [App\Http\Controllers\PublicDonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
 
 // Get total monetary donations
 $monetaryTotal = Donation::where('type', 'monetary')

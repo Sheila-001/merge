@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title>Monetary Donation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -28,8 +28,8 @@
             <h2 class="text-2xl md:text-3xl font-bold text-black text-center mb-2">Monetary Donation</h2>
             <p class="text-lg text-black text-center mb-8">Your generosity makes a difference</p>
             
-            <form id="donationForm" action="{{ route('monetary_donation.submit') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                @csrf
+            <form id="donationForm" action="<?php echo e(route('monetary_donation.submit')); ?>" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <?php echo csrf_field(); ?>
 
                 <!-- Left Column -->
                 <div class="space-y-6">
@@ -50,7 +50,7 @@
                     <!-- Bank Transfer QR (shown by default) -->
                     <div id="bankDetails" class="space-y-4 bg-[#B7E4FA] p-4 rounded-lg flex flex-col items-center">
                         <h3 class="text-sm font-semibold text-black mb-2">Bank Transfer QR Code</h3>
-                        <img src="{{ asset('image/HauzBank.jpg.jpg') }}" alt="Bank Transfer QR Code" class="mx-auto max-w-xs max-h-80 rounded shadow border-4 border-[#0A90A4]">
+                        <img src="<?php echo e(asset('image/HauzBank.jpg.jpg')); ?>" alt="Bank Transfer QR Code" class="mx-auto max-w-xs max-h-80 rounded shadow border-4 border-[#0A90A4]">
                         <p class="text-center text-black mt-2 text-sm font-medium">Scan this QR code with your banking app.</p>
                     </div>
 
@@ -58,7 +58,7 @@
                     <div id="gcashDetails" class="space-y-4 bg-[#B7E4FA] p-4 rounded-lg hidden flex flex-col items-center">
                         <h3 class="text-sm font-semibold text-black mb-2">GCash QR Code</h3>
                         <div class="bg-white p-2 rounded shadow border-4 border-[#0A90A4] flex justify-center items-center">
-                            <img src="{{ asset('image/HauzGcash.jpg.jpg') }}" alt="GCash QR Code" class="max-w-xs max-h-80 object-contain">
+                            <img src="<?php echo e(asset('image/HauzGcash.jpg.jpg')); ?>" alt="GCash QR Code" class="max-w-xs max-h-80 object-contain">
                         </div>
                         <p class="text-center text-black mt-2 text-sm font-medium">Scan this QR code with your GCash app.</p>
                     </div>
@@ -129,7 +129,7 @@
 
                 <!-- Buttons -->
                 <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
-                    <button type="button" onclick="window.location.href='{{ route('welcome') }}'" class="px-6 py-2.5 bg-white text-[#0A90A4] border border-[#0A90A4] rounded-lg hover:bg-[#B7E4FA] hover:text-[#0A90A4] transition-colors font-medium">Cancel</button>
+                    <button type="button" onclick="window.location.href='<?php echo e(route('welcome')); ?>'" class="px-6 py-2.5 bg-white text-[#0A90A4] border border-[#0A90A4] rounded-lg hover:bg-[#B7E4FA] hover:text-[#0A90A4] transition-colors font-medium">Cancel</button>
                     <button type="submit" class="px-6 py-2.5 bg-[#0A90A4] text-white rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">Submit Donation</button>
                 </div>
                 <input type="hidden" name="donation_preference" id="donationPreferenceInput">
@@ -212,7 +212,7 @@
                     </p>
                 </div>
                 <div class="items-center px-4 py-3">
-                    <a href="{{ route('welcome') }}" class="px-4 py-2 bg-[#0A90A4] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#098a9d] focus:outline-none focus:ring-2 focus:ring-[#0A90A4] transition-colors">
+                    <a href="<?php echo e(route('welcome')); ?>" class="px-4 py-2 bg-[#0A90A4] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#098a9d] focus:outline-none focus:ring-2 focus:ring-[#0A90A4] transition-colors">
                         Back to Home
                     </a>
                 </div>
@@ -452,4 +452,4 @@
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\Users\PNPh\Desktop\sheila\collab - Copy\resources\views/donation/monetary.blade.php ENDPATH**/ ?>

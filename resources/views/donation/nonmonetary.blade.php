@@ -78,7 +78,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-black mb-2">Contact Number</label>
-                        <input type="tel" name="donor_phone" placeholder="Your contact number" required class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent" inputmode="numeric" pattern="[0-9]*">
+                        <input type="tel" name="donor_phone" placeholder="Your contact number" required class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent" inputmode="numeric" maxlength="13">
                     </div>
 
                     <div>
@@ -305,10 +305,34 @@
             submitForm(); // Submit the form
         });
 
+        // Function to validate Philippine contact numbers
+        function validatePhilippineContactNumber(phoneNumber) {
+            // Regex for 09xxxxxxxx format (11 digits total)
+            const localRegex = /^09\d{9}$/;
+            // Regex for +639xxxxxxxx format (13 characters including +)
+            const internationalRegex = /^\+639\d{9}$/;
+
+            if (localRegex.test(phoneNumber) || internationalRegex.test(phoneNumber)) {
+                return { valid: true };
+            } else {
+                return { valid: false, error: "Invalid Philippine mobile number format. Please use 09xxxxxxxx or +639xxxxxxxx." };
+            }
+        }
+
         // Function to submit the form via fetch
         function submitForm() {
             const donationForm = document.getElementById('donationForm');
             const formData = new FormData(donationForm);
+            const contactNumberInput = donationForm.querySelector('input[name="donor_phone"]');
+            const contactNumber = contactNumberInput.value.trim();
+
+            // Validate contact number
+            const validationResult = validatePhilippineContactNumber(contactNumber);
+            if (!validationResult.valid) {
+                alert(validationResult.error);
+                contactNumberInput.focus(); // Focus the input field
+                return; // Stop submission
+            }
 
             // Check if 'Others' category is selected and update the category in formData
             const categorySelect = document.getElementById('category');
@@ -357,11 +381,6 @@
          // For simplicity, we are only showing the thank you modal on success and linking back to donation page.
          // If you need close buttons on the modals, you'll need to add them to the HTML and add corresponding JS.
 
-        // Restrict contact number input to numbers only
-        document.getElementById('donationForm').querySelector('input[name="donor_phone"]').addEventListener('input', function (e) {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-        });
-
         // Remove the old modal logic and replace with simple input field logic
         document.getElementById('category').addEventListener('change', function() {
             const otherCategoryInput = document.getElementById('otherCategoryInput');
@@ -375,6 +394,33 @@
                 otherCategoryField.removeAttribute('required');
                 otherCategoryField.value = '';
             }
+        });
+
+        // Restrict contact number input to digits and an optional leading + and limit length
+        document.getElementById('donationForm').querySelector('input[name="donor_phone"]').addEventListener('input', function (e) {
+            let value = e.target.value;
+
+            // Remove all non-digits, but allow a leading '+'
+            let cleanedValue = '';
+            if (value.startsWith('+')) {
+                cleanedValue = '+' + value.substring(1).replace(/[^0-9]/g, '');
+            } else {
+                cleanedValue = value.replace(/[^0-9]/g, '');
+            }
+
+            // Apply strict length limit based on leading character
+            let limitedValue = cleanedValue;
+            if (limitedValue.startsWith('+')) {
+                 if (limitedValue.length > 13) {
+                    limitedValue = limitedValue.substring(0, 13);
+                 }
+            } else { // Assuming anything else starting with a digit should follow the 09... pattern length
+                 if (limitedValue.length > 11) {
+                    limitedValue = limitedValue.substring(0, 11);
+                 }
+            }
+
+            e.target.value = limitedValue;
         });
 
     </script>

@@ -8,6 +8,9 @@ use App\Models\Donation;
 use App\Models\Campaign;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MonetaryDonationReceived;
+use App\Mail\NonMonetaryDropoffConfirmed;
 
 class DonationController extends Controller
 {
@@ -213,9 +216,29 @@ class DonationController extends Controller
             'status' => 'required|in:completed,pending,rejected'
         ]);
 
+        // Store the old status before updating
+        $oldStatus = $donation->status;
+
         $donation->update([
             'status' => $request->status
         ]);
+
+        // Check if the status changed to 'completed'
+        if ($oldStatus !== 'completed' && $donation->status === 'completed') {
+            // Send email based on donation type
+            if ($donation->type === 'monetary') {
+                Mail::to($donation->donor_email)->send(new MonetaryDonationReceived(
+                    $donation->donor_name,
+                    $donation->amount,
+                    $donation->created_at->format('M d, Y H:i')
+                ));
+            } elseif ($donation->type === 'non-monetary') {
+                Mail::to($donation->donor_email)->send(new NonMonetaryDropoffConfirmed(
+                    $donation->donor_name,
+                    $donation->expected_date?->format('M d, Y H:i')
+                ));
+            }
+        }
 
         return redirect()->back()->with('success', 'Donation status updated successfully');
     }

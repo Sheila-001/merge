@@ -8,6 +8,7 @@ use App\Models\Donation;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class DonationReportController extends Controller
 {
@@ -54,8 +55,43 @@ class DonationReportController extends Controller
         $donations = $donationsQuery->latest()->get();
         $recentDonations = $donations->take(10); // Get the 10 most recent donations
 
+        // --- Start: Code to fetch and prepare monthly data for the chart ---
+        $startDate = Carbon::now()->subMonths(11)->startOfMonth(); // Start 12 months ago at the beginning of the month
+
+        $monthlyDonations = Donation::select(
+                DB::raw('YEAR(created_at) as year'),
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('SUM(amount) as total_amount')
+            )
+            ->where('type', 'monetary') // Assuming you only want monetary donations
+            ->where('created_at', '>=', $startDate) // Filter for the last 12 months
+            ->groupBy('year', 'month')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+
+        $monthlyLabels = [];
+        $monthlyData = [];
+
+        // Generate labels and data for the last 12 months, including months with no donations
+        $currentMonth = Carbon::now()->subMonths(11)->startOfMonth();
+        for ($i = 0; $i < 12; $i++) {
+            $monthLabel = $currentMonth->format('M Y');
+            $monthlyLabels[] = $monthLabel;
+
+            // Find if there is a donation entry for this month
+            $donationForMonth = $monthlyDonations->first(function ($donation) use ($currentMonth) {
+                return $donation->year === $currentMonth->year && $donation->month === $currentMonth->month;
+            });
+
+            $monthlyData[] = $donationForMonth ? $donationForMonth->total_amount : 0;
+
+            $currentMonth->addMonth(); // Move to the next month
+        }
+        // --- End: Code to fetch and prepare monthly data for the chart ---
+
         // Pass all necessary data to the view
-        return view('admin.donation.reports', compact('campaigns', 'donations', 'monetaryDonationsTotal', 'nonMonetaryDonationsCount', 'campaignsCount', 'donorsCount', 'recentDonations'));
+        return view('admin.donation.reports', compact('campaigns', 'donations', 'monetaryDonationsTotal', 'nonMonetaryDonationsCount', 'campaignsCount', 'donorsCount', 'recentDonations', 'monthlyLabels', 'monthlyData'));
     }
 
     public function export(Request $request)

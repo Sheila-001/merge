@@ -27,10 +27,10 @@
     </div>
 
     <!-- Campaign Statistics -->
-    <div class="grid grid-cols-1 md::grid-cols-4 gap-4 mb-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-4">
         <div class="">
-            <div class="bg-white rounded-lg shadow-sm">
-                <div class="p-4">
+            <div class="bg-white rounded-lg shadow-sm flex items-center justify-center">
+                <div class="p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 mr-3">
                             <div class="rounded-full bg-blue-100 p-3">
@@ -46,8 +46,8 @@
             </div>
         </div>
         <div class="">
-            <div class="bg-white rounded-lg shadow-sm">
-                <div class="p-4">
+            <div class="bg-white rounded-lg shadow-sm flex items-center justify-center">
+                <div class="p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 mr-3">
                             <div class="rounded-full bg-green-100 p-3">
@@ -63,8 +63,8 @@
             </div>
         </div>
         <div class="">
-            <div class="bg-white rounded-lg shadow-sm">
-                <div class="p-4">
+            <div class="bg-white rounded-lg shadow-sm flex items-center justify-center">
+                <div class="p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 mr-3">
                             <div class="rounded-full bg-cyan-100 p-3">
@@ -80,8 +80,8 @@
             </div>
         </div>
         <div class="">
-            <div class="bg-white rounded-lg shadow-sm">
-                <div class="p-4">
+            <div class="bg-white rounded-lg shadow-sm flex items-center justify-center">
+                <div class="p-6">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 mr-3">
                             <div class="rounded-full bg-yellow-100 p-3">

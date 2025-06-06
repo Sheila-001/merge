@@ -1,1 +1,0 @@
- <?php /**PATH C:\Users\PNPh\Desktop\sheila\collab - Copy\resources\views\admin\scholars.blade.php ENDPATH**/ ?>

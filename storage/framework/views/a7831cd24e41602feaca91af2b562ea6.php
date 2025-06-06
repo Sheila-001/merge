@@ -1,4 +1,13 @@
-<x-app-layout>
+<?php if (isset($component)) { $__componentOriginal4619374cef299e94fd7263111d0abc69 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal4619374cef299e94fd7263111d0abc69 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.app-layout','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
     <div class="mb-8 flex justify-between items-center">
         <h1 class="text-2xl font-bold">All Donations </h1>
         <div class="flex items-center space-x-2">
@@ -10,7 +19,7 @@
     <div class="bg-white rounded-xl shadow p-6 mb-8">
         <div class="flex justify-between items-center mb-4">
             <h2 class="font-bold text-lg">All Donations</h2>
-            <div>{{-- Empty div for spacing --}}</div>
+            <div></div>
         </div>
         <table class="min-w-full text-sm">
             <thead>
@@ -25,44 +34,47 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($donations as $donation)
+                <?php $__currentLoopData = $donations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $donation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr class="border-b">
                     <td class="py-2 flex items-center space-x-2">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode($donation->donor_name) }}&background=random" class="w-8 h-8 rounded-full" alt="{{ $donation->donor_name }}">
+                        <img src="https://ui-avatars.com/api/?name=<?php echo e(urlencode($donation->donor_name)); ?>&background=random" class="w-8 h-8 rounded-full" alt="<?php echo e($donation->donor_name); ?>">
                         <span>
-                            <div class="font-semibold">{{ $donation->donor_name }}</div>
-                            <div class="text-xs text-gray-500">{{ $donation->donor_email }}</div>
+                            <div class="font-semibold"><?php echo e($donation->donor_name); ?></div>
+                            <div class="text-xs text-gray-500"><?php echo e($donation->donor_email); ?></div>
                         </span>
                     </td>
-                    <td class="py-2">{{ ucfirst($donation->type) }}</td>
+                    <td class="py-2"><?php echo e(ucfirst($donation->type)); ?></td>
                     <td class="py-2 font-bold">
-                        @if($donation->type === 'monetary')
-                            ₱{{ number_format($donation->amount, 2) }}
-                        @else
-                            {{ $donation->item_name }}
-                        @endif
+                        <?php if($donation->type === 'monetary'): ?>
+                            ₱<?php echo e(number_format($donation->amount, 2)); ?>
+
+                        <?php else: ?>
+                            <?php echo e($donation->item_name); ?>
+
+                        <?php endif; ?>
                     </td>
                     <td class="py-2">
-                        <span class="bg-{{ $donation->status === 'completed' ? 'green' : 'yellow' }}-100 text-{{ $donation->status === 'completed' ? 'green' : 'yellow' }}-600 px-2 py-1 rounded">
-                            {{ ucfirst($donation->status) }}
+                        <span class="bg-<?php echo e($donation->status === 'completed' ? 'green' : 'yellow'); ?>-100 text-<?php echo e($donation->status === 'completed' ? 'green' : 'yellow'); ?>-600 px-2 py-1 rounded">
+                            <?php echo e(ucfirst($donation->status)); ?>
+
                         </span>
                     </td>
-                    <td class="py-2">{{ $donation->created_at->format('M d, Y') }}</td>
+                    <td class="py-2"><?php echo e($donation->created_at->format('M d, Y')); ?></td>
                     <td class="py-2">
-                        @if($donation->proof_path)
-                            <img src="{{ Storage::url($donation->proof_path) }}" alt="Donation Proof" class="w-10 h-10 object-cover rounded">
-                        @else
+                        <?php if($donation->proof_path): ?>
+                            <img src="<?php echo e(Storage::url($donation->proof_path)); ?>" alt="Donation Proof" class="w-10 h-10 object-cover rounded">
+                        <?php else: ?>
                             N/A
-                        @endif
+                        <?php endif; ?>
                     </td>
                     <td class="py-2">
                         <div class="flex space-x-2">
-                             <a href="{{ route('admin.donations.show', $donation) }}" class="text-green-800 bg-green-100 px-2 py-1 rounded hover:bg-green-200"><i class="fas fa-eye"></i> View</a>
-                             <a href="{{ route('admin.donations.edit', $donation) }}" class="text-green-600 hover:text-green-800"><i class="fas fa-edit"></i></a>
+                             <a href="<?php echo e(route('admin.donations.show', $donation)); ?>" class="text-green-800 bg-green-100 px-2 py-1 rounded hover:bg-green-200"><i class="fas fa-eye"></i> View</a>
+                             <a href="<?php echo e(route('admin.donations.edit', $donation)); ?>" class="text-green-600 hover:text-green-800"><i class="fas fa-edit"></i></a>
                         </div>
                     </td>
                 </tr>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>
         </table>
     </div>
@@ -78,7 +90,7 @@
         </div>
     </div>
 
-    @push('styles')
+    <?php $__env->startPush('styles'); ?>
     <style>
     .card {
         transition: all 0.3s ease;
@@ -107,9 +119,9 @@
         width: 1.25rem;
     }
     </style>
-    @endpush
+    <?php $__env->stopPush(); ?>
 
-    @push('scripts')
+    <?php $__env->startPush('scripts'); ?>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Proof image modal functionality
@@ -141,5 +153,14 @@
         });
     });
     </script>
-    @endpush
-</x-app-layout> 
+    <?php $__env->stopPush(); ?>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal4619374cef299e94fd7263111d0abc69)): ?>
+<?php $attributes = $__attributesOriginal4619374cef299e94fd7263111d0abc69; ?>
+<?php unset($__attributesOriginal4619374cef299e94fd7263111d0abc69); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal4619374cef299e94fd7263111d0abc69)): ?>
+<?php $component = $__componentOriginal4619374cef299e94fd7263111d0abc69; ?>
+<?php unset($__componentOriginal4619374cef299e94fd7263111d0abc69); ?>
+<?php endif; ?> <?php /**PATH C:\Users\PNPh\Desktop\sheila\collab - Copy\resources\views/admin/donation/all-donors.blade.php ENDPATH**/ ?>

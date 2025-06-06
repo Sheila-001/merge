@@ -6,14 +6,14 @@
                 <p class="text-sm text-gray-600">View and manage scheduled campaigns</p>
             </div>
             <div class="flex gap-4">
-                <a href="{{ route('admin.categories.index') }}" 
+                <a href="{{ route('admin.categories.index') }}"
                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/>
                     </svg>
                     Manage Categories
                 </a>
-                <a href="{{ route('admin.campaigns.create') }}" 
+                <a href="{{ route('admin.campaigns.create') }}"
                    class="inline-flex items-center px-4 py-2 bg-[#1B4B5A] text-white rounded-md hover:bg-[#2C5F6E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -40,7 +40,7 @@
                 <div class="bg-white rounded-lg shadow-sm p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-semibold text-gray-800">Categories</h3>
-                        <a href="{{ route('admin.categories.create') }}" 
+                        <a href="{{ route('admin.categories.create') }}"
                            class="inline-flex items-center justify-center w-6 h-6 text-sm bg-[#1B4B5A] text-white rounded-full hover:bg-[#2C5F6E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
                             +
                         </a>
@@ -89,9 +89,9 @@
                 },
                 eventContent: function(arg) {
                     // Get the background color from the className (which includes the color)
-                    const colorMatch = arg.event.classNames[0].match(/bg-\[(.*?)\]/);
+                    const colorMatch = arg.event.classNames[0].match(/bg-\[(.*?)\].*/); // Modified regex to match more broadly
                     const backgroundColor = colorMatch ? colorMatch[1] : '#000000';
-                    
+
                     // Create a wrapper div that will be fully colored
                     const wrapper = document.createElement('div');
                     wrapper.className = 'event-wrapper';
@@ -100,7 +100,7 @@
                     wrapper.style.width = '100%';
                     wrapper.style.borderRadius = '4px';
                     wrapper.style.padding = '4px 8px';
-                    
+
                     // Add the title
                     const title = document.createElement('div');
                     title.className = 'event-title';
@@ -108,9 +108,9 @@
                     title.style.color = 'white';
                     title.style.fontWeight = '500';
                     title.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.2)';
-                    
+
                     wrapper.appendChild(title);
-                    
+
                     return { domNodes: [wrapper] };
                 }
             });
@@ -122,45 +122,45 @@
         .fc {
             background: white;
         }
-        
+
         /* Event styles */
         .fc-event {
             margin: 2px !important;
             border: none !important;
         }
-        
+
         .fc-h-event {
             background: none !important;
             border: none !important;
         }
-        
+
         .fc-daygrid-event {
             white-space: normal !important;
             align-items: normal !important;
             margin-top: 2px !important;
             margin-bottom: 2px !important;
         }
-        
+
         /* Event wrapper styles */
         .event-wrapper {
             min-height: 24px;
             display: flex;
             align-items: center;
         }
-        
+
         /* Make events take full width in their cell */
         .fc .fc-daygrid-event-harness {
             width: calc(100% - 4px) !important;
             margin-left: 2px !important;
             margin-right: 2px !important;
         }
-        
+
         /* Ensure event content takes full width */
         .fc-event-main {
             flex: 1;
             width: 100%;
         }
-        
+
         /* Title styles */
         .event-title {
             overflow: hidden;

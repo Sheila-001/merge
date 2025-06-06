@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category; // Assuming a Category model exists
 use Illuminate\Http\Request;
+use Illuminate\Support\Str; // Import the Str facade
 
 class CategoryController extends Controller
 {
@@ -32,11 +33,14 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        // Implement store logic here, e.g., validating and saving the new category
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            // Add other validation rules as needed
+            'name' => 'required|string|max:255|unique:categories,name',
+            'color' => 'nullable|string|max:7',
+            'description' => 'nullable|string',
         ]);
+
+        // Generate slug from the name
+        $validated['slug'] = Str::slug($validated['name']);
 
         Category::create($validated);
 
