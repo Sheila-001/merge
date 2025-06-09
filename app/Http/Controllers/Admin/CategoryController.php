@@ -16,7 +16,7 @@ class CategoryController extends Controller
     {
         // Implement index logic here, e.g., fetching all categories
         $categories = Category::all();
-        return view('admin.categories.index', compact('categories'));
+        return view('admin.campaigns.categories.index', compact('categories'));
     }
 
     /**
@@ -24,8 +24,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        // Implement create form logic here
-        return view('admin.categories.create');
+        return view('admin.campaigns.categories.create');
     }
 
     /**
@@ -59,7 +58,7 @@ class CategoryController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.categories.index')
+            ->route('admin.campaigns-categories.index')
             ->with('success', 'Category created successfully.');
     }
 
@@ -69,7 +68,7 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         // Implement show logic here
-        return view('admin.categories.show', compact('category'));
+        return view('admin.campaigns.categories.show', compact('category'));
     }
 
     /**
@@ -78,7 +77,7 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         // Implement edit form logic here
-        return view('admin.categories.edit', compact('category'));
+        return view('admin.campaigns.categories.edit', compact('category'));
     }
 
     /**
@@ -110,7 +109,7 @@ class CategoryController extends Controller
         $category->update($validated);
 
         return redirect()
-            ->route('admin.categories.index')
+            ->route('admin.campaigns-categories.index')
             ->with('success', 'Category updated successfully.');
     }
 
@@ -123,7 +122,7 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect()
-            ->route('admin.categories.index')
+                ->route('admin.campaigns-categories.index')
             ->with('success', 'Category deleted successfully.');
     }
 } 

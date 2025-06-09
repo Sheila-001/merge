@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('components.admin-layout')
 
 @section('content')
 <div class="p-8 bg-[#f3f6fb] min-h-screen">

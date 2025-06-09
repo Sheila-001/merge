@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Donation;
 use App\Models\Campaign;
+use Illuminate\Support\Facades\Log;
 
 class PublicDonationController extends Controller
 {
@@ -24,42 +25,54 @@ class PublicDonationController extends Controller
             'donor_phone' => 'required|string|max:20',
             'proof' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Max 2MB
             'message' => 'nullable|string',
-            'donation_preference' => 'required|in:anonymous,acknowledged', // Add validation for the preference
+            'donation_preference' => 'required|in:anonymous,acknowledged',
+            'campaign_id' => 'nullable|exists:campaigns,id', // Add validation for campaign_id
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        // Process the donation (e.g., save to database, send email)
-        
-        $proofPath = null;
-        if ($request->hasFile('proof')) {
-            $proofPath = $request->file('proof')->store('monetary', 'public');
+        try {
+            $proofPath = null;
+            if ($request->hasFile('proof')) {
+                $proofPath = $request->file('proof')->store('monetary', 'public');
+            }
+
+            $isAcknowledged = ($request->donation_preference === 'acknowledged');
+            $isAnonymous = !$isAcknowledged;
+            
+            $donation = Donation::create([
+                'type' => 'monetary',
+                'donor_name' => $request->donor_name,
+                'donor_email' => $request->donor_email,
+                'donor_phone' => $request->donor_phone,
+                'amount' => $request->amount,
+                'payment_method' => $request->payment_method,
+                'status' => 'pending',
+                'proof_path' => $proofPath,
+                'message' => $request->message,
+                'is_acknowledged' => $isAcknowledged,
+                'is_anonymous' => $isAnonymous,
+                'campaign_id' => $request->campaign_id, // Store campaign_id
+            ]);
+
+            // If a campaign_id is provided, update the campaign's total donations
+            if ($donation->campaign_id) {
+                $campaign = Campaign::find($donation->campaign_id);
+                if ($campaign) {
+                    $campaign->updateTotalDonations(); // This method should calculate and save the new total
+                }
+            }
+
+            return response()->json(['success' => true, 'message' => 'Donation submitted successfully!']);
+        } catch (\Exception $e) {
+            Log::error('Monetary Donation Submission Error: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request_data' => $request->all(),
+            ]);
+            return response()->json(['success' => false, 'message' => 'Submission failed: An unexpected error occurred.'], 500);
         }
-
-        // Determine the is_acknowledged value based on the preference
-        $isAcknowledged = ($request->donation_preference === 'acknowledged');
-        $isAnonymous = !$isAcknowledged; // If not acknowledged, then it's anonymous
-        
-        \App\Models\Donation::create([
-            'type' => 'monetary',
-            'donor_name' => $request->donor_name,
-            'donor_email' => $request->donor_email,
-            'donor_phone' => $request->donor_phone,
-            'amount' => $request->amount,
-            'payment_method' => $request->payment_method,
-            'description' => null, // Description is for non-monetary donations
-            'status' => 'pending', // Initial status
-            'transaction_id' => null, // You might get this from a payment gateway
-            'proof_path' => $proofPath,
-            'message' => $request->message,
-            'is_acknowledged' => $isAcknowledged,
-            'is_anonymous' => $isAnonymous,
-        ]);
-
-        // For this example, we'll just return a success response.
-        return response()->json(['success' => true, 'message' => 'Donation submitted successfully!']);
     }
 
     /**

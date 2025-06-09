@@ -34,14 +34,54 @@ class DashboardController extends Controller
             ->get();
 
         // Add donation stats for dashboard cards
-        $monetaryDonations = \App\Models\Donation::where('type', 'monetary')->count();
-        $nonMonetaryItems = \App\Models\Donation::where('type', 'non-monetary')->count();
-        $totalDonors = \App\Models\Donation::distinct('donor_email')->count('donor_email');
+        $currentMonth = \Carbon\Carbon::now();
+        $lastMonth = \Carbon\Carbon::now()->subMonth();
 
-        // Get recent donations with pagination
-        $recentDonations = \App\Models\Donation::latest()->paginate(10);
+        // Monetary Donations
+        $monetaryTotal = \App\Models\Donation::where('type', 'monetary')->where('status', 'completed')->sum('amount');
+        $lastMonthMonetary = \App\Models\Donation::where('type', 'monetary')
+            ->where('status', 'completed')
+            ->whereMonth('created_at', $lastMonth->month)
+            ->whereYear('created_at', $lastMonth->year)
+            ->sum('amount');
+        $monetaryChange = $lastMonthMonetary > 0 ? (($monetaryTotal - $lastMonthMonetary) / $lastMonthMonetary) * 100 : 0;
 
-        // Get pending drop-offs
+        // Non-Monetary Donations
+        $nonMonetaryCount = \App\Models\Donation::where('type', 'non-monetary')->where('status', 'completed')->count();
+        $lastMonthNonMonetary = \App\Models\Donation::where('type', 'non-monetary')
+            ->where('status', 'completed')
+            ->whereMonth('created_at', $lastMonth->month)
+            ->whereYear('created_at', $lastMonth->year)
+            ->count();
+        $nonMonetaryChange = $lastMonthNonMonetary > 0 ? (($nonMonetaryCount - $lastMonthNonMonetary) / $lastMonthNonMonetary) * 100 : 0;
+
+        // Campaign Donations
+        $campaignTotal = \App\Models\Donation::whereHas('campaign', function($query) {
+                $query->where('status', 'active');
+            })
+            ->where('status', 'completed')
+            ->sum('amount');
+        $lastMonthCampaign = \App\Models\Donation::whereHas('campaign', function($query) {
+                $query->where('status', 'active');
+            })
+            ->where('status', 'completed')
+            ->whereMonth('created_at', $lastMonth->month)
+            ->whereYear('created_at', $lastMonth->year)
+            ->sum('amount');
+        $campaignChange = $lastMonthCampaign > 0 ? (($campaignTotal - $lastMonthCampaign) / $lastMonthCampaign) * 100 : 0;
+
+        // Donor Count
+        $donorCount = \App\Models\Donation::select('donor_email')->distinct()->count();
+        $lastMonthDonors = \App\Models\Donation::select('donor_email')->distinct()
+            ->whereMonth('created_at', $lastMonth->month)
+            ->whereYear('created_at', $lastMonth->year)
+            ->count();
+        $donorChange = $lastMonthDonors > 0 ? (($donorCount - $lastMonthDonors) / $lastMonthDonors) * 100 : 0;
+
+        // Recent Donations
+        $donations = \App\Models\Donation::latest()->take(10)->get();
+
+        // Pending Drop-offs
         $pendingDropoffs = \App\Models\Donation::where('type', 'non-monetary')
             ->where('status', 'pending')
             ->latest()
@@ -52,10 +92,15 @@ class DashboardController extends Controller
             'activeStudents',
             'recentEvents',
             'upcomingEvents',
-            'monetaryDonations',
-            'nonMonetaryItems',
-            'totalDonors',
-            'recentDonations',
+            'monetaryTotal',
+            'monetaryChange',
+            'nonMonetaryCount',
+            'nonMonetaryChange',
+            'campaignTotal',
+            'campaignChange',
+            'donorCount',
+            'donorChange',
+            'donations',
             'pendingDropoffs'
         ));
     }

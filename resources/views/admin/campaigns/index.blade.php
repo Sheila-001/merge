@@ -1,13 +1,23 @@
-<x-app-layout>
+@extends('components.admin-layout')
+
+@section('content')
     <div class="container mx-auto px-4 py-6">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800">Manage Campaigns</h2>
+        <div class="flex space-x-4">
+            <a href="{{ route('admin.campaigns.dashboard') }}" class="inline-flex items-center px-4 py-2 bg-white border border-[#1B4B5A] text-[#1B4B5A] rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                Back to Dashboard
+            </a>
             <a href="{{ route('admin.campaigns.create') }}" class="inline-flex items-center px-4 py-2 bg-[#1B4B5A] text-white rounded-md hover:bg-[#2C5F6E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
                 Create New Campaign
             </a>
+        </div>
         </div>
 
         @if(session('success'))
@@ -28,7 +38,7 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Campaign</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Goal</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Raised</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -58,7 +68,7 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ ucfirst($campaign->type) }}
+                                        {{ $campaign->category ? ucfirst($campaign->category->name) : '—' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         ₱{{ number_format($campaign->goal_amount, 2) }}
@@ -87,19 +97,12 @@
                                                 </svg>
                                             </a>
                                             <button type="button"
-                                                    onclick="confirmDelete('{{ $campaign->id }}')"
+                                                onclick="openDeleteModal('{{ $campaign->id }}', '{{ $campaign->title }}')"
                                                     class="text-red-600 hover:text-red-900">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                 </svg>
                                             </button>
-                                            <form id="delete-form-{{ $campaign->id }}"
-                                                  action="{{ route('admin.campaigns.destroy', $campaign) }}"
-                                                  method="POST"
-                                                  class="hidden">
-                                                @csrf
-                                                @method('DELETE')
-                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -115,13 +118,64 @@
         </div>
     </div>
 
+<!-- Delete Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full" role="dialog">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Delete Campaign</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">Are you sure you want to delete this campaign? This action cannot be undone.</p>
+                <p class="text-sm font-medium text-gray-800 mt-2" id="campaignTitle"></p>
+            </div>
+            <div class="flex justify-center gap-4 mt-4">
+                <button type="button" 
+                        onclick="closeDeleteModal()"
+                        class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded-md">
+                    Cancel
+                </button>
+                <form id="deleteForm" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md">
+                        Delete Campaign
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
     @push('scripts')
     <script>
-        function confirmDelete(campaignId) {
-            if (confirm('Are you sure you want to delete this campaign? This action cannot be undone.')) {
-                document.getElementById('delete-form-' + campaignId).submit();
-            }
+    function openDeleteModal(campaignId, campaignTitle) {
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('campaignTitle').textContent = campaignTitle;
+        document.getElementById('deleteForm').action = `/admin/campaigns/${campaignId}`;
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeDeleteModal();
         }
+    });
+
+    // Close modal on escape key press
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !document.getElementById('deleteModal').classList.contains('hidden')) {
+            closeDeleteModal();
+            }
+    });
     </script>
     @endpush
-</x-app-layout>
+@endsection

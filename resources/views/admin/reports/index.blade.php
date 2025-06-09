@@ -1,4 +1,4 @@
-@extends('components.app-layout')
+@extends('components.admin-layout')
 
 @section('content')
 <div class="container-fluid">

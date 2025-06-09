@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('components.admin-layout')
+
+@section('content')
     <div class="p-8 bg-[#f3f6fb] min-h-screen">
         <div class="mb-8 flex justify-between items-center">
             <h1 class="text-2xl font-bold">Volunteer Management</h1>
@@ -87,4 +89,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

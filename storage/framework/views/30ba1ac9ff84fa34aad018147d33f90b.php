@@ -1,6 +1,6 @@
-@extends('components.admin-layout')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
     <div class="p-8 bg-[#f3f6fb] min-h-screen">
         <!-- Header Row: Title and User Badge -->
         <div class="mb-8 flex justify-between items-center">
@@ -25,7 +25,7 @@
                     </span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-2xl font-bold">₱{{ number_format($monetaryTotal ?? 0, 2) }}</span>
+                    <span class="text-2xl font-bold">₱<?php echo e(number_format($monetaryTotal ?? 0, 2)); ?></span>
                     <span class="text-sm text-green-500 mt-1">↑12% from last month</span>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     </span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-2xl font-bold">{{ $nonMonetaryCount ?? 0 }}</span>
+                    <span class="text-2xl font-bold"><?php echo e($nonMonetaryCount ?? 0); ?></span>
                     <span class="text-sm text-green-500 mt-1">↑8% from last month</span>
                 </div>
             </div>
@@ -53,7 +53,7 @@
                     </span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-2xl font-bold">{{ $totalDonors ?? 0 }}</span>
+                    <span class="text-2xl font-bold"><?php echo e($totalDonors ?? 0); ?></span>
                     <span class="text-sm text-green-500 mt-1">↑5% from last month</span>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                     </span>
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-2xl font-bold">{{ $pendingCount ?? 0 }}</span>
+                    <span class="text-2xl font-bold"><?php echo e($pendingCount ?? 0); ?></span>
                     <span class="text-sm text-yellow-500 mt-1">Awaiting confirmation</span>
                 </div>
             </div>
@@ -84,7 +84,7 @@
                                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
-                    <a href="{{ route('admin.donations.create') }}" 
+                    <a href="<?php echo e(route('admin.donations.create')); ?>" 
                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         <i class="fas fa-plus mr-2"></i>
                         Add New
@@ -106,70 +106,73 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($donations as $donation)
+                        <?php $__empty_1 = true; $__currentLoopData = $donations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $donation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="h-10 w-10 flex-shrink-0">
                                             <img class="h-10 w-10 rounded-full" 
-                                                 src="https://ui-avatars.com/api/?name={{ urlencode($donation->donor_name) }}&background=random" 
-                                                 alt="{{ $donation->donor_name }}">
+                                                 src="https://ui-avatars.com/api/?name=<?php echo e(urlencode($donation->donor_name)); ?>&background=random" 
+                                                 alt="<?php echo e($donation->donor_name); ?>">
                                         </div>
                                         <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">{{ $donation->donor_name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $donation->donor_email }}</div>
+                                            <div class="text-sm font-medium text-gray-900"><?php echo e($donation->donor_name); ?></div>
+                                            <div class="text-sm text-gray-500"><?php echo e($donation->donor_email); ?></div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $donation->type === 'monetary' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
-                                        {{ ucfirst($donation->type) }}
+                                        <?php echo e($donation->type === 'monetary' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'); ?>">
+                                        <?php echo e(ucfirst($donation->type)); ?>
+
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($donation->type === 'monetary')
-                                        <div class="text-sm font-medium text-gray-900">₱{{ number_format($donation->amount, 2) }}</div>
-                                    @else
-                                        <div class="text-sm text-gray-900">{{ $donation->item_name }}</div>
-                                        <div class="text-sm text-gray-500">Qty: {{ $donation->quantity ?? 1 }}</div>
-                                    @endif
+                                    <?php if($donation->type === 'monetary'): ?>
+                                        <div class="text-sm font-medium text-gray-900">₱<?php echo e(number_format($donation->amount, 2)); ?></div>
+                                    <?php else: ?>
+                                        <div class="text-sm text-gray-900"><?php echo e($donation->item_name); ?></div>
+                                        <div class="text-sm text-gray-500">Qty: <?php echo e($donation->quantity ?? 1); ?></div>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {{ $donation->status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                        {{ ucfirst($donation->status) }}
+                                        <?php echo e($donation->status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'); ?>">
+                                        <?php echo e(ucfirst($donation->status)); ?>
+
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $donation->created_at->format('M d, Y') }}
+                                    <?php echo e($donation->created_at->format('M d, Y')); ?>
+
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($donation->proof_path)
-                                        <img src="{{ Storage::url($donation->proof_path) }}" 
+                                    <?php if($donation->proof_path): ?>
+                                        <img src="<?php echo e(Storage::url($donation->proof_path)); ?>" 
                                              alt="Donation Proof" 
                                              class="h-10 w-10 rounded-lg object-cover cursor-pointer hover:opacity-75"
-                                             onclick="showProofModal('{{ Storage::url($donation->proof_path) }}')">
-                                    @else
+                                             onclick="showProofModal('<?php echo e(Storage::url($donation->proof_path)); ?>')">
+                                    <?php else: ?>
                                         <span class="text-sm text-gray-500">N/A</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-2">
-                                        <a href="{{ route('admin.donations.show', $donation) }}" 
+                                        <a href="<?php echo e(route('admin.donations.show', $donation)); ?>" 
                                            class="text-blue-600 hover:text-blue-900">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.donations.edit', $donation) }}" 
+                                        <a href="<?php echo e(route('admin.donations.edit', $donation)); ?>" 
                                            class="text-yellow-600 hover:text-yellow-900">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('admin.donations.destroy', $donation) }}" 
+                                        <form action="<?php echo e(route('admin.donations.destroy', $donation)); ?>" 
                                               method="POST" 
                                               class="inline-block"
                                               onsubmit="return confirm('Are you sure you want to delete this donation?');">
-                                            @csrf
-                                            @method('DELETE')
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
                                             <button type="submit" class="text-red-600 hover:text-red-900">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -177,20 +180,21 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="7" class="px-6 py-4 text-center text-gray-500">
                                     No donations found
                                 </td>
                             </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
 
             <!-- Pagination -->
             <div class="mt-4">
-                {{ $donations->links() }}
+                <?php echo e($donations->links()); ?>
+
             </div>
         </div>
     </div>
@@ -208,7 +212,7 @@
         </div>
     </div>
 
-    @push('scripts')
+    <?php $__env->startPush('scripts'); ?>
     <script>
         function showProofModal(imageSrc) {
             document.getElementById('proofModalImage').src = imageSrc;
@@ -237,5 +241,7 @@
             }
         });
     </script>
-    @endpush
-@endsection
+    <?php $__env->stopPush(); ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('components.admin-layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\collab\resources\views/admin/donation/index.blade.php ENDPATH**/ ?>

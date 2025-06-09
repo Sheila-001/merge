@@ -12,6 +12,7 @@ class CreateCampaignsTable extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
+            $table->unsignedBigInteger('category_id')->nullable();
             $table->string('type')->nullable();
             $table->decimal('goal_amount', 10, 2);
             $table->decimal('funds_raised', 10, 2)->default(0);
@@ -21,6 +22,8 @@ class CreateCampaignsTable extends Migration
             $table->dateTime('end_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
         });
     }
 

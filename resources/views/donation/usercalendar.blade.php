@@ -204,109 +204,56 @@
         <div class="mb-12">
             <h2 class="text-2xl font-bold text-center text-black mb-8">Choose a Campaign to Support</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Feeding Program Card -->
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-transform duration-200 hover:-translate-y-1">
-                    <div class="relative h-56">
-                        <img src="{{ asset('images/campaigns/feeding-program.jpg') }}"
-                             alt="Children receiving meals"
-                             class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
-                             onerror="this.onerror=null; this.src='{{ asset('images/default.jpg') }}'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                        <div class="absolute top-4 left-4">
-                            <span class="bg-[#0A90A4] text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md">
-                                Feeding Program
-                            </span>
-                        </div>
-                        <div class="absolute top-4 right-4">
-                            <span class="bg-[#0A90A4] text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md">
-                                Ongoing
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-gray-600 text-sm mb-4">Help provide meals for children in need. Every Sunday we serve nutritious meals to families.</p>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-gray-500 text-sm">Target</span>
-                                <p class="text-[#0A90A4] font-semibold">₱500,000</p>
+                @foreach($campaigns as $campaign)
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-transform duration-200 hover:-translate-y-1">
+                        <div class="relative h-56">
+                            <img src="{{ asset('storage/' . ($campaign->image ?? 'default.jpg')) }}"
+                                 alt="{{ $campaign->title ?? 'Campaign Image' }}"
+                                 class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+                                 onerror="this.onerror=null; this.src='{{ asset('image/default.jpg') }}'">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                            <div class="absolute top-4 left-4">
+                                <span class="bg-[#0A90A4] text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md">
+                                    {{ $campaign->title ?? 'N/A' }}
+                                </span>
                             </div>
-                            <button onclick="openCampaignDetailsModal({ title: 'Feeding Program - Ongoing', frequency: 'Every Sunday', raised: '₱120,000', goal: '₱300,000', percentage: 40, impact: 'Your donation provides daily nutritious meals to children and families in need, helping build a stronger community.' })" class="bg-[#0A90A4] hover:bg-[#0A90A4] text-white px-6 py-2 rounded-lg transition-colors text-sm font-medium shadow-sm hover:shadow-md">
-                                Join Campaign
-                            </button>
+                            <div class="absolute top-4 right-4">
+                                <span class="bg-[#0A90A4] text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md">
+                                    {{ ucfirst($campaign->status ?? 'N/A') }}
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="p-6">
+                            <p class="text-gray-600 text-sm mb-4">{{ $campaign->description ?? 'No description available.' }}</p>
+                            
+                            <!-- Progress Bar -->
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm text-gray-500 mb-1">
+                                    <span>Progress</span>
+                                    <span>{{ number_format($campaign->progress_percentage ?? 0, 0) }}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                    <div class="bg-[#0A90A4] h-2.5 rounded-full" style="width: {{ $campaign->progress_percentage ?? 0 }}%"></div>
+                                </div>
+                            </div>
 
-                <!-- Outreach Program Card -->
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-transform duration-200 hover:-translate-y-1">
-                    <div class="relative h-56">
-                        <img src="{{ url('images/campaigns/outreach-program.jpg') }}"
-                             alt="Community outreach activities"
-                             class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
-                             onerror="this.onerror=null; this.src='{{ url('images/default.jpg') }}'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                        <div class="absolute top-4 left-4">
-                            <span class="bg-[#0A90A4] text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md">
-                                Outreach Program
-                            </span>
-                        </div>
-                        <div class="absolute top-4 right-4">
-                            <span class="bg-[#0A90A4] text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md">
-                                Ongoing
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-gray-600 text-sm mb-4">Support community programs including medical missions at a barangay or barangays.</p>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-gray-500 text-sm">Target</span>
-                                <p class="text-[#0A90A4] font-semibold">₱300,000</p>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="text-gray-500 text-sm">Target</span>
+                                    <p class="text-[#0A90A4] font-semibold">₱{{ number_format($campaign->goal_amount ?? 0, 2) }}</p>
+                                </div>
+                                <a href="{{ route('monetary_donation', ['campaign_id' => $campaign->id]) }}" class="bg-[#0A90A4] hover:bg-[#0A90A4] text-white px-6 py-2 rounded-lg transition-colors text-sm font-medium shadow-sm hover:shadow-md">
+                                    Join Campaign
+                                </a>
                             </div>
-                            <button onclick="openCampaignDetailsModal({ title: 'Outreach Program - Ongoing', frequency: 'Monthly', raised: '₱120,000', goal: '₱300,000', percentage: 40, impact: 'Your support gives hope and essential resources.' })" class="bg-[#0A90A4] hover:bg-[#0A90A4] text-white px-6 py-2 rounded-lg transition-colors text-sm font-medium shadow-sm hover:shadow-md">
-                                Join Campaign
-                            </button>
                         </div>
                     </div>
-                </div>
-
-                <!-- Rice Distribution Card -->
-                <div class="campaign-card bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg">
-                    <div class="relative h-56">
-                        <img src="{{ asset('images/campaigns/rice-distribution.jpg') }}"
-                             alt="Rice distribution to community"
-                             class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
-                             onerror="this.onerror=null; this.src='{{ asset('images/default.jpg') }}'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                        <div class="absolute top-4 left-4">
-                            <span class="bg-[#0A90A4] text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md">
-                                Rice Distribution
-                            </span>
-                        </div>
-                        <div class="absolute top-4 right-4">
-                            <span class="bg-[#0A90A4] text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md">
-                                Ongoing
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <p class="text-gray-600 text-sm mb-4">Help distribute rice sacks to struggling families monthly.</p>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-gray-500 text-sm">Target</span>
-                                <p class="text-[#0A90A4] font-semibold">₱200,000</p>
-                            </div>
-                            <button onclick="openCampaignDetailsModal({ title: 'Rice Distribution - Ongoing', frequency: 'Monthly', raised: '₱120,000', goal: '₱300,000', percentage: 40, impact: 'One donation ensures a family has food security.' })" class="bg-[#0A90A4] hover:bg-[#0A90A4] text-white px-6 py-2 rounded-lg transition-colors text-sm font-medium shadow-sm hover:shadow-md mt-6">
-                                Join Campaign
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
 
-        <!-- Calendar Section -->
-        <div class="bg-white rounded-xl shadow-lg p-8">
+                <!-- Calendar Section -->
+                <div class="bg-white rounded-xl shadow-lg p-8">
             <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">CALENDAR OF ACTIVITIES 2025</h2>
 
             <!-- Calendar Grid -->
@@ -334,81 +281,80 @@
                                 $daysInMonth = (int)$firstDay->format('t');
                                 $firstDayOfWeek = (int)$firstDay->format('w');
                                 $currentMonth = $index + 1;
+                            @endphp
 
-                                // Add empty cells for days before the first day of the month
-                                for($i = 0; $i < $firstDayOfWeek; $i++) {
-                                    echo '<div class="day-cell text-gray-300"></div>';
-                                }
+                            {{-- Add empty cells for days before the first day of the month --}}
+                            @for($i = 0; $i < $firstDayOfWeek; $i++)
+                                <div class="day-cell text-gray-300"></div>
+                            @endfor
 
-                                // Add cells for each day of the month
-                                for($day = 1; $day <= $daysInMonth; $day++) {
+                            {{-- Add cells for each day of the month --}}
+                            @for($day = 1; $day <= $daysInMonth; $day++)
+                                @php
                                     $date = sprintf("2025-%02d-%02d", $currentMonth, $day);
-                                    $dayEvents = collect($campaigns)->filter(function($campaign) use ($date) {
-                                        $eventStart = \Carbon\Carbon::parse($campaign['start']);
-                                        $eventEnd = \Carbon\Carbon::parse($campaign['end']);
-                                        $currentDate = \Carbon\Carbon::parse($date);
-                                        return $currentDate->between($eventStart, $eventEnd);
+                                    $dayEvents = collect($calendarCampaigns)->filter(function($campaign) use ($date) {
+                                        $eventStart = \Carbon\Carbon::parse($campaign['start'])->toDateString();
+                                        $eventEnd = \Carbon\Carbon::parse($campaign['end'])->toDateString();
+                                        $currentDate = \Carbon\Carbon::parse($date)->toDateString();
+                                        return ($currentDate >= $eventStart && $currentDate <= $eventEnd);
                                     })->values();
 
                                     $hasEvents = $dayEvents->count() > 0;
                                     $cellClasses = 'day-cell ' . ($hasEvents ? 'has-event' : '');
-                                    
-                                    echo "<div class='$cellClasses' data-date='$date'>";
-                                    echo $day;
-                                    
-                                    if ($hasEvents) {
-                                        $firstEvent = $dayEvents->first();
-                                        echo "<div class='event-dot' style='background-color: {$firstEvent['categoryColor']}'></div>";
-                                        
-                                        // Create tooltip content with category color
-                                        $tooltipContent = "";
-                                        foreach($dayEvents as $index => $event) {
-                                            if ($index > 0) {
-                                                $tooltipContent .= "<div class='event-divider'></div>";
-                                            }
-                                            $tooltipContent .= "
-                                                <div class='event-tooltip'>
-                                                    <div class='event-tooltip-header' style='background-color: {$event['categoryColor']}'>
-                                                        <div class='event-tooltip-title'>{$event['title']}</div>
-                                                    </div>
-                                                    <div class='event-tooltip-body'>
-                                                        <div class='event-tooltip-detail'>
-                                                            <i class='fas fa-tag'></i>
-                                                            {$event['category']}
-                                                        </div>
-                                                        <div class='event-tooltip-detail'>
-                                                            <i class='fas fa-calendar'></i>
-                                                            " . \Carbon\Carbon::parse($event['start'])->format('M d') . " - " . 
-                                                            \Carbon\Carbon::parse($event['end'])->format('M d, Y') . "
-                                                        </div>
-                                                        <div class='event-tooltip-detail'>
-                                                            <i class='fas fa-info-circle'></i>
-                                                            Status: {$event['status']}
-                                                        </div>";
-                                            
-                                            if ($event['pledged']) {
-                                                $tooltipContent .= "
-                                                    <div class='event-tooltip-detail'>
-                                                        <i class='fas fa-hand-holding-heart'></i>
-                                                        Pledged: {$event['pledged']}
-                                                    </div>";
-                                            }
-                                            
-                                            $tooltipContent .= "</div></div>";
-                                        }
-                                        
-                                        echo "<div class='hidden tooltip-content'>$tooltipContent</div>";
-                                    }
-                                    
-                                    echo "</div>";
-                                }
+                                @endphp
 
-                                // Add empty cells for remaining days
+                                <div class="{{ $cellClasses }}" data-date="{{ $date }}">
+                                    {{ $day }}
+                                    @if($hasEvents)
+                                        @php
+                                            $statusColor = $dayEvents->first()['statusColor'];
+                                        @endphp
+                                        <div class="event-dot" style="background-color: {{ $statusColor }}"></div>
+                                        
+                                        {{-- Create tooltip content --}}
+                                        <div class="hidden event-details-tooltip">
+                                            @foreach($dayEvents as $event)
+                                                @if(!$loop->first)
+                                                    <div class="event-divider"></div>
+                                                @endif
+                                                <div class="event-tooltip">
+                                                    <div class="event-tooltip-header" style="background-color: {{ $event['categoryColor'] }}">
+                                                        <div class="event-tooltip-title">{{ $event['title'] }}</div>
+                                                    </div>
+                                                    <div class="event-tooltip-body">
+                                                        <div class="event-tooltip-detail">
+                                                            <i class="fas fa-tag"></i>
+                                                            Category: {{ $event['category'] }}
+                                                        </div>
+                                                        <div class="event-tooltip-detail">
+                                                            <i class="fas fa-calendar-alt"></i>
+                                                            Date: {{ \Carbon\Carbon::parse($event['start'])->format('M d, Y') }} - {{ \Carbon\Carbon::parse($event['end'])->format('M d, Y') }}
+                                                        </div>
+                                                        <div class="event-tooltip-detail">
+                                                            <i class="fas fa-info-circle"></i>
+                                                            Status: {{ ucfirst($event['status']) }}
+                                                        </div>
+                                                        @if(!empty($event['notes']))
+                                                            <div class="event-tooltip-detail">
+                                                                <i class="fas fa-sticky-note"></i>
+                                                                Notes: {{ $event['notes'] }}
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            @endfor
+
+                            {{-- Add empty cells for remaining days --}}
+                            @php
                                 $remainingCells = (7 - (($firstDayOfWeek + $daysInMonth) % 7)) % 7;
-                                for($i = 0; $i < $remainingCells; $i++) {
-                                    echo '<div class="day-cell text-gray-300"></div>';
-                                }
                             @endphp
+                            @for($i = 0; $i < $remainingCells; $i++)
+                                <div class="day-cell text-gray-300"></div>
+                            @endfor
                         </div>
                     </div>
                 @endforeach
@@ -437,6 +383,7 @@
                 </div>
             </div>
         </div>
+           
 
         <!-- Footer -->
         <footer class="bg-[#e6f4ea] text-gray-800 py-10 px-6 mt-12 animate-fade-in">
@@ -583,21 +530,22 @@
     <script src='https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js'></script>
     <script>
+        // Initialize Tippy.js for event hovers
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize tooltips for all cells with events
-            document.querySelectorAll('.has-event').forEach(cell => {
-                const tooltipContent = cell.querySelector('.tooltip-content').innerHTML;
-                tippy(cell, {
-                    content: tooltipContent,
-                    allowHTML: true,
-                    placement: 'top',
-                    interactive: true,
-                    theme: 'light',
-                    animation: 'shift-away',
-                    arrow: true,
-                    maxWidth: 350,
-                    appendTo: document.body
-                });
+            tippy('.day-cell.has-event', {
+                content: (reference) => {
+                    return reference.querySelector('.event-details-tooltip').innerHTML;
+                },
+                allowHTML: true,
+                interactive: true,
+                placement: 'top',
+                animation: 'fade',
+                theme: 'light',
+                appendTo: document.body,
+                onShow(instance) {
+                    // Optional: Add a class to the tippy box for custom styling
+                    instance.popper.querySelector('.tippy-box').classList.add('event-tooltip');
+                }
             });
         });
     </script>

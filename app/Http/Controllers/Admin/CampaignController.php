@@ -8,6 +8,8 @@ use App\Http\Requests\StoreCampaignRequest;
 use App\Http\Requests\UpdateCampaignRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Donation;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class CampaignController extends Controller
 {
@@ -16,7 +18,7 @@ class CampaignController extends Controller
      */
     public function index()
     {
-        $campaigns = Campaign::with('donations')
+        $campaigns = Campaign::with(['donations', 'category'])
             ->latest()
             ->paginate(10)
             ->through(function ($campaign) {
@@ -25,8 +27,7 @@ class CampaignController extends Controller
                 return $campaign;
             });
 
-        $recentDonations = Donation::latest()->take(5)->get();
-        return view('admin.campaigns.index', compact('campaigns', 'recentDonations'));
+        return view('admin.campaigns.index', compact('campaigns'));
     }
 
     /**
@@ -34,32 +35,58 @@ class CampaignController extends Controller
      */
     public function dashboard()
     {
-        $campaigns = Campaign::withCount('donations')
-            ->withSum('donations', 'amount')
+        // Log the admin status of the authenticated user
+        if (Auth::check()) {
+            \Illuminate\Support\Facades\Log::info('Admin Dashboard Access Attempt', [
+                'user_id' => Auth::id(),
+                'user_email' => Auth::user()->email,
+                'is_admin' => Auth::user()->is_admin,
+            ]);
+        } else {
+            \Illuminate\Support\Facades\Log::info('Admin Dashboard Access Attempt - No User Authenticated');
+        }
+
+        // Get active campaigns count
+        $activeCampaigns = Campaign::where('status', 'active')
+            ->where('end_date', '>', Carbon::now())
+            ->count();
+
+        // Get total donations amount
+        $totalDonations = Donation::where('status', 'completed')
+            ->sum('amount');
+
+        // Get total unique donors count
+        $totalDonors = Donation::where('status', 'completed')
+            ->distinct('donor_email')
+            ->count('donor_email');
+
+        // Get pending campaigns count
+        $pendingCampaigns = Campaign::where('status', 'paused')
+            ->orWhere(function($query) {
+                $query->where('status', 'active')
+                      ->where('start_date', '>', Carbon::now());
+            })
+            ->count();
+
+        // Get active campaigns with their current amounts
+        $campaigns = Campaign::where('status', 'active')
+            ->where('end_date', '>', Carbon::now())
+            ->withSum('donations as current_amount', 'amount')
             ->latest()
             ->get()
             ->map(function ($campaign) {
-                $campaign->current_amount = $campaign->donations_sum_amount ?? 0;
-                $campaign->status = $campaign->is_active ? 'Ongoing' : 'Paused';
+                // Ensure current_amount is not null
+                $campaign->current_amount = $campaign->current_amount ?? 0;
                 return $campaign;
             });
 
-        $recentDonations = Donation::with('campaign')
-            ->latest()
-            ->take(5)
-            ->get()
-            ->map(function ($donation) {
-                return (object)[
-                    'donor_name' => $donation->donor_display_name,
-                    'donor_avatar' => null,
-                    'campaign_title' => $donation->campaign->title ?? 'Unknown Campaign',
-                    'amount' => $donation->amount,
-                    'created_at' => $donation->created_at,
-                    'status' => ucfirst($donation->status)
-                ];
-            });
-
-        return view('admin.campaigns.dashboard', compact('campaigns', 'recentDonations'));
+        return view('admin.campaigns.dashboard', compact(
+            'activeCampaigns',
+            'totalDonations',
+            'totalDonors',
+            'pendingCampaigns',
+            'campaigns'
+        ));
     }
 
     /**
@@ -67,7 +94,8 @@ class CampaignController extends Controller
      */
     public function create()
     {
-        return view('admin.campaigns.create');
+        $categories = \App\Models\Category::orderBy('name')->get();
+        return view('admin.campaigns.create', compact('categories'));
     }
 
     /**

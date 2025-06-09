@@ -8,14 +8,14 @@
             <p class="text-sm text-gray-600">Manage calendar campaign categories</p>
         </div>
         <div class="flex space-x-3">
-            <a href="{{ route('admin.calendar.index') }}" 
+            <a href="{{ route('admin.campaigns.index') }}" 
                class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
-                Back to Calendar
+                Back to Campaigns
             </a>
-            <a href="{{ route('admin.calendar-categories.create') }}" 
+            <a href="{{ route('admin.campaigns-categories.create') }}" 
                class="inline-flex items-center px-4 py-2 bg-[#1B4B5A] text-white rounded-md hover:bg-[#2C5F6E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -82,7 +82,7 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
-                                    No categories found. <a href="{{ route('admin.calendar-categories.create') }}" class="text-[#1B4B5A] hover:underline">Create one now</a>.
+                                    No categories found. <a href="{{ route('admin.campaigns-categories.create') }}" class="text-[#1B4B5A] hover:underline">Create one now</a>.
                                 </td>
                             </tr>
                         @endforelse
@@ -172,8 +172,7 @@
 @push('scripts')
 <script>
     function openEditModal(id, name, color, description) {
-        console.log('openEditModal called for ID:', id);
-        document.getElementById('editForm').action = `{{ url('admin/calendar-categories') }}/${id}`;
+        document.getElementById('editForm').action = `{{ url('admin/campaigns-categories') }}/${id}`;
         document.getElementById('edit_name').value = name;
         document.getElementById('edit_color').value = color;
         document.getElementById('edit_description').value = description || '';
@@ -186,7 +185,6 @@
 
     // Handle edit form submission
     document.getElementById('editForm').addEventListener('submit', function(e) {
-        console.log('Edit form submission triggered!');
         e.preventDefault();
         const formData = new FormData(this);
         formData.append('_method', 'PUT');
@@ -200,14 +198,12 @@
             body: formData
         })
         .then(response => {
-            console.log('Update Response:', response);
             if (!response.ok) {
                 return response.json().then(data => Promise.reject(data));
             }
             return response.json();
         })
         .then(data => {
-            console.log('Update Data:', data);
             if (data.success) {
                 window.location.reload();
             } else {
@@ -215,14 +211,13 @@
             }
         })
         .catch(error => {
-            console.error('Update Error:', error);
+            console.error('Error:', error);
             alert(error.message || 'Failed to update category. Please try again.');
         });
     });
 
     function openDeleteModal(id, name) {
-        console.log('openDeleteModal called for ID:', id);
-        document.getElementById('deleteForm').action = `{{ url('admin/calendar-categories') }}/${id}`;
+        document.getElementById('deleteForm').action = `{{ url('admin/campaigns-categories') }}/${id}`;
         document.getElementById('deleteCategoryName').textContent = name;
         document.getElementById('deleteModal').classList.remove('hidden');
     }
@@ -233,7 +228,6 @@
 
     // Handle delete form submission
     document.getElementById('deleteForm').addEventListener('submit', function(e) {
-        console.log('Delete form submission triggered!');
         e.preventDefault();
         const formData = new FormData(this);
         formData.append('_method', 'DELETE');
@@ -247,14 +241,12 @@
             body: formData
         })
         .then(response => {
-            console.log('Delete Response:', response);
             if (!response.ok) {
                 return response.json().then(data => Promise.reject(data));
             }
             return response.json();
         })
         .then(data => {
-            console.log('Delete Data:', data);
             if (data.success) {
                 window.location.reload();
             } else {
@@ -262,7 +254,7 @@
             }
         })
         .catch(error => {
-            console.error('Delete Error:', error);
+            console.error('Error:', error);
             alert(error.message || 'Failed to delete category. Please try again.');
         });
     });

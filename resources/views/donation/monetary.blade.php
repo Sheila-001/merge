@@ -138,6 +138,7 @@
                     <button type="submit" class="px-6 py-2.5 bg-[#0A90A4] text-white rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">Submit Donation</button>
                 </div>
                 <input type="hidden" name="donation_preference" id="donationPreferenceInput">
+                <input type="hidden" name="campaign_id" id="campaignIdInput">
             </form>
         </div>
     </div>
@@ -226,6 +227,13 @@
     </div>
 
     <script>
+        // Get campaign_id from URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const campaignId = urlParams.get('campaign_id');
+        if (campaignId) {
+            document.getElementById('campaignIdInput').value = campaignId;
+        }
+
         // Toggle between bank and GCash details
         document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
             radio.addEventListener('change', function() {

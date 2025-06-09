@@ -1,5 +1,6 @@
-@php use Illuminate\Support\Facades\Storage; @endphp
-<x-app-layout>
+@extends('components.admin-layout')
+
+@section('content')
     <div class="max-w-7xl mx-auto py-8">
         <!-- Header Row: Title and User Badge -->
         <div class="flex items-center justify-between mb-8">
@@ -102,4 +103,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

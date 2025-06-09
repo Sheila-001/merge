@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('components.admin-layout')
+
+@section('content')
     <!-- Add Tailwind CSS to ensure all styles work properly -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -304,4 +306,4 @@
             }
         });
     </script>
-</x-app-layout>
+@endsection

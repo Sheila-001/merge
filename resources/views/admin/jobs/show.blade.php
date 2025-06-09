@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('components.admin-layout')
 
 @section('content')
 <div class="min-h-screen flex items-center justify-center bg-gray-50 py-8">

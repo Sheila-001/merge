@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('components.admin-layout')
+
+@section('content')
 <div class="flex">
         <div class="w-64 min-h-screen bg-[#1B4B5A] text-white">
             <div class="p-4 flex items-center space-x-2">
@@ -135,4 +137,5 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</div>
+@endsection

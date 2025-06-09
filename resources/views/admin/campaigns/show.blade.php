@@ -1,4 +1,4 @@
-@extends('components.app-layout')
+@extends('components.admin-layout')
 
 @section('content')
 <div class="container-fluid px-4">
@@ -14,17 +14,18 @@
         <div class="col-lg-6 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-0">
-                    @if($campaign->image)
-                        <img src="{{ asset('storage/' . $campaign->image) }}"
-                             alt="{{ $campaign->title }}"
-                             class="img-fluid rounded"
-                             style="width: 100%; height: 400px; object-fit: cover;">
-                    @else
-                        <div class="d-flex align-items-center justify-content-center bg-light rounded"
-                             style="height: 400px;">
-                            <i class="fas fa-image text-secondary" style="font-size: 4rem;"></i>
-                        </div>
-                    @endif
+                    <div class="campaign-image-container">
+                        @if($campaign->image)
+                            <img src="{{ Storage::url($campaign->image) }}"
+                                 alt="{{ $campaign->title }}"
+                                 class="campaign-image">
+                        @else
+                            <div class="d-flex align-items-center justify-content-center bg-light rounded"
+                                 style="height: 400px;">
+                                <i class="fas fa-image text-secondary" style="font-size: 4rem;"></i>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,6 +106,23 @@
 <style>
     .fs-12 {
         font-size: 12px;
+    }
+    .campaign-image-container {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 75%; /* 4:3 aspect ratio */
+        overflow: hidden;
+        border-radius: 0.5rem;
+    }
+    .campaign-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* This will maintain aspect ratio */
+        background-color: #f8f9fa; /* Light background for images */
     }
 </style>
 @endpush

@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('components.admin-layout')
+
+@section('content')
 <div class="flex min-h-screen bg-gray-50">
     <!-- Sidebar (untouched) -->
     <div class="w-64 min-h-screen bg-[#1B4B5A] text-white flex flex-col">
@@ -96,4 +98,4 @@
         </div>
     </div>
 </div>
-</x-app-layout> 
+@endsection 

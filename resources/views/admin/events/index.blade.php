@@ -1,4 +1,6 @@
-<x-app-layout>
+@extends('components.admin-layout')
+
+@section('content')
     <!-- Main Content -->
     <div class="flex-1 flex flex-col">
         <!-- Header -->
@@ -19,7 +21,8 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection
+
 @push('scripts')
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <script>
