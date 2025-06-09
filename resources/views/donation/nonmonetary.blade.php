@@ -63,7 +63,7 @@
                     <!-- Quantity Field (always visible after Item Condition) -->
                     <div id="quantityField">
                         <label class="block text-sm font-medium text-black mb-2">Quantity</label>
-                        <input type="number" min="1" name="quantity" id="quantityInput" placeholder="Enter quantity" class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent">
+                        <input type="text" name="quantity" id="quantityInput" placeholder="Enter quantity" class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent">
                     </div>
 
                     <div>

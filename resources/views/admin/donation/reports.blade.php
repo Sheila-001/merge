@@ -63,7 +63,7 @@
     <!-- Charts/Graphs Placeholder -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
         <div class="bg-white rounded-lg shadow-sm p-6">
-            <h6 class="text-lg font-semibold mb-4">Donation Distribution</h6>
+            <h6 class="text-lg font-semibold mb-4">Monthly Donations</h6>
             {{-- Bar graph for monthly donations --}}
             <div class="chart-container" style="position: relative; height:300px; width:100%">
                 <canvas id="monthlyDonationsChart"></canvas>
@@ -126,7 +126,7 @@
 
     const ctx = document.getElementById('monthlyDonationsChart').getContext('2d');
     const monthlyDonationsChart = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: monthlyLabels,
             datasets: [{
@@ -134,8 +134,7 @@
                 data: monthlyData,
                 backgroundColor: 'orange',
                 borderColor: 'darkorange',
-                borderWidth: 2,
-                tension: 0
+                borderWidth: 1,
             }]
         },
         options: {
@@ -143,7 +142,7 @@
             maintainAspectRatio: false,
             scales: {
                 y: {
-                    beginAtZero: false,
+                    beginAtZero: true,
                     max: 7000,
                     ticks: {
                         stepSize: 1000
@@ -163,13 +162,6 @@
                     display: false
                 }
             },
-            elements: {
-                point: {
-                    radius: 5,
-                    backgroundColor: 'orange',
-                    borderColor: 'darkorange'
-                }
-            }
         }
     });
 

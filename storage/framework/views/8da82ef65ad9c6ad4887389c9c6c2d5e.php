@@ -103,7 +103,7 @@
                         </td>
                         <td class="py-2">
                             <div class="flex space-x-2">
-                                 <a href="<?php echo e(route('admin.donations.show', $donation)); ?>" class="text-green-800 bg-green-100 px-2 py-1 rounded hover:bg-green-200"><i class="fas fa-eye"></i> View</a>
+                                 <a href="<?php echo e(route('admin.donations.show', $donation)); ?>" class="text-green-800 bg-green-100 px-2 py-1 rounded hover:bg-green-200"><i class="fas fa-eye"></i> Review</a>
                                  <form action="<?php echo e(route('admin.donations.destroy', $donation->id)); ?>" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this donation?');">
                                      <?php echo csrf_field(); ?>
                                      <?php echo method_field('DELETE'); ?>
@@ -151,18 +151,7 @@
 
                     <div class="flex items-center space-x-2">
                         <a href="<?php echo e(route('admin.donations.show', $dropoff)); ?>" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-blue-700">Review</a>
-                        <form action="<?php echo e(route('admin.donations.update-status', $dropoff->id)); ?>" method="POST" class="inline">
-                            <?php echo csrf_field(); ?>
-                            <?php echo method_field('PATCH'); ?>
-                            <input type="hidden" name="status" value="completed">
-                            <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-green-600">Confirmed</button>
-                        </form>
-                        <form action="<?php echo e(route('admin.donations.update-status', $dropoff->id)); ?>" method="POST" class="inline">
-                            <?php echo csrf_field(); ?>
-                            <?php echo method_field('PATCH'); ?>
-                            <input type="hidden" name="status" value="rejected">
-                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-red-600">Reject</button>
-                        </form>
+                        <button type="button" class="bg-orange-500 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-orange-600">Reschedule</button>
                     </div>
                 </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
