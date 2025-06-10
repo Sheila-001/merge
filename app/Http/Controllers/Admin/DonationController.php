@@ -8,6 +8,9 @@ use App\Models\Donation;
 use App\Models\Campaign;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MonetaryDonationReceived;
+use App\Mail\NonMonetaryDropoffConfirmed;
 
 class DonationController extends Controller
 {
@@ -155,13 +158,13 @@ class DonationController extends Controller
 
     public function show(Donation $donation)
     {
-        return view('admin.donation.donation.show', compact('donation'));
+        return view('admin.donation.show', compact('donation'));
     }
 
     public function edit(Donation $donation)
     {
         $campaigns = Campaign::where('status', 'active')->get();
-        return view('admin.donation.edit', compact('donation', 'campaigns'));
+        return view('admin.donation.adddonation', compact('donation', 'campaigns'));
     }
 
     public function update(Request $request, Donation $donation)
@@ -213,9 +216,22 @@ class DonationController extends Controller
             'status' => 'required|in:completed,pending,rejected'
         ]);
 
+        // Store the old status before updating
+        $oldStatus = $donation->status;
+
         $donation->update([
             'status' => $request->status
         ]);
+
+        // Check if the status changed to 'completed'
+        if ($oldStatus !== 'completed' && $donation->status === 'completed') {
+            // Send email based on donation type
+            if ($donation->type === 'monetary') {
+                Mail::to($donation->donor_email)->send(new MonetaryDonationReceived($donation));
+            } elseif ($donation->type === 'non-monetary') {
+                Mail::to($donation->donor_email)->send(new NonMonetaryDropoffConfirmed($donation));
+            }
+        }
 
         return redirect()->back()->with('success', 'Donation status updated successfully');
     }

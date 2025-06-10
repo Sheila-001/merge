@@ -9,12 +9,10 @@
             <div class="bg-blue-200 text-blue-700 rounded-full px-3 py-1 font-semibold">AD</div>
         </div>
     </div>
-
     <!-- All Donations Table -->
     <div class="bg-white rounded-xl shadow p-6 mb-8">
         <div class="flex justify-between items-center mb-4">
             <h2 class="font-bold text-lg">All Donations</h2>
-            {{-- Removed search input --}}
             <div>{{-- Empty div for spacing --}}</div>
         </div>
         <table class="min-w-full text-sm">
@@ -44,7 +42,7 @@
                         @if($donation->type === 'monetary')
                             ₱{{ number_format($donation->amount, 2) }}
                         @else
-                            {{ $donation->item_name }} {{-- Changed from $donation->description --}}
+                            {{ $donation->item_name }}
                         @endif
                     </td>
                     <td class="py-2">
@@ -70,86 +68,81 @@
                 @endforeach
             </tbody>
         </table>
-        {{-- Removed pagination links --}}
     </div>
 
-    {{-- Removed Drop-Off Confirmation section --}}
-
-</div>
-
-<!-- Proof Image Modal -->
-<div id="proofModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
-    <div class="bg-white rounded-lg p-4 max-w-lg max-h-full overflow-y-auto">
-        <div class="flex justify-between items-center border-b pb-2 mb-4">
-            <h3 class="text-lg font-semibold">Donation Proof</h3>
-            <button id="closeProofModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+    <!-- Proof Image Modal -->
+    <div id="proofModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg p-4 max-w-lg max-h-full overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-2 mb-4">
+                <h3 class="text-lg font-semibold">Donation Proof</h3>
+                <button id="closeProofModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <img id="proofImage" src="" alt="Donation Proof" class="max-w-full h-auto">
         </div>
-        <img id="proofImage" src="" alt="Donation Proof" class="max-w-full h-auto">
     </div>
-</div>
-@endsection
 
-@push('styles')
-<style>
-.card {
-    transition: all 0.3s ease;
-}
+    @push('styles')
+    <style>
+    .card {
+        transition: all 0.3s ease;
+    }
 
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
 
-.badge {
-    padding: 0.5em 0.75em;
-    font-weight: 500;
-}
+    .badge {
+        padding: 0.5em 0.75em;
+        font-weight: 500;
+    }
 
-.table th {
-    font-weight: 600;
-    background-color: #f8f9fa;
-}
+    .table th {
+        font-weight: 600;
+        background-color: #f8f9fa;
+    }
 
-.dropdown-item {
-    padding: 0.5rem 1rem;
-}
+    .dropdown-item {
+        padding: 0.5rem 1rem;
+    }
 
-.dropdown-item i {
-    width: 1.25rem;
-}
-</style>
-@endpush
+    .dropdown-item i {
+        width: 1.25rem;
+    }
+    </style>
+    @endpush
 
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Proof image modal functionality (keeping this as it's useful for viewing proofs)
-    const proofModal = document.getElementById('proofModal');
-    const proofImage = document.getElementById('proofImage');
-    const closeProofModal = document.getElementById('closeProofModal');
-    const viewProofLinks = document.querySelectorAll('.view-proof-link');
+    @push('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Proof image modal functionality
+        const proofModal = document.getElementById('proofModal');
+        const proofImage = document.getElementById('proofImage');
+        const closeProofModal = document.getElementById('closeProofModal');
+        const viewProofLinks = document.querySelectorAll('.view-proof-link');
 
-    viewProofLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const imageUrl = this.dataset.proofUrl;
-            proofImage.src = imageUrl;
-            proofModal.classList.remove('hidden');
+        viewProofLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const imageUrl = this.dataset.proofUrl;
+                proofImage.src = imageUrl;
+                proofModal.classList.remove('hidden');
+            });
         });
-    });
 
-    closeProofModal.addEventListener('click', function() {
-        proofModal.classList.add('hidden');
-        proofImage.src = ''; // Clear the image source when closing
-    });
-
-    // Close modal when clicking outside of the modal content
-    proofModal.addEventListener('click', function(e) {
-        if (e.target === proofModal) {
+        closeProofModal.addEventListener('click', function() {
             proofModal.classList.add('hidden');
             proofImage.src = ''; // Clear the image source when closing
-        }
+        });
+
+        // Close modal when clicking outside of the modal content
+        proofModal.addEventListener('click', function(e) {
+            if (e.target === proofModal) {
+                proofModal.classList.add('hidden');
+                proofImage.src = ''; // Clear the image source when closing
+            }
+        });
     });
-});
-</script>
-@endpush 
+    </script>
+    @endpush
+</x-app-layout> 

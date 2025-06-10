@@ -47,25 +47,20 @@
                         </div>
                     </div>
 
-                    <!-- Bank Transfer Details (shown by default) -->
-                    <div id="bankDetails" class="space-y-4 bg-[#B7E4FA] p-4 rounded-lg">
-                        <h3 class="text-sm font-semibold text-black">Bank Transfer Details</h3>
-                        <div class="text-sm text-black">
-                            <p><strong>Bank Name:</strong> Example Bank</p>
-                            <p><strong>Account Name:</strong> Hauz Hayag Organization</p>
-                            <p><strong>Account Number:</strong> 1234-5678-9012</p>
-                            <p><strong>Branch:</strong> Main Branch</p>
-                        </div>
+                    <!-- Bank Transfer QR (shown by default) -->
+                    <div id="bankDetails" class="space-y-4 bg-[#B7E4FA] p-4 rounded-lg flex flex-col items-center">
+                        <h3 class="text-sm font-semibold text-black mb-2">Bank Transfer QR Code</h3>
+                        <img src="{{ asset('image/HauzBank.jpg.jpg') }}" alt="Bank Transfer QR Code" class="mx-auto max-w-xs max-h-80 rounded shadow border-4 border-[#0A90A4]">
+                        <p class="text-center text-black mt-2 text-sm font-medium">Scan this QR code with your banking app.</p>
                     </div>
 
-                    <!-- GCash Details (hidden by default) -->
-                    <div id="gcashDetails" class="space-y-4 bg-[#B7E4FA] p-4 rounded-lg hidden">
-                        <h3 class="text-sm font-semibold text-black">GCash Details</h3>
-                        <div class="text-sm text-black">
-                            <p><strong>GCash Number:</strong> 0917 123 4567</p>
-                            <p><strong>Account Name:</strong> Charity Organization</p>
-                            <p class="mt-2">Please use your name as the reference when sending.</p>
+                    <!-- GCash QR (hidden by default) -->
+                    <div id="gcashDetails" class="space-y-4 bg-[#B7E4FA] p-4 rounded-lg hidden flex flex-col items-center">
+                        <h3 class="text-sm font-semibold text-black mb-2">GCash QR Code</h3>
+                        <div class="bg-white p-2 rounded shadow border-4 border-[#0A90A4] flex justify-center items-center">
+                            <img src="{{ asset('image/HauzGcash.jpg.jpg') }}" alt="GCash QR Code" class="max-w-xs max-h-80 object-contain">
                         </div>
+                        <p class="text-center text-black mt-2 text-sm font-medium">Scan this QR code with your GCash app.</p>
                     </div>
 
                     <div>
@@ -111,8 +106,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-black mb-2">Message (Optional)</label>
-                        <textarea name="message" rows="3" placeholder="Any additional message..." class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent"></textarea>
+                        <label class="block text-sm font-medium text-black mb-2">Note (Optional)</label>
+                        <textarea name="notes" rows="3" placeholder="Any additional note..." class="w-full px-4 py-2.5 border border-[#0A90A4] rounded-lg focus:ring-2 focus:ring-[#0A90A4] focus:border-transparent"></textarea>
                     </div>
                 </div>
 
@@ -134,7 +129,7 @@
 
                 <!-- Buttons -->
                 <div class="md:col-span-2 flex justify-end space-x-4 mt-6">
-                    <button type="button" onclick="window.location.href='{{ route('donation') }}'" class="px-6 py-2.5 bg-white text-[#0A90A4] border border-[#0A90A4] rounded-lg hover:bg-[#B7E4FA] hover:text-[#0A90A4] transition-colors font-medium">Cancel</button>
+                    <button type="button" onclick="window.location.href='{{ route('welcome') }}'" class="px-6 py-2.5 bg-white text-[#0A90A4] border border-[#0A90A4] rounded-lg hover:bg-[#B7E4FA] hover:text-[#0A90A4] transition-colors font-medium">Cancel</button>
                     <button type="submit" class="px-6 py-2.5 bg-[#0A90A4] text-white rounded-lg hover:bg-[#0A90A4] transition-colors font-medium">Submit Donation</button>
                 </div>
                 <input type="hidden" name="donation_preference" id="donationPreferenceInput">
@@ -218,7 +213,7 @@
                     </p>
                 </div>
                 <div class="items-center px-4 py-3">
-                    <a href="{{ route('donation') }}" class="px-4 py-2 bg-[#0A90A4] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#098a9d] focus:outline-none focus:ring-2 focus:ring-[#0A90A4] transition-colors">
+                    <a href="{{ route('welcome') }}" class="px-4 py-2 bg-[#0A90A4] text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-[#098a9d] focus:outline-none focus:ring-2 focus:ring-[#0A90A4] transition-colors">
                         Back to Home
                     </a>
                 </div>
@@ -298,6 +293,18 @@
         // Form submission
         document.getElementById('donationForm').addEventListener('submit', function(e) {
             e.preventDefault();
+
+            const contactNumberInput = document.getElementById('donationForm').querySelector('input[name="donor_phone"]');
+            const contactNumber = contactNumberInput.value.trim();
+
+            // Validate contact number
+            const validationResult = validatePhilippineContactNumber(contactNumber);
+            if (!validationResult.valid) {
+                alert(validationResult.error);
+                contactNumberInput.focus(); // Focus the input field
+                return; // Stop submission
+            }
+
             // Show the donation options modal instead of submitting directly
             document.getElementById('donationOptionsModal').classList.remove('hidden');
         });
@@ -411,9 +418,31 @@
             });
         });
 
-        // Restrict contact number input to numbers only
+        // Restrict contact number input to digits and an optional leading + and limit length
         document.getElementById('donationForm').querySelector('input[name="donor_phone"]').addEventListener('input', function (e) {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            let value = e.target.value;
+
+            // Remove all non-digits, but allow a leading '+'
+            let cleanedValue = '';
+            if (value.startsWith('+')) {
+                cleanedValue = '+' + value.substring(1).replace(/[^0-9]/g, '');
+            } else {
+                cleanedValue = value.replace(/[^0-9]/g, '');
+            }
+
+            // Apply strict length limit based on leading character
+            let limitedValue = cleanedValue;
+            if (limitedValue.startsWith('+')) {
+                 if (limitedValue.length > 13) {
+                    limitedValue = limitedValue.substring(0, 13);
+                 }
+            } else { // Assuming anything else starting with a digit should follow the 09... pattern length
+                 if (limitedValue.length > 11) {
+                    limitedValue = limitedValue.substring(0, 11);
+                 }
+            }
+
+            e.target.value = limitedValue;
         });
     </script>
 </body>

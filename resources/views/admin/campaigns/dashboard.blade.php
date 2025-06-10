@@ -1,4 +1,4 @@
-@extends('components.admin-layout')
+<x-app-layout>
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
@@ -149,4 +149,5 @@
         </div>
     </div>
 </div>
-@endsection
+
+</x-app-layout>

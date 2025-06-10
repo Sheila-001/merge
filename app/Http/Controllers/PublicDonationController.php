@@ -81,54 +81,69 @@ class PublicDonationController extends Controller
     public function submitNonMonetaryDonation(Request $request)
     {
         // Log the incoming request data
-        \Illuminate\Support\Facades\Log::info('Non-monetary donation request data:', $request->all());
+        Log::info('Non-monetary donation request data:', $request->all());
 
-        // Validate the incoming request data
-        $validator = Validator::make($request->all(), [
-            'category' => 'required|string|max:255',
-            'condition' => 'required|string|max:255',
-            'donor_name' => 'required|string|max:255',
-            'donor_email' => 'required|email|max:255',
-            'donor_phone' => 'required|string|max:20',
-            'image' => 'required|file|image|max:2048', // Max 2MB, image file types
-            'preferred_time' => 'required|date',
-            'description' => 'required|string',
-            'donation_preference' => 'required|in:anonymous,acknowledged', // Add validation for the preference
-        ]);
+        try {
+            // Validate the incoming request data
+            $validator = Validator::make($request->all(), [
+                'category' => 'required|string|max:255',
+                'condition' => 'required|string|max:255',
+                'donor_name' => 'required|string|max:255',
+                'donor_email' => 'required|email|max:255',
+                'donor_phone' => 'required|string|max:20',
+                'image' => 'required|file|image|max:2048', // Max 2MB, image file types
+                'expected_date' => 'required|date',
+                'description' => 'required|string',
+                'donation_preference' => 'required|in:anonymous,acknowledged', // Add validation for the preference
+                'quantity' => 'required|integer|min:1', // Add validation for quantity
+                'other_item_name' => 'nullable|string|max:255', // Add validation for other item name
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
-        }
+            if ($validator->fails()) {
+                return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+            }
 
-        // Add this log to inspect the request data before saving
-        \Illuminate\Support\Facades\Log::info('Request data before saving donation:', ['expected_date' => $request->expected_date, 'all' => $request->all()]);
+            // Add this log to inspect the request data before saving
+            Log::info('Request data before processing donation:', ['expected_date' => $request->expected_date, 'all' => $request->all()]);
 
-        // Process the donation (e.g., save to database, send email)
+            // Process the donation (e.g., save to database, send email)
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('non-monetary', 'public');
-        }
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                Log::info('Attempting to store image file.');
+                $imagePath = $request->file('image')->store('non-monetary', 'public');
+                Log::info('Image file stored at path:' . $imagePath);
+            }
 
-        // Determine the is_acknowledged value based on the preference
-        $isAcknowledged = ($request->donation_preference === 'acknowledged');
-        $isAnonymous = !$isAcknowledged; // If not acknowledged, then it's anonymous
+            // Determine the is_acknowledged and is_anonymous values based on the preference
+            $isAcknowledged = ($request->donation_preference === 'acknowledged');
+            $isAnonymous = !$isAcknowledged; // If not acknowledged, then it's anonymous
 
-        // Create a new record in the donations table
-        $donation = new \App\Models\Donation([
-            'type' => 'non-monetary',
-            'donor_name' => $request->donor_name,
-            'donor_email' => $request->donor_email,
-            'donor_phone' => $request->donor_phone,
-            'amount' => null, // Amount is null for non-monetary donations
-            'payment_method' => null, // Payment method is null for non-monetary donations
-            'item_description' => 'Category: ' . $request->category . ', Condition: ' . $request->condition . ', Description: ' . $request->description,
-            'status' => 'pending', // Initial status
-            'transaction_id' => null,
-            'proof_path' => $imagePath, // Store image path in proof_path
-            'message' => 'Preferred Time: ' . $request->preferred_time, // Store preferred time in message
-            'is_anonymous' => !($request->donation_preference === 'acknowledged'),
-        ]);
+            // Create a new record in the donations table
+            $donation = new \App\Models\Donation([
+                'type' => 'non-monetary',
+                'donor_name' => $request->donor_name,
+                'donor_email' => $request->donor_email,
+                'donor_phone' => $request->donor_phone,
+                'amount' => null, // Amount is null for non-monetary donations
+                'payment_method' => null, // Payment method is null for non-monetary donations
+                'status' => 'pending', // Initial status
+                'transaction_id' => null,
+                'proof_path' => $imagePath, // Store image path in proof_path
+                'is_acknowledged' => $isAcknowledged,
+                'is_anonymous' => $isAnonymous,
+                'expected_date' => $request->expected_date,
+                'notes' => $request->description,
+                'category' => $request->category, // Store the selected or specified category
+                'condition' => $request->condition,
+                'quantity' => $request->quantity, // Save the quantity
+                'other_item_name' => null, // other_item_name is no longer used with the new frontend approach
+            ]);
+
+            Log::info('Attempting to save donation to database.');
+            // Save the donation to the database
+            $donation->save();
+            Log::info('Donation saved successfully.');
 
         // For this example, we'll just return a success response.
         return response()->json(['success' => true, 'message' => 'Non-monetary donation submitted successfully!']);

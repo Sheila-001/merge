@@ -146,7 +146,7 @@ Route::group(['prefix' => 'scholarship'], function () {
     Route::get('/apply', [ScholarshipController::class, 'showApplyForm'])->name('scholarship.apply.form');
     Route::post('/apply', [ScholarshipController::class, 'apply'])->name('scholarship.apply');
     Route::get('/status/{tracking_code}', [ScholarshipController::class, 'show'])->name('scholarship.show');
-    Route::match(['get', 'post'], '/track', [ScholarshipController::class, 'track'])->name('scholarship.track');
+    Route::match(['get', 'post'], '/scholarship/track', [App\Http\Controllers\ScholarshipController::class, 'track'])->name('scholarship.track');
     // Resend tracking code by email
     Route::post('/resend', [ScholarshipController::class, 'resendCode'])->name('scholarship.resend');
 });
@@ -163,9 +163,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DonationController::class, 'index'])->name('dashboard');
 });
 
-// Public Volunteer Dashboard Route (no auth required)
-Route::get('/volunteer_dashboard', [VolunteerController::class, 'dashboard'])->name('volunteer.dashboard');
-
 // User management routes with auth
 Route::middleware(['auth'])->group(function () {
     // Route::get('/users', [UserController::class, 'index'])->name('users.index');
@@ -174,6 +171,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    // New routes for volunteer dashboard and job post
+    Route::get('/volunteer/job-post', [VolunteerController::class, 'jobPost'])->name('volunteer.job-post');
+    // Route to handle volunteer job post submission
+    Route::post('/volunteer/job-post', [VolunteerController::class, 'storeJobPost'])->name('volunteer.jobs.store');
 });
 // Event routes with auth
 Route::middleware(['auth'])->group(function () {
@@ -216,6 +218,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
    
     // Category Management
     Route::resource('categories', CategoryController::class)->names('admin.categories');
+    Route::resource('categories', CategoryController::class)->names('admin.categories');
 });
 
 // Admin Scholars Route
@@ -235,13 +238,6 @@ Route::get('/jobs/listings', [JobController::class, 'index'])->name('jobs.listin
 Route::get('/api/job-listings/{id}', function($id) {
     return \App\Models\JobListing::findOrFail($id);
 });
-
-// Scholarship Application Routes
-Route::get('/scholarship/apply', [App\Http\Controllers\ScholarshipController::class, 'showApplyForm'])->name('scholarship.apply.form');
-Route::post('/scholarship/apply', [App\Http\Controllers\ScholarshipController::class, 'apply'])->name('scholarship.apply');
-Route::get('/scholarship/success/{tracking_code}', [App\Http\Controllers\ScholarshipController::class, 'success'])->name('scholarship.success');
-Route::match(['get', 'post'], '/scholarship/track', [App\Http\Controllers\ScholarshipController::class, 'track'])->name('scholarship.track');
-Route::get('/scholarship/track/{tracking_code}', [App\Http\Controllers\ScholarshipController::class, 'show'])->name('scholarship.show');
 
 // New route for students to view job listings
 Route::get('/jobs/listings', [JobController::class, 'index'])->name('jobs.listings');
@@ -298,7 +294,7 @@ Route::post('/donations/monetary', [App\Http\Controllers\PublicDonationControlle
 // For non-monetary donations
 Route::post('/donations/non-monetary', [App\Http\Controllers\PublicDonationController::class, 'storeNonMonetary'])->name('donations.non-monetary.store');
 
-Route::post('/non-monetary-donation', [PublicDonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
+Route::post('/non-monetary-donation', [App\Http\Controllers\PublicDonationController::class, 'submitNonMonetaryDonation'])->name('non_monetary.submit');
 
 // Get total monetary donations (moved to DonationController)
 Route::get('/donations/total', [App\Http\Controllers\PublicDonationController::class, 'getMonetaryTotal'])->name('donations.total');
