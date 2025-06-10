@@ -7,7 +7,7 @@
             <h1 class="text-2xl font-bold text-gray-800">Add Category</h1>
             <p class="text-sm text-gray-600">Create a new campaign category</p>
         </div>
-        <a href="<?php echo e(route('admin.calendar-categories.index')); ?>" 
+        <a href="<?php echo e(route('admin.campaigns-categories.index')); ?>" 
            class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -17,7 +17,7 @@
     </div>
 
     <div class="bg-white rounded-lg shadow-sm">
-        <form action="<?php echo e(route('admin.calendar-categories.store')); ?>" method="POST" class="p-6">
+        <form action="<?php echo e(route('admin.campaigns-categories.store')); ?>" method="POST" class="p-6">
             <?php echo csrf_field(); ?>
             
             <div class="grid grid-cols-1 gap-6">
@@ -87,7 +87,7 @@ unset($__errorArgs, $__bag); ?>
 
             <div class="mt-6 flex justify-end space-x-3">
                 <button type="button" 
-                        onclick="window.location.href='<?php echo e(route('admin.calendar-categories.index')); ?>'"
+                        onclick="window.location.href='<?php echo e(route('admin.campaigns-categories.index')); ?>'"
                         class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B4B5A]">
                     Cancel
                 </button>
@@ -100,4 +100,4 @@ unset($__errorArgs, $__bag); ?>
     </div>
 </div>
 <?php $__env->stopSection(); ?> 
-<?php echo $__env->make('components.admin-layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\collab\resources\views/admin/calendar/categories/create.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('components.admin-layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\collab\resources\views/admin/campaigns/categories/create.blade.php ENDPATH**/ ?>

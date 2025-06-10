@@ -104,6 +104,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(
 
         
         // Campaigns
+        Route::get('campaigns/dashboard', [CampaignController::class, 'dashboard'])->name('campaigns.dashboard');
         Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class)->names([
             'index' => 'campaigns.index',
             'create' => 'campaigns.create',
@@ -113,7 +114,6 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(
             'update' => 'campaigns.update',
             'destroy' => 'campaigns.destroy',
         ]);
-        Route::get('campaigns/dashboard', [CampaignController::class, 'dashboard'])->name('campaigns.dashboard');
         Route::patch('campaigns/{campaign}/status', [CampaignController::class, 'updateStatus'])->name('campaigns.update-status');
 
         // Calendar Campaign Routes
@@ -213,8 +213,6 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Admin Volunteer Management
     Route::get('/volunteers', [App\Http\Controllers\AdminController::class, 'volunteerIndex'])->name('admin.volunteers.index');
 
-   
-    // Campaign Management Routes
    
     // Category Management
     Route::resource('categories', CategoryController::class)->names('admin.categories');

@@ -120,6 +120,9 @@ class CampaignController extends Controller
      */
     public function show(Campaign $campaign)
     {
+        $campaign->load('donations');
+        $campaign->funds_raised = $campaign->donations->sum('amount');
+
         return view('admin.campaigns.show', compact('campaign'));
     }
 
